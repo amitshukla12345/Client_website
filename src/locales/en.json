@@ -1,0 +1,27 @@
+{
+  "navbar": {
+    "home": "Home",
+    "about": "About",
+    "services": "Services",
+    "events": "Events",
+    "gallery": "Gallery",
+    "live": "Live Katha",
+    "contact": "Contact",
+    "book": "Book your Katha"
+  },
+  "home": {
+    "bookButton": "Book Your Katha",
+    "liveButton": "Watch Live"
+  },
+  "about": {
+    "badge1": "Spiritual Lineage",
+    "title1": "Biography of Guru Ji",
+    "subtitle1": "A life devoted to scriptural truth, self-realization, and leading souls towards divine love.",
+    "badge2": "Early Journey & Enlightenment",
+    "badge3": "Bhagvad Acharya",
+    "missionTitle": "The Core Mission",
+    "missionDesc": "To revive Sanatan Dharma values, offering modern society a pathway away from material stress towards inner peace and spiritual surrender.",
+    "timelineBadge": "The Divine Voyage",
+    "timelineTitle": "Timeline of Devotion"
+  }
+}

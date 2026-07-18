@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-cream-light text-dark font-sans;
+    background-image: 
+      radial-gradient(rgba(212, 175, 55, 0.03) 1px, transparent 0),
+      radial-gradient(rgba(255, 153, 51, 0.02) 1px, transparent 0);
+    background-size: 40px 40px;
+    background-position: 0 0, 20px 20px;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-serif tracking-wide;
+  }
+}
+
+@layer components {
+  .text-gold-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-gold-dark via-gold to-gold-dark;
+    text-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .text-saffron-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-saffron-dark via-saffron to-saffron-dark;
+  }
+
+  .bg-saffron-gradient {
+    @apply bg-gradient-to-r from-saffron-dark via-saffron to-saffron-light;
+  }
+
+  .bg-gold-gradient {
+    @apply bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728];
+  }
+
+  .bg-gold-dark-gradient {
+    @apply bg-gradient-to-r from-gold-dark to-gold;
+  }
+
+  .border-gold-gradient {
+    border-image: linear-gradient(to right, #BF953F, #FCF6BA, #B38728) 1;
+  }
+
+  .glass-card {
+    @apply bg-white/75 backdrop-blur-md border border-amber-500/10 shadow-premium rounded-2xl;
+  }
+
+  .glass-card-dark {
+    @apply bg-dark-light/90 backdrop-blur-md border border-gold-dark/20 shadow-2xl rounded-2xl;
+  }
+
+  .btn-premium-saffron {
+    @apply bg-saffron text-white font-medium px-8 py-3 rounded-full hover:bg-saffron-dark transition-all duration-300 shadow-premium hover:shadow-saffron-glow hover:-translate-y-0.5 active:translate-y-0;
+  }
+
+  .btn-premium-gold {
+    @apply bg-gradient-to-r from-gold-dark to-gold text-white font-medium px-8 py-3 rounded-full hover:from-gold hover:to-gold-light transition-all duration-300 shadow-premium hover:shadow-gold-glow hover:-translate-y-0.5 active:translate-y-0 border border-gold-light/20;
+  }
+
+  .btn-premium-outline {
+    @apply border-2 border-gold text-gold-dark font-medium px-8 py-3 rounded-full hover:bg-gold/10 transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0;
+  }
+}
+
+/* Custom Swiper Styles */
+.swiper-pagination-bullet-active {
+  background: #ff9933 !important;
+  width: 24px !important;
+  border-radius: 4px !important;
+}
+
+.swiper-pagination-bullet {
+  background: #d4af37 !important;
+  transition: all 0.3s ease;
+}
+
+.swiper-button-next, .swiper-button-prev {
+  color: #d4af37 !important;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fffdf9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff9933 0%, #d4af37 100%);
+  border-radius: 5px;
+  border: 2px solid #fffdf9;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #e05a10 0%, #b38728 100%);
+}
+
+/* Sanskrit Quote Ornament styling */
+.ornament-line {
+  @apply relative flex items-center justify-center my-6;
+}
+
+.ornament-line::before, .ornament-line::after {
+  content: '';
+  @apply flex-grow h-[1px] bg-gradient-to-r from-transparent via-gold to-transparent max-w-[120px];
+}
+
+.ornament-line::before {
+  margin-right: 16px;
+}
+
+.ornament-line::after {
+  margin-left: 16px;
+}
