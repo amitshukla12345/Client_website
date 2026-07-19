@@ -59,6 +59,7 @@ export const AppProvider = ({ children }) => {
   const [bookings, setBookings] = useState([])
   const [calendarDates, setCalendarDates] = useState([])
   const [organizers, setOrganizers] = useState([])
+  const [yajman, setYajman] = useState(null)
   
   // Admin Profile State
   const [adminProfile, setAdminProfile] = useState({ username: '', fullname: '', email: '', role: '' })
@@ -91,6 +92,9 @@ export const AppProvider = ({ children }) => {
           if (data.bookings && data.bookings.length > 0) setBookings(data.bookings);
           if (data.organizers && data.organizers.length > 0) setOrganizers(data.organizers);
           if (data.calendarDates && data.calendarDates.length > 0) setCalendarDates(data.calendarDates);
+          if (data.yajman && data.yajman.length > 0) {
+            setYajman(data.yajman[data.yajman.length - 1]);
+          }
         }
       } catch (error) {
         console.warn('Backend not reachable, falling back to local storage defaults.');
@@ -363,8 +367,15 @@ export const AppProvider = ({ children }) => {
         body: JSON.stringify(newBanners)
       })
       await handleResponse(res)
-      if (res.ok) setBanners(await res.json())
-    } catch(e) { console.error(e) }
+      if (res.ok) {
+        setBanners(await res.json())
+      } else {
+        setBanners(newBanners)
+      }
+    } catch(e) { 
+      console.error("Backend fetch failed, updating banners locally", e) 
+      setBanners(newBanners)
+    }
   }
 
   const addOrganizer = async (org) => {
@@ -477,7 +488,10 @@ export const AppProvider = ({ children }) => {
         deleteOrganizer,
         adminProfile,
         updateAdminProfile,
-        changeAdminPassword
+        changeAdminPassword,
+        getAuthHeaders,
+        handleResponse,
+        yajman, setYajman
       }}
     >
       {children}

@@ -6,6 +6,7 @@ import { GiLotus, GiGreekTemple, GiSun, GiMusicalNotes, GiFlame, GiBookCover, Gi
 
 import { AppContext } from '../context/AppContext'
 import { useTranslation } from '../context/LanguageContext'
+import YajmanIntro from '../components/YajmanIntro'
 
 export default function Home() {
   const { banners, about, events, galleryPhotos, galleryVideos, organizers, contacts } = useContext(AppContext)
@@ -13,6 +14,13 @@ export default function Home() {
   const [activeGalleryTab, setActiveGalleryTab] = useState('Photos')
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
   const [activeYajmanIdx, setActiveYajmanIdx] = useState(0)
+
+  // Helper to ensure button text is valid and visible
+  const getValidBtnText = (text1, text2, fallbackKey) => {
+    if (text1 && text1.trim().length > 0) return text1;
+    if (text2 && text2.trim().length > 0) return text2;
+    return t(fallbackKey);
+  };
 
   const nextHeroSlide = () => {
     if (banners && banners.length > 0) {
@@ -79,6 +87,7 @@ export default function Home() {
       location: 'लखनऊ'
     }
   ]
+  const currentBanner = banners && banners.length > 0 ? banners[currentHeroSlide] : {};
 
   return (
     <div className="bg-[#FCF9F2] text-[#3D2B20] font-sans selection:bg-[#E05A10] selection:text-white overflow-x-hidden">
@@ -86,7 +95,7 @@ export default function Home() {
       {/* 1. HERO CAROUSEL SECTION */}
       <section className="relative w-full bg-white border-b border-[#EAD8C8] overflow-hidden">
         {/* Banner Grid Container */}
-        <div className="w-full relative min-h-[460px] lg:h-[500px]">
+        <div className="w-full relative min-h-[460px] lg:min-h-[550px] h-auto">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentHeroSlide}
@@ -97,23 +106,33 @@ export default function Home() {
               className="w-full h-full grid grid-cols-1 lg:grid-cols-12 items-stretch"
             >
               {/* Left Column: Text content */}
-              <div className="lg:col-span-6 flex flex-col justify-center px-4 xs:px-8 sm:px-16 lg:px-24 pt-36 xs:pt-40 sm:pt-44 lg:pt-48 pb-12 bg-[#FCF9F2] text-center lg:text-left relative z-10">
+              <div className="lg:col-span-6 flex flex-col justify-center px-4 xs:px-8 sm:px-16 lg:px-24 pt-28 sm:pt-32 lg:pt-32 pb-16 lg:pb-16 bg-[#FCF9F2] text-center lg:text-left relative z-10">
+                
                 <h2
-                  className="font-serif text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-bold text-[#3D2B20] mb-2"
-                  style={{ lineHeight: '1.5', paddingTop: '10px' }}
+                  className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold text-[#3D2B20] mb-3 leading-tight"
                 >
-                  {banners[currentHeroSlide]?.title}
+                  {currentBanner?.title || 'श्रीमद् भागवत कथा'}
                 </h2>
 
-                <p className="font-serif text-base xs:text-lg sm:text-xl lg:text-2xl text-[#3D2B20] font-bold leading-relaxed mb-4">
-                  {banners[currentHeroSlide]?.tagline}
-                </p>
+                {currentBanner?.subtitle && (
+                  <p className="font-serif text-base xs:text-lg sm:text-xl lg:text-2xl text-[#3D2B20]/80 font-semibold leading-relaxed mb-4">
+                    {currentBanner.subtitle}
+                  </p>
+                )}
 
-                {(banners[currentHeroSlide]?.kathaDay || banners[currentHeroSlide]?.kathaTopic) && (
-                  <div className="flex items-center justify-center lg:justify-start gap-2 mb-6 text-xs sm:text-sm font-bold text-[#E05A10] bg-[#E05A10]/10 px-4 py-2 rounded-full w-fit mx-auto lg:mx-0">
-                    {banners[currentHeroSlide]?.kathaDay && <span>{banners[currentHeroSlide].kathaDay}</span>}
-                    {banners[currentHeroSlide]?.kathaDay && banners[currentHeroSlide]?.kathaTopic && <span>•</span>}
-                    {banners[currentHeroSlide]?.kathaTopic && <span>{banners[currentHeroSlide].kathaTopic}</span>}
+                {(currentBanner?.kathaDay || currentBanner?.prasang) && (
+                  <div className="flex items-center justify-center lg:justify-start gap-2 mb-4 text-xs sm:text-sm font-bold text-[#E05A10] bg-[#E05A10]/10 px-4 py-2 rounded-full w-fit mx-auto lg:mx-0">
+                    {currentBanner?.kathaDay && <span>{currentBanner.kathaDay}</span>}
+                    {currentBanner?.kathaDay && currentBanner?.prasang && <span className="opacity-60">•</span>}
+                    {currentBanner?.prasang && <span>प्रसंग: {currentBanner.prasang}</span>}
+                  </div>
+                )}
+
+                {(currentBanner?.date || currentBanner?.time || currentBanner?.venue) && (
+                  <div className="flex flex-col gap-2 text-[#3D2B20]/70 text-xs md:text-sm font-medium mb-6 mt-2 mx-auto lg:mx-0 text-left">
+                    {currentBanner?.date && <span className="flex items-center gap-2"><FaCalendarAlt className="text-[#E05A10]"/> {currentBanner.date}</span>}
+                    {currentBanner?.time && <span className="flex items-center gap-2"><FaClock className="text-[#E05A10]"/> {currentBanner.time}</span>}
+                    {currentBanner?.venue && <span className="flex items-center gap-2"><FaMapMarkerAlt className="text-[#E05A10]"/> {currentBanner.venue}</span>}
                   </div>
                 )}
 
@@ -126,18 +145,23 @@ export default function Home() {
 
                 {/* Buttons */}
                 <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 w-full max-w-[280px] sm:max-w-none mx-auto lg:mx-0 relative z-30">
-                  <Link
-                    to="/contact"
-                    className="w-full sm:w-auto bg-[#E05A10] hover:bg-[#c94d0d] text-white font-sans font-bold text-xs uppercase tracking-wider px-6 sm:px-8 py-3.5 rounded shadow transition-all duration-300 text-center"
-                  >
-                    {t('home.bookButton')}
-                  </Link>
-                  <Link
-                    to="/live"
-                    className="w-full sm:w-auto border border-[#E05A10]/40 hover:border-[#E05A10] text-[#E05A10] font-sans font-bold text-xs uppercase tracking-wider px-6 sm:px-8 py-3 rounded hover:bg-[#E05A10]/5 transition-all duration-300 text-center"
-                  >
-                    {t('home.liveButton')}
-                  </Link>
+                  {currentBanner?.enableBook !== false && (
+                    <Link
+                      to={(currentBanner?.btn1Url || '').trim() || "/contact"}
+                      className="w-full sm:w-auto bg-[#E05A10] hover:bg-[#c94d0d] text-white font-sans font-bold text-xs uppercase tracking-wider px-6 sm:px-8 py-3.5 rounded shadow transition-all duration-300 text-center flex items-center justify-center min-w-[140px]"
+                    >
+                      {getValidBtnText(currentBanner?.btn1Text, currentBanner?.btnText1, 'home.bookButton')}
+                    </Link>
+                  )}
+                  
+                  {currentBanner?.enableLive !== false && (
+                    <Link
+                      to={(currentBanner?.btn2Url || '').trim() || "/live"}
+                      className="w-full sm:w-auto border border-[#E05A10]/40 hover:border-[#E05A10] text-[#E05A10] font-sans font-bold text-xs uppercase tracking-wider px-6 sm:px-8 py-3 rounded hover:bg-[#E05A10]/5 transition-all duration-300 text-center flex items-center justify-center min-w-[140px]"
+                    >
+                      {getValidBtnText(currentBanner?.btn2Text, currentBanner?.btnText2, 'home.liveButton')}
+                    </Link>
+                  )}
                 </div>
               </div>
 
@@ -148,7 +172,7 @@ export default function Home() {
                   <polygon points="0,0 100,0 0,100" fill="currentColor" />
                 </svg>
                 <img
-                  src={banners[currentHeroSlide]?.image}
+                  src={currentBanner?.image}
                   alt="Pujya Guru Ji Maharaj"
                   className="w-full h-full object-cover object-top pointer-events-none"
                 />
@@ -213,149 +237,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. DYNAMIC KATHA ORGANIZER / YAJMAN DETAILS SECTION */}
-      <section className="py-24 bg-[#FCF9F2] border-t border-[#EAD8C8]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-          <div className="text-center mb-16">
-            <span className="text-xs font-bold uppercase tracking-widest text-[#E05A10] flex items-center justify-center space-x-2">
-              <GiLotus />
-              <span>कथा आयोजक एवं यजमान विवरण</span>
-              <GiLotus />
-            </span>
-            <h2 className="font-serif text-3xl font-black text-[#3D2B20] mt-1">
-              श्रद्धालु यजमान परिचय
-            </h2>
-            <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-3"></div>
-          </div>
-
-          {organizers && organizers.length > 0 ? (
-            <div className="bg-white border border-[#EAD8C8] rounded-3xl p-8 sm:p-12 shadow-premium max-w-5xl mx-auto">
-              {/* Split Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-
-                {/* 🖼 Left Side (Image) */}
-                <div className="lg:col-span-5 flex flex-col items-center">
-                  <motion.div
-                    key={activeYajmanIdx}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4 }}
-                    className="relative border-[6px] border-[#FCF9F2] rounded-[2rem] bg-white shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] w-full max-w-sm ring-1 ring-[#EAD8C8]"
-                  >
-                    <img
-                      src={organizers[activeYajmanIdx].image || 'https://images.unsplash.com/photo-1544790181-37288bde4d16?auto=format&fit=crop&w=600&q=80'}
-                      alt={organizers[activeYajmanIdx].name}
-                      className="rounded-[1.5rem] w-full h-[300px] sm:h-[420px] object-cover"
-                    />
-                    <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-[#E05A10] to-[#c94d0d] text-white text-xs font-bold uppercase tracking-widest px-6 py-2.5 rounded-full shadow-lg border-2 border-white">
-                      कथा यजमान
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* 📄 Right Side (Details) */}
-                <motion.div
-                  key={`details-${activeYajmanIdx}`}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4 }}
-                  className="lg:col-span-7 space-y-8"
-                >
-                  {/* Header */}
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <GiLotus className="text-[#E05A10] text-sm" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-[#E05A10]">Yajman Details</span>
-                    </div>
-                    <h3 className="font-serif text-3xl sm:text-4xl font-black text-[#3D2B20] leading-tight">
-                      {organizers[activeYajmanIdx].name}
-                    </h3>
-                    {organizers[activeYajmanIdx].familyName && (
-                      <p className="text-sm font-bold text-[#D4AF37] tracking-wide text-lg">
-                        {organizers[activeYajmanIdx].familyName}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Info List */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
-                    <div className="flex items-start space-x-3">
-                      <div className="mt-1 bg-[#FAF6F0] p-2.5 rounded-full text-[#E05A10]">
-                        <FaMapMarkerAlt className="text-sm" />
-                      </div>
-                      <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-[#3D2B20]/50 mb-0.5">पता / स्थान</span>
-                        <p className="text-sm font-semibold text-[#3D2B20]">{organizers[activeYajmanIdx].address}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-3">
-                      <div className="mt-1 bg-[#FAF6F0] p-2.5 rounded-full text-[#E05A10]">
-                        <GiGreekTemple className="text-sm" />
-                      </div>
-                      <div>
-                        <span className="block text-[10px] font-bold uppercase tracking-wider text-[#3D2B20]/50 mb-0.5">शहर एवं राज्य</span>
-                        <p className="text-sm font-semibold text-[#3D2B20]">{organizers[activeYajmanIdx].cityState}</p>
-                      </div>
-                    </div>
-
-                    {organizers[activeYajmanIdx].purpose && (
-                      <div className="flex items-start space-x-3 sm:col-span-2">
-                        <div className="mt-1 bg-[#FAF6F0] p-2.5 rounded-full text-[#E05A10]">
-                          <GiLotus className="text-sm" />
-                        </div>
-                        <div>
-                          <span className="block text-[10px] font-bold uppercase tracking-wider text-[#3D2B20]/50 mb-0.5">आयोजन का उद्देश्य</span>
-                          <p className="text-[15px] font-semibold text-[#E05A10]">{organizers[activeYajmanIdx].purpose}</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* About Text */}
-                  {organizers[activeYajmanIdx].about && (
-                    <div className="relative bg-gradient-to-br from-[#FCF9F2] to-white p-6 rounded-2xl border border-[#EAD8C8]/60 shadow-sm mt-4">
-                      <FaQuoteLeft className="absolute top-4 right-4 text-4xl text-[#D4AF37]/10" />
-                      <p className="text-sm text-[#3D2B20]/80 font-medium leading-relaxed whitespace-pre-line relative z-10">
-                        {organizers[activeYajmanIdx].about}
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Organizer Selection Controllers */}
-                  {organizers.length > 1 && (
-                    <div className="flex items-center space-x-3 pt-4 border-t border-[#FAF0E6]">
-                      <button
-                        onClick={() => setActiveYajmanIdx((prev) => (prev - 1 + organizers.length) % organizers.length)}
-                        className="w-10 h-10 rounded-full border border-[#EAD8C8] bg-white text-[#E05A10] hover:bg-[#E05A10] hover:text-white flex items-center justify-center transition-all active:scale-95 shadow-sm"
-                        title="Previous Yajman"
-                      >
-                        ◀
-                      </button>
-                      <span className="font-bold text-xs">
-                        {activeYajmanIdx + 1} / {organizers.length}
-                      </span>
-                      <button
-                        onClick={() => setActiveYajmanIdx((prev) => (prev + 1) % organizers.length)}
-                        className="w-10 h-10 rounded-full border border-[#EAD8C8] bg-white text-[#E05A10] hover:bg-[#E05A10] hover:text-white flex items-center justify-center transition-all active:scale-95 shadow-sm"
-                        title="Next Yajman"
-                      >
-                        ▶
-                      </button>
-                    </div>
-                  )}
-
-                </motion.div>
-              </div>
-            </div>
-          ) : (
-            <div className="py-16 text-center text-sm text-[#3D2B20]/40 font-light bg-white rounded-3xl border border-[#EAD8C8] max-w-xl mx-auto">
-              सम्प्रति कोई यजमान विवरण उपलब्ध नहीं है।
-            </div>
-          )}
-        </div>
-      </section>
+      {/* 3. DYNAMIC KATHA YAJMAN SECTION */}
+      <YajmanIntro />
 
       {/* 4. KATHA SERVICES SECTION */}
       <section className="py-20 bg-white border-y border-[#FAF0E6]">

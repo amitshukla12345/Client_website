@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { GiLotus } from 'react-icons/gi'
 import { FaYoutube, FaExternalLinkAlt, FaPlayCircle, FaInstagram, FaFacebookF } from 'react-icons/fa'
 import { AppContext } from '../context/AppContext'
+import LiveHeroImg from '../assets/images/live_hero.png'
 
 export default function Live() {
   const { contacts, galleryVideos } = useContext(AppContext)
@@ -24,26 +25,19 @@ export default function Live() {
   }
 
   return (
-    <div className="pt-24 pb-20">
+    <div className="pt-[20px] lg:pt-[30px] pb-0">
       {/* Page Header */}
-      <section className="relative py-20 bg-dark-charcoal text-white text-center">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#d4af37_1px,transparent_0)] bg-[size:32px_32px] pointer-events-none"></div>
-        <div className="max-w-4xl mx-auto px-4 relative z-10 space-y-4">
-          <span className="text-saffron uppercase font-bold tracking-widest text-xs flex items-center justify-center space-x-2">
-            <GiLotus className="text-red-500 animate-pulse" />
-            <span>Divine Broadcast</span>
-            <GiLotus className="text-red-500 animate-pulse" />
-          </span>
-          <h1 className="font-serif text-3xl xs:text-4xl sm:text-5xl font-black">Live Katha Darshan</h1>
-          <p className="text-sm font-light text-cream-deep/70 max-w-xl mx-auto">
-            YouTube चैनल पर लाइव कथा देखें — नीचे दिए गए बटन पर क्लिक करें और सीधे लाइव स्ट्रीम से जुड़ें।
-          </p>
-        </div>
+      <section className="relative w-full">
+        <img 
+          src={LiveHeroImg} 
+          alt="Live Katha Hero Banner" 
+          className="w-full h-auto object-cover md:object-contain bg-[#FCF9F2]" 
+        />
       </section>
 
       {/* Live Katha CTA Section */}
-      <section className="py-24 bg-cream-light">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pb-8 bg-cream-light relative z-10 pt-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
           <div className="relative bg-white rounded-3xl shadow-2xl border border-gold/20 overflow-hidden">
 
             {/* Decorative Top Gradient */}

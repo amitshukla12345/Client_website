@@ -12,6 +12,8 @@ import {
   FaLink, FaSave, FaExternalLinkAlt, FaImage, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaGlobe, FaYoutube, FaUser, FaLock, FaEye, FaEyeSlash, FaQuoteLeft, FaBars
 } from 'react-icons/fa'
 import logoImg from '../../assets/images/logo.jpeg'
+import AdminBannerManager from './components/AdminBannerManager'
+import AdminYajmanManager from './components/AdminYajmanManager'
 
 export default function Dashboard() {
   const {
@@ -133,14 +135,15 @@ export default function Dashboard() {
         <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto">
             {[
               { id: 'Overview', label: 'Overview', icon: FaInfoCircle },
-              { id: 'Bookings', label: 'Manage Bookings', icon: FaClipboardList, badge: bookings.filter(b => b.status === 'Pending').length },
-              { id: 'Banners', label: 'Home Banners', icon: FaImages },
-              { id: 'Biography', label: 'Guru Ji Biography', icon: FaUserEdit },
+              { id: 'Bookings', label: 'Bookings', icon: FaClipboardList, badge: bookings.filter(b => b.status === 'Pending').length },
+              { id: 'Yajman', label: 'Yajman Management', icon: FaUsers },
+              { id: 'Banners', label: 'Home Banner', icon: FaImages },
+              { id: 'Biography', label: 'Guru Biography', icon: FaUserEdit },
               { id: 'Events', label: 'Upcoming Events', icon: FaCalendarPlus },
-              { id: 'Calendar', label: 'Manage Calendar', icon: FaCalendarAlt },
-              { id: 'Gallery', label: 'Gallery (Media)', icon: FaImages },
-              { id: 'Organizers', label: 'Katha Organizers', icon: FaUsers },
-              { id: 'Contact', label: 'Contact Details', icon: FaGlobe }
+              { id: 'Gallery', label: 'Gallery', icon: FaImage },
+              { id: 'Live', label: 'Live Katha', icon: FaYoutube },
+              { id: 'Contact', label: 'Contact Details', icon: FaGlobe },
+              { id: 'Settings', label: 'Settings', icon: FaUser }
             ].map(item => (
               <button
                 key={item.id}
@@ -305,16 +308,19 @@ export default function Dashboard() {
         </header>
 
         {/* Scrollable Sub-Views Area */}
-        <div className="flex-grow p-4 sm:p-8 overflow-y-auto">
-          {activeTab === 'Overview' && <OverviewTab {...{ bookings, events, galleryPhotos, galleryVideos, setActiveTab }} />}
-          {activeTab === 'Bookings' && <BookingsTab {...{ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings }} />}
-          {activeTab === 'Banners' && <BannersTab {...{ banners, updateBanners }} />}
-          {activeTab === 'Biography' && <BiographyTab {...{ about, updateAbout, timeline, setTimeline, achievements, setAchievements }} />}
-          {activeTab === 'Events' && <EventsTab {...{ events, addEvent, deleteEvent }} />}
-          {activeTab === 'Calendar' && <CalendarTab {...{ calendarDates, addCalendarDate, deleteCalendarDate }} />}
-          {activeTab === 'Organizers' && <OrganizersTab {...{ organizers, addOrganizer, updateOrganizer, deleteOrganizer }} />}
-          {activeTab === 'Gallery' && <GalleryTab {...{ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVideo, deleteVideo }} />}
-          {activeTab === 'Contact' && <ContactTab {...{ contacts, updateContacts }} />}
+        <div className="flex-grow p-0 sm:p-0 overflow-y-auto bg-gray-50">
+          {activeTab === 'Overview' && <div className="p-4 sm:p-8"><OverviewTab {...{ bookings, events, galleryPhotos, galleryVideos, setActiveTab }} /></div>}
+          {activeTab === 'Bookings' && <div className="p-4 sm:p-8"><BookingsTab {...{ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings }} /></div>}
+          {activeTab === 'Yajman' && <AdminYajmanManager />}
+          {activeTab === 'Banners' && <AdminBannerManager />}
+          {activeTab === 'Biography' && <div className="p-4 sm:p-8"><BiographyTab {...{ about, updateAbout, timeline, setTimeline, achievements, setAchievements }} /></div>}
+          {activeTab === 'Events' && <div className="p-4 sm:p-8"><EventsTab {...{ events, addEvent, deleteEvent }} /></div>}
+          {activeTab === 'Calendar' && <div className="p-4 sm:p-8"><CalendarTab {...{ calendarDates, addCalendarDate, deleteCalendarDate }} /></div>}
+          {activeTab === 'Organizers' && <div className="p-4 sm:p-8"><OrganizersTab {...{ organizers, addOrganizer, updateOrganizer, deleteOrganizer }} /></div>}
+          {activeTab === 'Gallery' && <div className="p-4 sm:p-8"><GalleryTab {...{ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVideo, deleteVideo }} /></div>}
+          {activeTab === 'Contact' && <div className="p-4 sm:p-8"><ContactTab {...{ contacts, updateContacts }} /></div>}
+          {activeTab === 'Live' && <div className="p-4 sm:p-8"><h2 className="text-2xl font-bold">Live Katha Management (Coming Soon)</h2></div>}
+          {activeTab === 'Settings' && <div className="p-4 sm:p-8"><h2 className="text-2xl font-bold">Settings (Coming Soon)</h2></div>}
         </div>
       </main>
 

@@ -82,14 +82,14 @@ export default function Contact() {
   ]
 
   return (
-    <div className="pt-[90px] lg:pt-[104px] pb-20 overflow-x-hidden bg-[#FFFDF7]">
+    <div className="pt-0 pb-0 overflow-x-hidden bg-[#FFFDF7]">
       {/* Hero Section */}
-      <section className="relative w-full flex justify-center border-b border-gold/20">
-        <img src={contactHeroImg} alt="Contact Hero Banner" className="w-full max-w-[1920px] h-auto block shadow-sm" />
+      <section className="relative w-full flex justify-center border-b border-gold/20 -mt-4">
+        <img src={contactHeroImg} alt="Contact Hero Banner" className="w-full max-w-[1920px] h-auto block shadow-sm relative z-10" />
       </section>
 
       {/* Contact Content Section */}
-      <section className="py-24 bg-cream-light">
+      <section className="pt-2 pb-8 bg-cream-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
