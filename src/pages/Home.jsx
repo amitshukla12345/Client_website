@@ -7,6 +7,7 @@ import { GiLotus, GiGreekTemple, GiSun, GiMusicalNotes, GiFlame, GiBookCover, Gi
 import { AppContext } from '../context/AppContext'
 import { useTranslation } from '../context/LanguageContext'
 import YajmanIntro from '../components/YajmanIntro'
+import KathaServices from '../components/KathaServices'
 
 export default function Home() {
   const { banners, about, events, galleryPhotos, galleryVideos, organizers, contacts } = useContext(AppContext)
@@ -241,38 +242,7 @@ export default function Home() {
       <YajmanIntro />
 
       {/* 4. KATHA SERVICES SECTION */}
-      <section className="py-20 bg-white border-y border-[#FAF0E6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
-          <div className="space-y-1 max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#E05A10]">Katha Services</span>
-            <h2 className="font-serif text-2xl sm:text-3xl font-black text-[#3D2B20]">हमारी सेवाएं</h2>
-            <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-3"></div>
-          </div>
-
-          {/* Grid list of services */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-            {services.map((svc, idx) => (
-              <motion.div
-                key={idx}
-                whileHover={{ y: -4 }}
-                className="bg-[#FCF9F2] border border-[#FAF0E6] p-5 rounded-xl text-center hover:shadow transition-all flex flex-col items-center justify-between"
-              >
-                <div className="w-12 h-12 rounded-full bg-[#E05A10]/10 text-[#E05A10] flex items-center justify-center text-xl mb-4">
-                  <svc.icon />
-                </div>
-                <h4 className="font-serif font-bold text-xs text-[#3D2B20] leading-tight">{svc.title}</h4>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="mt-12">
-            <Link to="/services" className="bg-[#E05A10] hover:bg-[#c94d0d] text-white font-serif font-bold text-xs uppercase tracking-widest px-8 py-3 rounded shadow transition-all">
-              View All Services
-            </Link>
-          </div>
-        </div>
-      </section>
+      <KathaServices />
 
       {/* 5. UPCOMING EVENTS */}
       <section className="py-20 bg-[#FCF9F2]">

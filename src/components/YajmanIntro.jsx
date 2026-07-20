@@ -88,6 +88,11 @@ export default function YajmanIntro() {
                 <h3 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black text-[#800000] tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#800000] to-[#E05A10]">
                   {yajman.yajmanName}
                 </h3>
+                {yajman.wifeName && (
+                  <h4 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#D4AF37] mt-2 tracking-wide">
+                    एवं {yajman.wifeName}
+                  </h4>
+                )}
                 <div className="h-[2px] w-24 bg-gradient-to-r from-[#D4AF37] to-transparent mt-4"></div>
               </div>
 
@@ -125,41 +130,35 @@ export default function YajmanIntro() {
               </div>
 
               {/* Bottom Family Section */}
-              <div className="flex flex-col sm:flex-row items-center sm:items-stretch justify-between bg-[#FAF0E6]/80 rounded-xl p-4 border border-[#EAD8C8] gap-4 mt-2">
-                <div className="flex items-center space-x-3 pr-4 sm:border-r border-[#D4AF37]/30">
-                  <div className="bg-[#D4AF37] text-white p-2.5 rounded-lg shadow-sm">
-                    <FaUsers className="text-xl" />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-[#3D2B20] text-sm leading-none">परिवार</h4>
-                    <p className="text-xs text-[#8B5A2B] mt-1">{yajman.familyMembersCount} सदस्य</p>
-                  </div>
+              <div className="mt-8 pt-6 border-t border-[#D4AF37]/20">
+                <div className="flex items-center justify-center space-x-3 mb-6">
+                  <div className="h-px bg-gradient-to-r from-transparent via-[#D4AF37]/50 to-transparent flex-grow max-w-[150px]"></div>
+                  <h4 className="font-bold text-[#3D2B20] text-xl px-4 font-serif flex items-center space-x-2">
+                    <FaUsers className="text-[#E05A10]" />
+                    <span>समस्त यजमान परिवार</span>
+                  </h4>
+                  <div className="h-px bg-gradient-to-r from-[#D4AF37]/50 via-[#D4AF37]/50 to-transparent flex-grow max-w-[150px]"></div>
                 </div>
                 
-                {/* Family Avatars (Dummy representations) */}
-                <div className="flex-grow flex items-center justify-center sm:justify-start space-x-[-12px] px-2">
-                  {[...Array(Math.min(5, yajman.familyMembersCount || 0))].map((_, i) => (
-                    <img 
-                      key={i}
-                      src={dummyFamilyAvatar} 
-                      alt="Family Member" 
-                      className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white shadow-md object-cover relative transition-transform hover:scale-110"
-                      style={{ zIndex: 10 - i }}
-                    />
-                  ))}
-                  {(yajman.familyMembersCount || 0) > 5 && (
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-white bg-[#FFF3E0] text-[#E05A10] font-bold text-xs sm:text-sm flex items-center justify-center shadow-md relative z-0">
-                      +{yajman.familyMembersCount - 5}
-                    </div>
-                  )}
-                </div>
-
-                <div className="hidden md:flex items-center space-x-2 pl-4 border-l border-[#D4AF37]/30 text-xs text-[#5C4033] font-medium max-w-[150px]">
-                  <div className="w-8 h-8 flex-shrink-0 opacity-70">
-                     <svg viewBox="0 0 24 24" fill="currentColor" className="text-[#D4AF37]"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                {yajman.familyMembers && yajman.familyMembers.length > 0 ? (
+                  <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
+                    {yajman.familyMembers.map((member, index) => (
+                      <div key={index} className="flex flex-col items-center group w-28 sm:w-32">
+                        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full p-1 bg-gradient-to-br from-[#D4AF37] to-[#E05A10] shadow-md mb-3 transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg">
+                          <img 
+                            src={member.imageUrl || dummyFamilyAvatar} 
+                            alt={member.name} 
+                            className="w-full h-full object-cover rounded-full border-[3px] border-white"
+                          />
+                        </div>
+                        <h5 className="font-bold text-[#3D2B20] text-sm sm:text-base text-center leading-tight mb-1.5">{member.name || '-'}</h5>
+                        <p className="text-[11px] sm:text-xs text-[#E05A10] font-bold bg-[#FFF3E0] px-3 py-1 rounded-full shadow-sm">{member.relation || '-'}</p>
+                      </div>
+                    ))}
                   </div>
-                  <p className="leading-tight">आप सभी पर भगवान श्री राम की कृपा सदैव बनी रहे।</p>
-                </div>
+                ) : (
+                  <p className="text-center text-[#8B5A2B]/70 italic text-sm">परिवार के सदस्यों की जानकारी उपलब्ध नहीं है।</p>
+                )}
               </div>
 
             </div>
