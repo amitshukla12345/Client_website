@@ -1,13 +1,13 @@
 import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaCalendarAlt, FaStar, FaQuoteLeft, FaPhoneAlt, FaRegHandshake, FaMapMarkerAlt, FaCheck, FaArrowRight, FaClock, FaOm, FaPlaceOfWorship, FaBookOpen, FaPrayingHands, FaYoutube, FaFacebookF, FaChevronLeft, FaChevronRight } from 'react-icons/fa'
+import { FaCalendarAlt, FaStar, FaQuoteLeft, FaPhoneAlt, FaRegHandshake, FaMapMarkerAlt, FaCheck, FaArrowRight, FaClock, FaOm, FaPlaceOfWorship, FaBookOpen, FaPrayingHands, FaGlobeAmericas, FaYoutube, FaFacebookF, FaChevronLeft, FaChevronRight, FaImages, FaVideo, FaPlayCircle, FaInstagram, FaWhatsapp } from 'react-icons/fa'
 import { GiLotus, GiGreekTemple, GiSun, GiMusicalNotes, GiFlame, GiBookCover, GiTrident, GiPrayerBeads, GiOpenBook, GiFireBowl } from 'react-icons/gi'
 
 import { AppContext } from '../context/AppContext'
 import { useTranslation } from '../context/LanguageContext'
 import YajmanIntro from '../components/YajmanIntro'
-import KathaServices from '../components/KathaServices'
+import aboutHeroImg from '../assets/images/about_guru.png'
 
 export default function Home() {
   const { banners, about, events, galleryPhotos, galleryVideos, organizers, contacts } = useContext(AppContext)
@@ -15,6 +15,7 @@ export default function Home() {
   const [activeGalleryTab, setActiveGalleryTab] = useState('Photos')
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
   const [activeYajmanIdx, setActiveYajmanIdx] = useState(0)
+  const [activeTestimonial, setActiveTestimonial] = useState(0)
 
   // Helper to ensure button text is valid and visible
   const getValidBtnText = (text1, text2, fallbackKey) => {
@@ -61,31 +62,63 @@ export default function Home() {
 
   // 4. Services Data
   const services = [
-    { title: 'श्रीमद्भागवत कथा', icon: GiLotus },
-    { title: 'राम कथा', icon: FaPlaceOfWorship },
-    { title: 'शिव महापुराण', icon: GiTrident },
-    { title: 'देवी भागवत', icon: FaOm },
-    { title: 'सुन्दरकाण्ड पाठ', icon: FaBookOpen },
-    { title: 'भजन संध्या', icon: GiMusicalNotes },
-    { title: 'अन्य कार्यक्रम', icon: FaPrayingHands }
+    { 
+      title: 'श्रीमद भागवत कथा', 
+      desc: 'भगवान श्रीकृष्ण की दिव्य कथा का श्रवण और चिंतन।',
+      icon: GiOpenBook, 
+      img: 'https://images.unsplash.com/photo-1582500057088-750da52b2dfa?w=600&q=80&fit=crop'
+    },
+    { 
+      title: 'श्री राम कथा', 
+      desc: 'मर्यादा पुरुषोत्तम श्रीराम के चरित्र का रसपान।',
+      icon: GiPrayerBeads, 
+      img: 'https://images.unsplash.com/photo-1599839619722-39751411ea63?w=600&q=80&fit=crop'
+    },
+    { 
+      title: 'शिव महापुराण', 
+      desc: 'महादेव की अनंत महिमा और शिव तत्व का ज्ञान।',
+      icon: GiTrident, 
+      img: 'https://images.unsplash.com/photo-1621614008127-ec561d3da556?w=600&q=80&fit=crop'
+    },
+    { 
+      title: 'देवी भागवत कथा', 
+      desc: 'आदिशक्ति जगदम्बा की कथा और महिमा का गुणगान।',
+      icon: GiLotus, 
+      img: 'https://images.unsplash.com/photo-1604005934440-410a694a11f2?w=600&q=80&fit=crop'
+    },
+    { 
+      title: 'सुंदरकांड पाठ', 
+      desc: 'श्री हनुमान जी की कृपा और सुंदरकांड का पाठ।',
+      icon: FaBookOpen, 
+      img: 'https://images.unsplash.com/photo-1603714228681-b399854b8f75?w=600&q=80&fit=crop'
+    },
+    { 
+      title: 'अन्य धार्मिक सेवाएँ', 
+      desc: 'पूजन, अनुष्ठान, जागरण एवं अन्य धार्मिक कार्यक्रम।',
+      icon: GiFireBowl, 
+      img: 'https://images.unsplash.com/photo-1561336313-0bd5e0b27ec8?w=600&q=80&fit=crop'
+    }
   ]
 
   // 7. Testimonials Data
   const testimonials = [
     {
-      quote: 'महाराज जी की कथा सुनकर जीवन में सकारात्मक परिवर्तन आया है। बहुत ही मधुर वाणी और गहन ज्ञान।',
-      author: 'संदीप शर्मा',
-      location: 'वाराणसी'
+      quote: 'गुरु जी की मधुर वाणी और ज्ञान से जीवन में सकारात्मक परिवर्तन आया है। कथा सुनकर मन को शांति और नई ऊर्जा मिली।',
+      author: 'राजेश शर्मा',
+      location: 'प्रयागराज, उत्तर प्रदेश',
+      avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&h=150&fit=crop'
     },
     {
-      quote: 'कथा के प्रत्येक प्रसंग की व्याख्या इतनी सरल और भावपूर्ण होती है कि मन आनंदित हो जाता है।',
-      author: 'दीपा गुप्ता',
-      location: 'कानपुर'
+      quote: 'भागवत कथा ने मुझे ईश्वर के और करीब ला दिया। गुरु जी का आशीर्वाद हमेशा बना रहे, यही प्रार्थना है।',
+      author: 'सीमा तिवारी',
+      location: 'वाराणसी, उत्तर प्रदेश',
+      avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop'
     },
     {
-      quote: 'महाराज जी की भजन संध्या और श्री राम कथा से पूरे परिवार में भक्ति मय वातावरण बना है।',
-      author: 'अभिषेक मिश्रा',
-      location: 'लखनऊ'
+      quote: 'कथा का प्रत्येक क्षण बहुत ही दिव्य और प्रेरणादायक होता है। जीवन में भक्ति और सेवा की भावना जागृत हुई।',
+      author: 'अंकित मिश्रा',
+      location: 'लखनऊ, उत्तर प्रदेश',
+      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop'
     }
   ]
   const currentBanner = banners && banners.length > 0 ? banners[currentHeroSlide] : {};
@@ -107,10 +140,10 @@ export default function Home() {
               className="w-full h-full grid grid-cols-1 lg:grid-cols-12 items-stretch"
             >
               {/* Left Column: Text content */}
-              <div className="lg:col-span-6 flex flex-col justify-center px-4 xs:px-8 sm:px-16 lg:px-24 pt-28 sm:pt-32 lg:pt-32 pb-16 lg:pb-16 bg-[#FCF9F2] text-center lg:text-left relative z-10">
+              <div className="lg:col-span-6 flex flex-col justify-center px-4 xs:px-8 sm:px-16 lg:px-24 pt-36 sm:pt-40 lg:pt-48 pb-16 lg:pb-16 bg-[#FCF9F2] text-center lg:text-left relative z-10">
                 
                 <h2
-                  className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold text-[#3D2B20] mb-3 leading-tight"
+                  className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold text-[#3D2B20] mb-3 leading-normal"
                 >
                   {currentBanner?.title || 'श्रीमद् भागवत कथा'}
                 </h2>
@@ -242,134 +275,286 @@ export default function Home() {
       <YajmanIntro />
 
       {/* 4. KATHA SERVICES SECTION */}
-      <KathaServices />
+      {/* 4. KATHA SERVICES SECTION */}
+      <section className="group relative py-24 bg-[#FFF9F0] overflow-hidden border-y border-[#EAD8C8]/40">
+        
+        {/* Soft Center Glow */}
+        <div className="absolute inset-0 pointer-events-none opacity-40 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#D4AF37]/20 via-[#FFF9F0]/0 to-transparent transition-opacity duration-1000 group-hover:opacity-60"></div>
+        
+        {/* Decorative Mandala Corners - 4 Sides with Hover Animation */}
+        {/* Top Left */}
+        <svg className="absolute top-0 left-0 w-96 h-96 text-[#D4AF37] opacity-10 pointer-events-none -translate-x-1/3 -translate-y-1/3 transition-all duration-[1500ms] ease-in-out group-hover:opacity-25 group-hover:rotate-45 group-hover:scale-110" viewBox="0 0 100 100" fill="currentColor">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
+          <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          <path d="M50 5 L50 95 M5 50 L95 50 M18 18 L82 82 M18 82 L82 18" stroke="currentColor" strokeWidth="0.5" />
+        </svg>
+        {/* Top Right */}
+        <svg className="absolute top-0 right-0 w-96 h-96 text-[#D4AF37] opacity-10 pointer-events-none translate-x-1/3 -translate-y-1/3 transition-all duration-[1500ms] ease-in-out group-hover:opacity-25 group-hover:-rotate-45 group-hover:scale-110" viewBox="0 0 100 100" fill="currentColor">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
+          <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          <path d="M50 5 L50 95 M5 50 L95 50 M18 18 L82 82 M18 82 L82 18" stroke="currentColor" strokeWidth="0.5" />
+        </svg>
+        {/* Bottom Left */}
+        <svg className="absolute bottom-0 left-0 w-96 h-96 text-[#D4AF37] opacity-10 pointer-events-none -translate-x-1/3 translate-y-1/3 transition-all duration-[1500ms] ease-in-out group-hover:opacity-25 group-hover:-rotate-45 group-hover:scale-110" viewBox="0 0 100 100" fill="currentColor">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
+          <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          <path d="M50 5 L50 95 M5 50 L95 50 M18 18 L82 82 M18 82 L82 18" stroke="currentColor" strokeWidth="0.5" />
+        </svg>
+        {/* Bottom Right */}
+        <svg className="absolute bottom-0 right-0 w-96 h-96 text-[#D4AF37] opacity-10 pointer-events-none translate-x-1/3 translate-y-1/3 transition-all duration-[1500ms] ease-in-out group-hover:opacity-25 group-hover:rotate-45 group-hover:scale-110" viewBox="0 0 100 100" fill="currentColor">
+          <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="1" fill="none" strokeDasharray="2,2" />
+          <circle cx="50" cy="50" r="35" stroke="currentColor" strokeWidth="0.5" fill="none" />
+          <path d="M50 5 L50 95 M5 50 L95 50 M18 18 L82 82 M18 82 L82 18" stroke="currentColor" strokeWidth="0.5" />
+        </svg>
 
-      {/* 5. UPCOMING EVENTS */}
-      <section className="py-20 bg-[#FCF9F2]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
-          <div className="space-y-1 max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#E05A10]">Upcoming Events</span>
-            <h2 className="font-serif text-2xl sm:text-3xl font-black text-[#3D2B20]">आगामी कथाएं</h2>
-            <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-3"></div>
+        <div className="relative max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-12 text-center">
+          
+          {/* Header */}
+          <div className="space-y-2 max-w-3xl mx-auto mb-14">
+            <div className="flex items-center justify-center space-x-3 mb-1">
+              <div className="h-px w-10 bg-[#D4AF37]/60"></div>
+              <span className="text-[11px] font-bold text-[#D4AF37] font-serif tracking-widest uppercase">सेवा ही समर्पण है</span>
+              <div className="h-px w-10 bg-[#D4AF37]/60"></div>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl font-black text-[#3D2B20]">हमारी सेवाएँ</h2>
+            <p className="text-[#3D2B20]/60 font-medium text-xs sm:text-sm pt-2">
+              भक्ति, ज्ञान और सेवा के माध्यम से हम समाज में आध्यात्मिक चेतना का प्रसार कर रहे हैं।
+            </p>
           </div>
 
-          {/* Events cards grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
-            {events.slice(0, 3).map((evt, idx) => (
+          {/* Cards Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 mb-20 px-2 lg:px-8">
+            {services.map((svc, idx) => (
               <motion.div
                 key={idx}
                 whileHover={{ y: -5 }}
-                className="bg-white rounded-xl overflow-hidden shadow border border-[#FAF0E6] hover:shadow-md transition-all flex flex-col justify-between"
+                className="group bg-white rounded-xl shadow-[0_4px_15px_rgba(0,0,0,0.03)] border border-[#F5E6D3] flex flex-col overflow-hidden relative transition-all duration-300"
               >
-                <div className="relative h-48 overflow-hidden">
-                  <img src={evt.image} alt={evt.title} className="w-full h-full object-cover" />
-
-                  {/* Date Badge */}
-                  <div className="absolute top-4 left-4 bg-[#E05A10] text-white rounded p-1.5 text-center min-w-[50px] shadow-md z-10 flex flex-col">
-                    <span className="text-sm font-black leading-none">{evt.date}</span>
-                    <span className="text-[9px] uppercase tracking-wider mt-0.5 leading-none font-bold">{evt.month}</span>
-                  </div>
+                {/* Image Section */}
+                <div className="h-40 w-full overflow-hidden border-b border-[#F5E6D3]">
+                  <img src={svc.img} alt={svc.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
 
-                <div className="p-6 space-y-4">
-                  <div className="space-y-2">
-                    <h4 className="font-serif text-lg font-bold text-[#3D2B20]">{evt.title}</h4>
-                    <div className="space-y-1 text-xs text-[#3D2B20]/65 font-light">
-                      <div className="flex items-center space-x-2">
-                        <FaMapMarkerAlt className="text-[#E05A10] text-[10px]" />
-                        <span>{evt.venue}</span>
-                      </div>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <FaClock className="text-[#E05A10] text-[10px]" />
-                        <span>{evt.time}</span>
-                      </div>
-                    </div>
-                  </div>
+                {/* Overlapping Icon */}
+                <div className="absolute top-40 left-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 bg-white rounded-full flex items-center justify-center shadow-sm border border-[#F5E6D3] z-10">
+                  <svc.icon className="text-lg text-[#D4AF37]" />
+                </div>
 
-                  <Link
-                    to="/contact"
-                    className="block text-center border border-[#E05A10] hover:bg-[#E05A10] hover:text-white text-[#E05A10] font-serif font-bold text-xs uppercase tracking-wider py-2.5 rounded transition-all"
-                  >
-                    Book Now
-                  </Link>
+                {/* Content Section */}
+                <div className="pt-9 pb-6 px-4 flex flex-col flex-grow items-center text-center">
+                  <h4 className="font-serif font-bold text-sm text-[#3D2B20] mb-2">{svc.title}</h4>
+                  <p className="text-[10px] text-[#3D2B20]/60 font-medium leading-relaxed mb-5 line-clamp-2 px-1">
+                    {svc.desc}
+                  </p>
+                  
+                  <div className="mt-auto">
+                    <Link to="/services" className="inline-flex items-center space-x-1 text-[#D4AF37] font-bold text-[11px] transition-colors hover:text-[#E05A10]">
+                      <span>अधिक जानें</span>
+                      <FaArrowRight className="text-[8px] mt-0.5" />
+                    </Link>
+                  </div>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <div className="mt-12">
-            <Link to="/events" className="bg-[#E05A10] hover:bg-[#c94d0d] text-white font-serif font-bold text-xs uppercase tracking-widest px-8 py-3 rounded shadow transition-all">
-              View All Events
+          {/* Statistics Card */}
+          <div className="max-w-5xl mx-auto bg-gradient-to-r from-[#FFF9F0] via-white to-[#FFF9F0] border border-[#F5E6D3] rounded-xl p-6 sm:p-10 shadow-sm hover:shadow-[0_10px_40px_rgba(212,175,55,0.15)] transition-all duration-500 hover:-translate-y-1 relative group cursor-default">
+            {/* Decorative Diamond Corners */}
+            <div className="absolute top-2 left-3 text-[#D4AF37]/50 text-sm transition-transform duration-500 group-hover:scale-125 group-hover:text-[#D4AF37]">✧</div>
+            <div className="absolute top-2 right-3 text-[#D4AF37]/50 text-sm transition-transform duration-500 group-hover:scale-125 group-hover:text-[#D4AF37]">✧</div>
+            <div className="absolute bottom-2 left-3 text-[#D4AF37]/50 text-sm transition-transform duration-500 group-hover:scale-125 group-hover:text-[#D4AF37]">✧</div>
+            <div className="absolute bottom-2 right-3 text-[#D4AF37]/50 text-sm transition-transform duration-500 group-hover:scale-125 group-hover:text-[#D4AF37]">✧</div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-y-8 gap-x-4 divide-x divide-[#F5E6D3]/80">
+              <div className="flex flex-col items-center justify-center space-y-2 px-2 hover-group group/stat cursor-pointer">
+                <FaStar className="text-3xl text-[#D4AF37] transition-all duration-300 group-hover/stat:-translate-y-1.5 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 drop-shadow-sm" />
+                <div className="text-2xl sm:text-3xl font-black text-[#3D2B20] transition-colors duration-300 group-hover/stat:text-[#E05A10]">25+</div>
+                <div className="text-[10px] sm:text-[11px] font-bold text-[#8B5A2B] uppercase tracking-widest text-center transition-colors duration-300">वर्षों का अनुभव</div>
+              </div>
+              <div className="flex flex-col items-center justify-center space-y-2 px-2 hover-group group/stat cursor-pointer">
+                <FaBookOpen className="text-3xl text-[#D4AF37] transition-all duration-300 group-hover/stat:-translate-y-1.5 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 drop-shadow-sm" />
+                <div className="text-2xl sm:text-3xl font-black text-[#3D2B20] transition-colors duration-300 group-hover/stat:text-[#E05A10]">500+</div>
+                <div className="text-[10px] sm:text-[11px] font-bold text-[#8B5A2B] uppercase tracking-widest text-center transition-colors duration-300">कथा आयोजन</div>
+              </div>
+              <div className="flex flex-col items-center justify-center space-y-2 px-2 hover-group group/stat cursor-pointer">
+                <FaMapMarkerAlt className="text-3xl text-[#D4AF37] transition-all duration-300 group-hover/stat:-translate-y-1.5 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 drop-shadow-sm" />
+                <div className="text-2xl sm:text-3xl font-black text-[#3D2B20] transition-colors duration-300 group-hover/stat:text-[#E05A10]">20+</div>
+                <div className="text-[10px] sm:text-[11px] font-bold text-[#8B5A2B] uppercase tracking-widest text-center transition-colors duration-300">राज्यों में सेवा</div>
+              </div>
+              <div className="flex flex-col items-center justify-center space-y-2 px-2 hover-group group/stat cursor-pointer">
+                <FaPrayingHands className="text-3xl text-[#D4AF37] transition-all duration-300 group-hover/stat:-translate-y-1.5 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 drop-shadow-sm" />
+                <div className="text-2xl sm:text-3xl font-black text-[#3D2B20] transition-colors duration-300 group-hover/stat:text-[#E05A10]">15000+</div>
+                <div className="text-[10px] sm:text-[11px] font-bold text-[#8B5A2B] uppercase tracking-widest text-center transition-colors duration-300">श्रद्धालु परिवार</div>
+              </div>
+              <div className="flex flex-col items-center justify-center space-y-2 px-2 hover-group group/stat cursor-pointer">
+                <FaOm className="text-3xl text-[#D4AF37] transition-all duration-300 group-hover/stat:-translate-y-1.5 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 drop-shadow-sm" />
+                <div className="text-2xl sm:text-3xl font-black text-[#3D2B20] transition-colors duration-300 group-hover/stat:text-[#E05A10]">5</div>
+                <div className="text-[10px] sm:text-[11px] font-bold text-[#8B5A2B] uppercase tracking-widest text-center transition-colors duration-300">मुख्य सेवाएँ</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 5. UPCOMING EVENTS - SPIRITUAL & SIMPLE DESIGN */}
+      <section className="py-24 relative overflow-hidden bg-cover bg-center bg-fixed" style={{ backgroundImage: "url('/images/spiritual_bg.png')" }}>
+        
+        {/* Soft elegant overlay to ensure content is readable over the rich background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#FFF9F0]/80 via-white/60 to-[#FFF9F0]/90 backdrop-blur-[1px]"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+          {/* Elegant Spiritual Section Header */}
+          <div className="flex flex-col items-center mb-16">
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="w-16 h-[2px] bg-[#D4AF37]"></div>
+              <FaOm className="text-[#D4AF37] text-3xl drop-shadow-sm" />
+              <div className="w-16 h-[2px] bg-[#D4AF37]"></div>
+            </div>
+            <span className="text-xs font-bold uppercase tracking-widest text-[#E05A10] mb-3 font-serif">Upcoming Events</span>
+            <h2 className="font-serif text-3xl sm:text-4xl font-black text-[#3D2B20] tracking-wide">आगामी कथाएं</h2>
+          </div>
+
+          {/* Events cards grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 xl:gap-10 text-left px-2 sm:px-4">
+            {events.slice(0, 3).map((evt, idx) => (
+              <motion.div
+                key={idx}
+                whileHover={{ y: -6 }}
+                className="group bg-white rounded-xl overflow-hidden shadow-[0_5px_20px_rgba(0,0,0,0.06)] border border-[#EAD8C8] hover:shadow-[0_15px_35px_rgba(212,175,55,0.25)] transition-all duration-700 flex flex-col justify-between"
+              >
+                {/* Image Section */}
+                <div className="relative h-52 overflow-hidden border-b-2 border-[#D4AF37]/30">
+                  <div className="absolute inset-0 bg-[#3D2B20]/10 group-hover:bg-transparent transition-colors duration-700 z-10"></div>
+                  <img src={evt.image} alt={evt.title} className="w-full h-full object-cover transform transition-transform duration-[2000ms] ease-out group-hover:scale-110" />
+
+                  {/* Elegant Date Badge */}
+                  <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm border border-[#EAD8C8] text-[#3D2B20] rounded p-2 text-center min-w-[55px] shadow-sm z-20 flex flex-col transition-transform duration-700 group-hover:-translate-y-1">
+                    <span className="text-xl font-black text-[#E05A10] leading-none font-serif">{evt.date}</span>
+                    <span className="text-[9px] uppercase tracking-widest mt-1.5 leading-none font-bold text-[#8B5A2B]">{evt.month}</span>
+                  </div>
+                </div>
+
+                {/* Content Section */}
+                <div className="p-8 flex flex-col flex-grow bg-white">
+                  <div className="space-y-4 mb-8">
+                    <h4 className="font-serif text-xl font-bold text-[#3D2B20] group-hover:text-[#E05A10] transition-colors duration-500">{evt.title}</h4>
+                    
+                    <div className="space-y-2.5 text-[11px] sm:text-xs text-[#3D2B20]/70 font-medium">
+                      <div className="flex items-center space-x-3">
+                        <FaMapMarkerAlt className="text-[#D4AF37] text-[12px]" />
+                        <span className="line-clamp-1">{evt.venue}</span>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <FaClock className="text-[#D4AF37] text-[12px]" />
+                        <span>{evt.time}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Minimalist Button */}
+                  <div className="mt-auto pt-4 border-t border-[#EAD8C8]/30">
+                    <Link
+                      to="/contact"
+                      className="inline-flex items-center space-x-2 text-[#E05A10] font-serif font-bold text-xs uppercase tracking-widest group-hover:text-[#c94d0d] transition-colors duration-300"
+                    >
+                      <span>Book Now</span>
+                      <FaArrowRight className="text-[10px] transform group-hover:translate-x-1 transition-transform duration-300" />
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Elegant View All Button */}
+          <div className="mt-16 text-center">
+            <Link to="/events" className="inline-flex items-center justify-center space-x-3 bg-white border-2 border-[#EAD8C8] hover:border-[#D4AF37] text-[#3D2B20] hover:text-[#E05A10] font-serif font-bold text-sm uppercase tracking-widest px-10 py-3.5 rounded-full shadow-sm hover:shadow-[0_8px_25px_rgba(212,175,55,0.15)] transition-all transform hover:-translate-y-1">
+              <span>सभी इवेंट्स देखें</span>
+              <FaArrowRight className="text-xs" />
             </Link>
           </div>
+          
         </div>
       </section>
 
       {/* 6. GALLERY SECTION */}
-      <section className="py-20 bg-white border-y border-[#FAF0E6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-24 bg-[#FCF9F2] relative overflow-hidden border-y-[4px] border-[#FAF0E6]">
+        {/* Rich Background Decorative Elements */}
+        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-40 pointer-events-none mix-blend-multiply"></div>
+        <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#FFF9F0] via-transparent to-[#FFF9F0] pointer-events-none opacity-80"></div>
+        <div className="absolute -top-10 -right-10 text-[#E05A10]/15 text-[220px] font-serif pointer-events-none transform rotate-12">ॐ</div>
+        <div className="absolute -bottom-10 -left-10 text-[#D4AF37]/20 text-[220px] font-serif pointer-events-none transform -rotate-12">卐</div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
 
-          <div className="space-y-1 max-w-2xl mx-auto mb-12">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#E05A10]">Gallery</span>
-            <h2 className="font-serif text-2xl sm:text-3xl font-black text-[#3D2B20]">हमारी गैलरी</h2>
-            <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-3"></div>
+          {/* Section Header */}
+          <div className="flex flex-col items-center mb-12">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-[#E05A10] mb-2 font-serif">Gallery</span>
+            <div className="bg-[#E05A10] px-8 py-2.5 shadow-sm rounded-sm">
+              <h2 className="font-serif text-2xl sm:text-3xl font-black text-white tracking-wide">हमारी गैलरी</h2>
+            </div>
+            {/* Small decorative divider */}
+            <div className="w-16 h-px bg-[#D4AF37] mt-5 opacity-40"></div>
           </div>
 
           {/* Photo/Video Tab toggle */}
-          <div className="flex items-center justify-center space-x-4 mb-8">
+          <div className="flex items-center justify-center space-x-4 mb-10">
             <button
               onClick={() => setActiveGalleryTab('Photos')}
-              className={`px-6 py-2 rounded-full font-serif text-xs font-bold uppercase tracking-wider transition-all border ${activeGalleryTab === 'Photos'
-                ? 'bg-[#E05A10] text-white border-[#E05A10]'
-                : 'bg-white text-[#3D2B20] border-[#EAD8C8] hover:bg-[#FCF9F2]'
+              className={`px-8 py-2.5 rounded-full font-serif text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all border-2 ${activeGalleryTab === 'Photos'
+                ? 'bg-[#E05A10] text-white border-[#E05A10] shadow-[0_4px_15px_rgba(224,90,16,0.3)]'
+                : 'bg-white text-[#3D2B20] border-[#EAD8C8] hover:border-[#D4AF37] hover:text-[#E05A10]'
                 }`}
             >
               Photos
             </button>
             <button
               onClick={() => setActiveGalleryTab('Videos')}
-              className={`px-6 py-2 rounded-full font-serif text-xs font-bold uppercase tracking-wider transition-all border ${activeGalleryTab === 'Videos'
-                ? 'bg-[#E05A10] text-white border-[#E05A10]'
-                : 'bg-white text-[#3D2B20] border-[#EAD8C8] hover:bg-[#FCF9F2]'
+              className={`px-8 py-2.5 rounded-full font-serif text-[10px] sm:text-xs font-bold uppercase tracking-widest transition-all border-2 ${activeGalleryTab === 'Videos'
+                ? 'bg-[#E05A10] text-white border-[#E05A10] shadow-[0_4px_15px_rgba(224,90,16,0.3)]'
+                : 'bg-white text-[#3D2B20] border-[#EAD8C8] hover:border-[#D4AF37] hover:text-[#E05A10]'
                 }`}
             >
               Videos
             </button>
           </div>
 
-          {/* Grid Layout of Gallery items */}
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          {/* Grid Layout of Gallery items (4 in a row) */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 px-2 sm:px-4">
             {activeGalleryTab === 'Photos' ? (
-              galleryPhotos.slice(0, 10).map((photo, idx) => (
+              galleryPhotos.slice(0, 4).map((photo, idx) => (
                 <motion.div
                   key={idx}
-                  whileHover={{ scale: 1.02 }}
-                  className="relative aspect-square overflow-hidden rounded-lg shadow-sm border border-[#FAF0E6] cursor-pointer"
+                  whileHover={{ y: -5, scale: 1.02 }}
+                  className="relative aspect-square overflow-hidden rounded-[16px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] border border-[#F5E6D3] cursor-pointer transition-all duration-300"
                 >
-                  <img src={photo.url} alt="Gallery Photo" className="w-full h-full object-cover" />
+                  <img src={photo.url} alt="Gallery Photo" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" />
                 </motion.div>
               ))
             ) : (
-              galleryVideos.slice(0, 10).map((vid, idx) => (
+              galleryVideos.slice(0, 4).map((vid, idx) => (
                 <a
                   key={vid.id}
                   href={`https://youtube.com/watch?v=${vid.videoId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative aspect-square overflow-hidden rounded-lg shadow-sm border border-[#FAF0E6] cursor-pointer block group"
+                  className="relative aspect-video lg:aspect-square overflow-hidden rounded-[16px] shadow-[0_4px_15px_rgba(0,0,0,0.05)] border border-[#F5E6D3] cursor-pointer block group transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                 >
-                  <img src={vid.image || `https://img.youtube.com/vi/${vid.videoId}/hqdefault.jpg`} alt={vid.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-[#3D2B20]/45 flex items-center justify-center group-hover:bg-[#3D2B20]/60 transition-colors">
-                    <span className="text-white text-3xl font-black">▶</span>
+                  <img src={vid.image || `https://img.youtube.com/vi/${vid.videoId}/hqdefault.jpg`} alt={vid.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                  <div className="absolute inset-0 bg-[#3D2B20]/40 flex items-center justify-center group-hover:bg-[#E05A10]/50 transition-colors duration-300">
+                    <span className="text-white text-4xl font-black drop-shadow-md group-hover:scale-110 transition-transform">▶</span>
                   </div>
                 </a>
               ))
             )}
           </div>
 
-          <div className="mt-12">
-            <Link to="/gallery" className="bg-[#E05A10] hover:bg-[#c94d0d] text-white font-serif font-bold text-xs uppercase tracking-widest px-8 py-3 rounded shadow transition-all">
+          {/* View Full Gallery Button */}
+          <div className="mt-14 text-center">
+            <Link to="/gallery" className="inline-flex items-center justify-center bg-[#E05A10] hover:bg-[#c94d0d] text-white font-serif font-bold text-xs uppercase tracking-widest px-10 py-3.5 rounded shadow-[0_4px_15px_rgba(224,90,16,0.25)] transition-all hover:shadow-[0_6px_20px_rgba(224,90,16,0.35)] hover:-translate-y-0.5">
               View Full Gallery
             </Link>
           </div>
@@ -377,54 +562,107 @@ export default function Home() {
       </section>
 
       {/* 7. LIVE KATHA SECTION */}
-      <section className="py-20 bg-[#FCF9F2] relative">
+      <section className="py-24 bg-[#FCF9F2] relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-[#1E130C] to-[#3D2B20] rounded-2xl overflow-hidden shadow-2xl border border-[#D4AF37]/30">
-            <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-8">
+          <div className="relative rounded-3xl overflow-hidden shadow-[0_10px_40px_rgba(224,90,16,0.1)] border border-[#EAD8C8] group">
+            
+            {/* Animated Background Gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#FFFDF7] via-[#FCF9F2] to-[#FFF9F0]"></div>
+            
+            {/* Texture Overlay */}
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-multiply"></div>
 
+            {/* Glowing Orbs */}
+            <div className="absolute -top-32 -left-32 w-64 h-64 bg-[#E05A10] rounded-full mix-blend-multiply filter blur-[100px] opacity-15 animate-pulse"></div>
+            <div className="absolute -bottom-32 -right-32 w-64 h-64 bg-[#D4AF37] rounded-full mix-blend-multiply filter blur-[100px] opacity-15 animate-pulse"></div>
+
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 items-stretch">
+              
               {/* Left Texts */}
-              <div className="p-6 xs:p-8 sm:p-12 space-y-4 xs:space-y-6 text-cream-light">
-                <span className="text-[10px] xs:text-xs font-bold uppercase tracking-widest text-[#D4AF37] animate-pulse block">
-                  Live Katha
-                </span>
-                <h3 className="font-serif text-xl xs:text-2xl sm:text-4xl font-black text-white leading-tight">
-                  सीधे प्रसारण से जुड़ें
-                </h3>
-                <p className="text-sm font-light text-white/70 max-w-md leading-relaxed">
-                  हमारे साथ वेब सीधा प्रसारण YouTube और Facebook पर देखें
-                </p>
-                <div className="w-16 h-[1px] bg-[#D4AF37]"></div>
+              <div className="p-8 sm:p-12 lg:p-16 flex flex-col justify-center space-y-6">
+                
+                {/* Live Badge */}
+                <div className="flex items-center space-x-3 bg-[#E05A10]/10 backdrop-blur-md w-max px-4 py-1.5 rounded-full border border-[#E05A10]/30 shadow-sm">
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E05A10] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-[#E05A10]"></span>
+                  </span>
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-[#E05A10]">Live Katha</span>
+                </div>
 
-                <div className="flex flex-wrap items-center gap-4 pt-2">
+                <h3 className="font-serif text-3xl sm:text-5xl font-black text-[#D4AF37] leading-relaxed pt-2 pb-2 drop-shadow-sm">
+                  <span className="text-[#E05A10]">सीधे</span> प्रसारण से जुड़ें
+                </h3>
+                
+                <p className="text-sm sm:text-base font-medium text-[#3D2B20] leading-relaxed max-w-md">
+                  हमारे साथ वेब सीधा प्रसारण YouTube, Facebook, Instagram और WhatsApp पर देखें। दिव्य कथा और प्रवचन का आनंद अपने घर से लें।
+                </p>
+                
+                <div className="w-20 h-[2px] bg-gradient-to-r from-[#D4AF37] to-transparent my-2"></div>
+
+                <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 pt-4">
+                  {/* YouTube Button */}
                   <a
                     href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-[#FF0000] hover:bg-[#cc0000] text-white font-serif font-bold text-xs uppercase tracking-widest px-6 py-3 rounded flex items-center space-x-2 shadow transition-all"
+                    className="bg-gradient-to-r from-[#FF0000] to-[#cc0000] text-white font-serif font-bold text-xs sm:text-sm uppercase tracking-widest px-6 py-4 rounded-xl shadow-[0_5px_15px_rgba(255,0,0,0.3)] transition-all hover:shadow-[0_8px_25px_rgba(255,0,0,0.5)] hover:-translate-y-1 flex items-center justify-center space-x-2 flex-grow sm:flex-grow-0"
                   >
-                    <FaYoutube />
-                    <span>Watch on YouTube</span>
+                    <FaYoutube className="text-xl" />
+                    <span>YouTube</span>
                   </a>
+                  
+                  {/* Facebook Button */}
                   <a
                     href="https://www.facebook.com/share/1HLEzxvCT3/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="bg-[#1877F2] hover:bg-[#0d62d3] text-white font-serif font-bold text-xs uppercase tracking-widest px-6 py-3 rounded flex items-center space-x-2 shadow transition-all"
+                    className="bg-gradient-to-r from-[#1877F2] to-[#0d62d3] text-white font-serif font-bold text-xs sm:text-sm uppercase tracking-widest px-6 py-4 rounded-xl shadow-[0_5px_15px_rgba(24,119,242,0.3)] transition-all hover:shadow-[0_8px_25px_rgba(24,119,242,0.5)] hover:-translate-y-1 flex items-center justify-center space-x-2 flex-grow sm:flex-grow-0"
                   >
-                    <FaFacebookF />
-                    <span>Watch on Facebook</span>
+                    <FaFacebookF className="text-xl" />
+                    <span>Facebook</span>
+                  </a>
+
+                  {/* Instagram Button */}
+                  <a
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-[#f09433] via-[#dc2743] to-[#bc1888] text-white font-serif font-bold text-xs sm:text-sm uppercase tracking-widest px-6 py-4 rounded-xl shadow-[0_5px_15px_rgba(220,39,67,0.3)] transition-all hover:shadow-[0_8px_25px_rgba(220,39,67,0.5)] hover:-translate-y-1 flex items-center justify-center space-x-2 flex-grow sm:flex-grow-0"
+                  >
+                    <FaInstagram className="text-xl" />
+                    <span>Instagram</span>
+                  </a>
+
+                  {/* WhatsApp Button */}
+                  <a
+                    href="#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white font-serif font-bold text-xs sm:text-sm uppercase tracking-widest px-6 py-4 rounded-xl shadow-[0_5px_15px_rgba(37,211,102,0.3)] transition-all hover:shadow-[0_8px_25px_rgba(37,211,102,0.5)] hover:-translate-y-1 flex items-center justify-center space-x-2 flex-grow sm:flex-grow-0"
+                  >
+                    <FaWhatsapp className="text-xl" />
+                    <span>WhatsApp</span>
                   </a>
                 </div>
               </div>
 
               {/* Right Image */}
-              <div className="h-64 sm:h-80 lg:h-full min-h-[300px] relative">
+              <div className="h-72 sm:h-96 lg:h-auto relative overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80"
+                  src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1000&q=80"
                   alt="Guru Ji Live Stream"
-                  className="absolute inset-0 w-full h-full object-cover object-center"
+                  className="absolute inset-0 w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-1000"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#1E130C] via-transparent to-transparent"></div>
+                {/* Gradient mask for smooth blending matching light theme */}
+                <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#FFFDF7] via-[#FFFDF7]/60 lg:via-[#FFFDF7]/40 to-transparent"></div>
+                
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-24 h-24 rounded-full border border-[#E05A10]/20 flex items-center justify-center backdrop-blur-md bg-white/40 text-[#E05A10] shadow-[0_0_40px_rgba(224,90,16,0.2)] group-hover:scale-110 transition-transform duration-500">
+                    <FaPlayCircle className="text-6xl drop-shadow-lg opacity-90" />
+                  </div>
+                </div>
               </div>
 
             </div>
@@ -433,48 +671,110 @@ export default function Home() {
       </section>
 
       {/* 8. TESTIMONIALS SECTION */}
-      <section className="py-20 bg-white border-t border-[#FAF0E6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="py-24 relative bg-[#FFF9F0] overflow-hidden border-t border-[#FAF0E6]">
+        
+        {/* Background Decorative Elements */}
+        <div className="absolute top-0 left-0 w-96 h-96 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-[0.03] pointer-events-none transform -translate-x-1/4 -translate-y-1/4 rounded-full"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-[0.03] pointer-events-none transform translate-x-1/4 -translate-y-1/4 rounded-full"></div>
+        
+        {/* Bottom Wavy Gradient (Simulated with absolute div) */}
+        <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#FDEBD0]/50 to-transparent pointer-events-none"></div>
 
-          <div className="space-y-1 max-w-2xl mx-auto mb-16">
-            <span className="text-xs font-bold uppercase tracking-wider text-[#E05A10]">Testimonials</span>
-            <h2 className="font-serif text-xl xs:text-2xl sm:text-3xl font-black text-[#3D2B20]">श्रद्धालुओं के विचार</h2>
-            <div className="w-12 h-[2px] bg-[#D4AF37] mx-auto mt-3"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+          {/* Heading Section */}
+          <div className="text-center mb-24">
+            <p className="text-[#E05A10] font-medium text-sm sm:text-base tracking-widest mb-3">... || श्री गुरवे नमः || ...</p>
+            <h2 className="font-serif text-4xl md:text-5xl font-black text-[#3D2B20] mb-4">
+              श्रद्धालुओं के विचार
+            </h2>
+            <p className="text-[#3D2B20] text-sm sm:text-base font-medium mb-5">
+              आप सभी का स्नेह, विश्वास और आशीर्वाद ही हमारी सबसे बड़ी पूँजी है।
+            </p>
+            <div className="flex justify-center text-[#E05A10] text-2xl">
+              <GiLotus />
+            </div>
           </div>
 
           {/* Reviews Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-20 px-2 sm:px-0">
             {testimonials.map((rev, idx) => (
-              <motion.div
+              <div
                 key={idx}
-                className="bg-[#FCF9F2] p-6 rounded-xl border border-[#FAF0E6] flex flex-col justify-between space-y-6 shadow-sm hover:shadow transition-all"
+                className="relative bg-gradient-to-b from-white to-[#FFF5E1] rounded-[2rem] p-8 pt-16 shadow-[0_10px_35px_rgba(230,126,34,0.15)] flex flex-col border border-white hover:-translate-y-2 transition-transform duration-500 group"
               >
-                <div className="space-y-4">
-                  <FaQuoteLeft className="text-[#E05A10]/15 text-4xl" />
-                  <p className="text-xs text-[#3D2B20]/80 italic leading-relaxed">"{rev.quote}"</p>
+                {/* Avatar overlapping top */}
+                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-20">
+                  <div className="w-24 h-24 rounded-full border-[5px] border-white shadow-[0_5px_15px_rgba(230,126,34,0.2)] overflow-hidden bg-white">
+                    <img 
+                      src={rev.avatar} 
+                      alt={rev.author} 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                    />
+                  </div>
                 </div>
 
-                <div className="pt-4 border-t border-[#EAD8C8] flex items-center justify-between">
-                  <div>
-                    <h4 className="font-serif font-bold text-xs text-[#3D2B20]">{rev.author}</h4>
-                    <span className="text-[10px] text-[#E05A10] uppercase font-bold tracking-wider">{rev.location}</span>
+                {/* Quote Mark Top Left */}
+                <div className="absolute top-6 left-6 text-[#E05A10] text-6xl font-serif font-black leading-none opacity-90 select-none">
+                  “
+                </div>
+
+                {/* Decorative Pattern Top Right */}
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] opacity-[0.04] pointer-events-none rounded-tr-[2rem]"></div>
+
+                {/* Temple Silhouette Bottom Left */}
+                <div className="absolute bottom-0 left-0 text-[#E05A10] opacity-[0.04] text-7xl pointer-events-none transform translate-y-2 -translate-x-2">
+                  <GiGreekTemple />
+                </div>
+
+                <div className="mt-8 mb-6 relative z-10 text-center flex-grow flex items-center justify-center">
+                  <p className="text-[#3D2B20]/90 text-[13px] sm:text-sm leading-relaxed font-medium">
+                    {rev.quote}
+                  </p>
+                </div>
+
+                {/* Elegant Divider */}
+                <div className="flex items-center justify-center space-x-2 mb-6 opacity-60">
+                  <div className="w-12 h-px bg-gradient-to-r from-transparent to-[#D4AF37]"></div>
+                  <div className="w-1 h-1 rounded-full bg-[#D4AF37]"></div>
+                  <div className="w-12 h-px bg-gradient-to-l from-transparent to-[#D4AF37]"></div>
+                </div>
+
+                {/* Author Info & Stars */}
+                <div className="text-center relative z-10 pb-2">
+                  <h4 className="font-serif font-bold text-lg text-[#E05A10] mb-1.5">{rev.author}</h4>
+                  <div className="flex items-center justify-center text-[11px] sm:text-xs text-[#3D2B20]/70 font-bold mb-4">
+                    <FaMapMarkerAlt className="mr-1.5 text-[#E05A10]" />
+                    {rev.location}
                   </div>
-                  <div className="flex items-center space-x-0.5 text-[#D4AF37] text-[10px]">
+                  <div className="flex items-center justify-center space-x-1.5 text-[#E05A10] text-sm">
                     {[...Array(5)].map((_, i) => (
                       <FaStar key={i} />
                     ))}
                   </div>
                 </div>
-              </motion.div>
+                
+              </div>
             ))}
           </div>
 
-          {/* Carousel dots simulated */}
-          <div className="flex items-center justify-center space-x-1.5 mt-8">
-            <span className="w-2 h-2 rounded-full bg-[#E05A10]"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#EAD8C8]"></span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#EAD8C8]"></span>
+          {/* Bottom Action Button */}
+          <div className="mt-20 text-center relative z-10">
+            <div className="flex items-center justify-center space-x-4 mb-6 opacity-40">
+              <div className="w-24 h-[1px] bg-[#3D2B20]"></div>
+              <GiLotus className="text-[#E05A10] text-lg" />
+              <div className="w-24 h-[1px] bg-[#3D2B20]"></div>
+            </div>
+            
+            <p className="text-[#3D2B20] font-bold text-sm sm:text-base mb-6">आप भी अपनी अनुभूति हमारे साथ साझा करें</p>
+            
+            <button className="bg-gradient-to-r from-[#E05A10] to-[#E67E22] hover:from-[#c94d0d] hover:to-[#d35400] text-white font-medium text-sm px-8 py-3.5 rounded-full shadow-[0_8px_20px_rgba(230,126,34,0.3)] transition-all hover:shadow-[0_10px_25px_rgba(230,126,34,0.4)] hover:-translate-y-1 flex items-center justify-center mx-auto space-x-2.5 group">
+              <FaQuoteLeft className="text-xs opacity-90" />
+              <span>अपना विचार साझा करें</span>
+              <FaArrowRight className="text-xs opacity-90 group-hover:translate-x-1 transition-transform" />
+            </button>
           </div>
+
         </div>
       </section>
 

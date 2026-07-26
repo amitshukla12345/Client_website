@@ -44,6 +44,9 @@ export default {
       fontFamily: {
         serif: ['Cinzel', 'Playfair Display', 'serif'],
         sans: ['Outfit', 'Inter', 'sans-serif'],
+        hindi: ['"Tiro Devanagari Hindi"', 'serif'],
+        poppins: ['Poppins', 'sans-serif'],
+        playfair: ['"Playfair Display"', 'serif'],
       },
       boxShadow: {
         'premium': '0 10px 30px -10px rgba(212, 175, 55, 0.15)',
@@ -74,6 +77,10 @@ export default {
         marquee: {
           '0%': { transform: 'translateX(0%)' },
           '100%': { transform: 'translateX(-50%)' },
+        },
+        shine: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(200%)' },
         }
       }
     },

@@ -8,12 +8,13 @@ import SearchableSelect from '../../components/SearchableSelect'
 import CustomCalendar from '../../components/CustomCalendar'
 import { 
   FaSignOutAlt, FaBookOpen, FaImages, FaUserEdit, FaCalendarPlus, FaCalendarAlt, FaUsers,
-  FaInfoCircle, FaClipboardList, FaCheck, FaTimes, FaTrash, FaPlus, 
+  FaInfoCircle, FaClipboardList, FaCheck, FaTimes, FaTrash, FaPlus, FaChevronDown, FaSearch, FaBell,
   FaLink, FaSave, FaExternalLinkAlt, FaImage, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaGlobe, FaYoutube, FaUser, FaLock, FaEye, FaEyeSlash, FaQuoteLeft, FaBars
 } from 'react-icons/fa'
 import logoImg from '../../assets/images/logo.jpeg'
 import AdminBannerManager from './components/AdminBannerManager'
 import AdminYajmanManager from './components/AdminYajmanManager'
+import OverviewTab from './components/OverviewTab'
 
 export default function Dashboard() {
   const {
@@ -40,6 +41,8 @@ export default function Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
+
+  const pendingBookingsCount = bookings?.filter(b => b.status === 'Pending')?.length || 0
 
   const handleBulkDelete = () => {
     if (window.confirm(`Are you sure you want to delete ${selectedBookings.length} selected booking(s)?`)) {
@@ -234,6 +237,20 @@ export default function Dashboard() {
                 </button>
               </div>
             )}
+            {/* Notifications Bell */}
+            <button 
+              onClick={() => setActiveTab('Bookings')}
+              className="relative p-2 text-[#3D2B20]/60 hover:text-[#E05A10] transition-colors focus:outline-none"
+              title="View Bookings"
+            >
+              <FaBell className="text-xl" />
+              {pendingBookingsCount > 0 && (
+                <span className="absolute top-0 right-0 w-4 h-4 bg-red-600 text-white text-[9px] font-bold flex items-center justify-center rounded-full border border-white animate-pulse">
+                  {pendingBookingsCount}
+                </span>
+              )}
+            </button>
+
             <Link 
               to="/" 
               className="text-xs font-serif font-bold text-[#E05A10] hover:text-white border border-[#E05A10] hover:bg-[#E05A10] px-4 py-2 rounded-xl flex items-center space-x-1.5 transition-all shadow-sm active:scale-95 hidden sm:flex"
@@ -314,7 +331,7 @@ export default function Dashboard() {
           {activeTab === 'Yajman' && <AdminYajmanManager />}
           {activeTab === 'Banners' && <AdminBannerManager />}
           {activeTab === 'Biography' && <div className="p-4 sm:p-8"><BiographyTab {...{ about, updateAbout, timeline, setTimeline, achievements, setAchievements }} /></div>}
-          {activeTab === 'Events' && <div className="p-4 sm:p-8"><EventsTab {...{ events, addEvent, deleteEvent }} /></div>}
+          {activeTab === 'Events' && <div className="p-4 sm:p-8"><EventsTab {...{ events, addEvent, deleteEvent, calendarDates, addCalendarDate, deleteCalendarDate }} /></div>}
           {activeTab === 'Calendar' && <div className="p-4 sm:p-8"><CalendarTab {...{ calendarDates, addCalendarDate, deleteCalendarDate }} /></div>}
           {activeTab === 'Organizers' && <div className="p-4 sm:p-8"><OrganizersTab {...{ organizers, addOrganizer, updateOrganizer, deleteOrganizer }} /></div>}
           {activeTab === 'Gallery' && <div className="p-4 sm:p-8"><GalleryTab {...{ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVideo, deleteVideo }} /></div>}
@@ -497,115 +514,11 @@ function ChangePasswordModal({ onClose, changeAdminPassword }) {
 
 /* =========================================================================
    TAB: OVERVIEW
-   ========================================================================= */
-function OverviewTab({ bookings, events, galleryPhotos, galleryVideos, setActiveTab }) {
-  const pendingCount = bookings.filter(b => b.status === 'Pending').length
-  const confirmedCount = bookings.filter(b => b.status === 'Confirmed').length
-  const rejectedCount = bookings.filter(b => b.status === 'Cancelled' || b.status === 'Rejected').length
-  const totalCount = bookings.length
-
-  return (
-    <div className="space-y-8">
-      {/* Metrics Row */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 sm:gap-6">
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#3D2B20]/50 uppercase tracking-wider block">Pending Bookings</span>
-            <span className="text-3xl font-serif font-black text-[#E05A10] mt-1 block">{pendingCount}</span>
-          </div>
-          <div className="p-3 bg-[#E05A10]/10 text-[#E05A10] rounded-xl text-xl"><FaClipboardList /></div>
-        </div>
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-[10px] sm:text-xs font-bold text-[#3D2B20]/50 uppercase tracking-wider block">Confirmed</span>
-            <span className="text-2xl sm:text-3xl font-serif font-black text-green-600 mt-1 block">{confirmedCount}</span>
-          </div>
-          <div className="p-2 sm:p-3 bg-green-100 text-green-600 rounded-xl text-lg sm:text-xl"><FaCheck /></div>
-        </div>
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-[10px] sm:text-xs font-bold text-[#3D2B20]/50 uppercase tracking-wider block">Rejected</span>
-            <span className="text-2xl sm:text-3xl font-serif font-black text-red-600 mt-1 block">{rejectedCount}</span>
-          </div>
-          <div className="p-2 sm:p-3 bg-red-100 text-red-600 rounded-xl text-lg sm:text-xl"><FaTimes /></div>
-        </div>
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#3D2B20]/50 uppercase tracking-wider block">Upcoming Events</span>
-            <span className="text-3xl font-serif font-black text-[#D4AF37] mt-1 block">{events.length}</span>
-          </div>
-          <div className="p-3 bg-[#D4AF37]/10 text-[#D4AF37] rounded-xl text-xl"><FaCalendarPlus /></div>
-        </div>
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#3D2B20]/50 uppercase tracking-wider block">Gallery Photos</span>
-            <span className="text-3xl font-serif font-black text-blue-600 mt-1 block">{galleryPhotos.length}</span>
-          </div>
-          <div className="p-3 bg-blue-100 text-blue-600 rounded-xl text-xl"><FaImages /></div>
-        </div>
-        <div className="bg-white p-4 sm:p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#3D2B20]/50 uppercase tracking-wider block">Katha Videos</span>
-            <span className="text-3xl font-serif font-black text-red-600 mt-1 block">{galleryVideos.length}</span>
-          </div>
-          <div className="p-3 bg-red-100 text-red-600 rounded-xl text-xl"><FaExternalLinkAlt /></div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        {/* Left: Recent Bookings widget */}
-        <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-serif text-lg font-bold text-[#3D2B20]">Recent Booking Requests</h3>
-            <button onClick={() => setActiveTab('Bookings')} className="text-xs text-[#E05A10] font-bold hover:underline">View All</button>
-          </div>
-          <div className="divide-y divide-[#FAF0E6]">
-            {bookings.slice(0, 3).map((item, idx) => (
-              <div key={idx} className="py-4 flex items-center justify-between">
-                <div>
-                  <h4 className="font-serif text-sm font-bold text-[#3D2B20]">{item.name} ({item.city})</h4>
-                  <p className="text-xs text-[#3D2B20]/55 mt-0.5">{item.kathaType} • Preffered: {item.preferredDate}</p>
-                </div>
-                <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                  item.status === 'Confirmed' ? 'bg-green-50 text-green-700' :
-                  item.status === 'Cancelled' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'
-                }`}>
-                  {item.status}
-                </span>
-              </div>
-            ))}
-            {bookings.length === 0 && (
-              <div className="py-8 text-center text-xs text-[#3D2B20]/40">No booking requests available.</div>
-            )}
-          </div>
-        </div>
-
-        {/* Right: Quick actions panel */}
-        <div className="lg:col-span-5 bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm space-y-4">
-          <h3 className="font-serif text-lg font-bold text-[#3D2B20]">Quick Administrative Actions</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <button onClick={() => setActiveTab('Events')} className="p-4 border border-[#EAD8C8] hover:border-[#E05A10] rounded-xl text-center space-y-2 hover:bg-[#FAF6F0] transition-colors group">
-              <FaCalendarPlus className="text-xl text-[#E05A10] mx-auto group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-bold block">Add New Event</span>
-            </button>
-            <button onClick={() => setActiveTab('Gallery')} className="p-4 border border-[#EAD8C8] hover:border-[#E05A10] rounded-xl text-center space-y-2 hover:bg-[#FAF6F0] transition-colors group">
-              <FaImages className="text-xl text-[#D4AF37] mx-auto group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-bold block">Upload Photos</span>
-            </button>
-            <button onClick={() => setActiveTab('Contact')} className="p-4 border border-[#EAD8C8] hover:border-[#E05A10] rounded-xl text-center space-y-2 hover:bg-[#FAF6F0] transition-colors group">
-              <FaGlobe className="text-xl text-blue-600 mx-auto group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-bold block">Update Contact details</span>
-            </button>
-            <button onClick={() => setActiveTab('Biography')} className="p-4 border border-[#EAD8C8] hover:border-[#E05A10] rounded-xl text-center space-y-2 hover:bg-[#FAF6F0] transition-colors group">
-              <FaUserEdit className="text-xl text-green-600 mx-auto group-hover:scale-110 transition-transform" />
-              <span className="text-xs font-bold block">Edit Guru Ji Bio</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+/* =========================================================================
+   TAB: OVERVIEW
+   ========================================================================= 
+   (Moved to ./components/OverviewTab.jsx)
+*/
 
 /* =========================================================================
    TAB: BOOKINGS MANAGER
@@ -1196,7 +1109,7 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
 /* =========================================================================
    TAB: UPCOMING EVENTS
    ========================================================================= */
-function EventsTab({ events, addEvent, deleteEvent }) {
+function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDate, deleteCalendarDate }) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
   const [month, setMonth] = useState('')
@@ -1208,6 +1121,22 @@ function EventsTab({ events, addEvent, deleteEvent }) {
   const [image, setImage] = useState('')
   const [type, setType] = useState('Katha')
   const [success, setSuccess] = useState(false)
+
+  // Search state
+  const [eventSearchQuery, setEventSearchQuery] = useState('')
+
+  // Pagination and Filtering states
+  const [currentEventPage, setCurrentEventPage] = useState(1)
+  const eventsPerPage = 5
+
+  const filteredEvents = events.filter(evt => {
+    if (!eventSearchQuery) return true
+    const title = evt?.title || ''
+    return title.toLowerCase().includes(eventSearchQuery.toLowerCase())
+  })
+
+  const totalEventPages = Math.ceil(filteredEvents.length / eventsPerPage) || 1
+  const currentEvents = filteredEvents.slice((currentEventPage - 1) * eventsPerPage, currentEventPage * eventsPerPage)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -1257,16 +1186,41 @@ function EventsTab({ events, addEvent, deleteEvent }) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
-      {/* Left Panel: Events List */}
+    <div className="space-y-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+        {/* Left Panel: Events List */}
       <div className="lg:col-span-7 bg-white p-4 sm:p-6 rounded-2xl border border-[#EAD8C8] shadow-sm space-y-4">
         <div className="border-b border-[#FAF0E6] pb-3 flex items-center justify-between">
           <h3 className="font-serif text-lg font-bold text-[#3D2B20]">Active Events Calendar</h3>
-          <span className="text-xs text-[#3D2B20]/60">Total: {events.length} upcoming</span>
+          <span className="text-xs text-[#3D2B20]/60">Total: {filteredEvents.length} upcoming</span>
+        </div>
+
+        {/* Search Bar */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <FaSearch className="text-[#3D2B20]/40" />
+          </div>
+          <input
+            type="text"
+            value={eventSearchQuery}
+            onChange={(e) => {
+              setEventSearchQuery(e.target.value)
+              setCurrentEventPage(1) // Reset pagination on search
+            }}
+            placeholder="Search by event name (e.g. Ram Katha)..."
+            className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl pl-10 pr-24 py-2.5 outline-none font-medium text-xs transition-colors"
+          />
+          {eventSearchQuery && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <span className="bg-[#E05A10] text-white text-[10px] font-bold px-2 py-1 rounded-md">
+                {filteredEvents.length} Found
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="space-y-3 sm:space-y-4">
-          {events.map((evt) => (
+          {currentEvents.map((evt) => (
             <div key={evt.id} className="flex items-center space-x-3 sm:space-x-4 bg-[#FAF6F0] p-3 sm:p-4 rounded-xl border border-[#EAD8C8] relative group">
               <div className="w-12 h-12 sm:w-14 sm:h-14 bg-[#E05A10] text-white rounded-lg flex flex-col items-center justify-center flex-shrink-0 shadow shadow-orange-500/10">
                 <span className="text-sm sm:text-base font-black leading-none">{evt.date}</span>
@@ -1288,10 +1242,41 @@ function EventsTab({ events, addEvent, deleteEvent }) {
               </button>
             </div>
           ))}
-          {events.length === 0 && (
+          {filteredEvents.length === 0 && (
             <div className="py-12 text-center text-xs text-[#3D2B20]/40">No upcoming events cataloged.</div>
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {totalEventPages > 1 && (
+          <div className="flex items-center justify-between pt-4 border-t border-[#FAF0E6]">
+            <button
+              onClick={() => setCurrentEventPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentEventPage === 1}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                currentEventPage === 1 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+              }`}
+            >
+              Previous
+            </button>
+            <span className="text-xs font-bold text-[#3D2B20]/60">
+              Page {currentEventPage} of {totalEventPages}
+            </span>
+            <button
+              onClick={() => setCurrentEventPage(prev => Math.min(prev + 1, totalEventPages))}
+              disabled={currentEventPage === totalEventPages}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                currentEventPage === totalEventPages 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right Panel: Add New Event Form */}
@@ -1411,8 +1396,11 @@ function EventsTab({ events, addEvent, deleteEvent }) {
           </div>
 
           <div className="space-y-1">
-            <label className="font-bold text-[#3D2B20]/75 block">Event Banner Image (Optional)</label>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-between">
+              <label className="font-bold text-[#3D2B20]/75 block">Event Banner Image (Optional)</label>
+              <span className="text-[10px] text-[#E05A10] font-medium bg-[#E05A10]/10 px-2 py-0.5 rounded-full">Recommended: 1200x600 | Max: 5MB</span>
+            </div>
+            <div className="flex items-center space-x-4 pt-1">
               {image && (
                 <div className="w-16 h-16 rounded-xl border border-[#EAD8C8] overflow-hidden flex-shrink-0">
                   <img src={image} alt="Preview" className="w-full h-full object-cover" />
@@ -1443,6 +1431,20 @@ function EventsTab({ events, addEvent, deleteEvent }) {
             Create Event (कथा जोड़ें)
           </button>
         </form>
+      </div>
+      </div>
+
+      {/* Calendar Management Section embedded below Events */}
+      <div className="pt-8 border-t border-[#EAD8C8]">
+        <h2 className="font-serif text-xl font-bold text-[#3D2B20] mb-6 flex items-center space-x-2">
+          <FaCalendarAlt className="text-[#E05A10]" />
+          <span>Manage Booked Dates (कथा बुकिंग कैलेंडर)</span>
+        </h2>
+        <CalendarTab 
+          calendarDates={calendarDates} 
+          addCalendarDate={addCalendarDate} 
+          deleteCalendarDate={deleteCalendarDate} 
+        />
       </div>
     </div>
   )
@@ -1877,6 +1879,38 @@ function CalendarTab({ calendarDates = [], addCalendarDate, deleteCalendarDate }
   const [success, setSuccess] = useState(false)
   const [showFromCalendar, setShowFromCalendar] = useState(false)
   const [showToCalendar, setShowToCalendar] = useState(false)
+  const [showStatusDropdown, setShowStatusDropdown] = useState(false)
+
+  // Search state
+  const [searchQuery, setSearchQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState('All')
+
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+
+  // Filter dates by search query (date or month)
+  const searchFilteredDates = calendarDates.filter(item => {
+    if (!searchQuery) return true
+    const q = searchQuery.toLowerCase()
+    const dateStr = item?.date || ''
+    const d = new Date(dateStr)
+    const monthShort = isNaN(d) ? '' : d.toLocaleString('en-US', { month: 'short' }).toLowerCase()
+    const monthLong = isNaN(d) ? '' : d.toLocaleString('en-US', { month: 'long' }).toLowerCase()
+    return dateStr.includes(q) || monthShort.includes(q) || monthLong.includes(q)
+  })
+
+  // Apply status filter
+  const filteredDates = searchFilteredDates.filter(item => {
+    if (statusFilter === 'All') return true
+    return item.status === statusFilter
+  })
+
+  // Pagination calculation
+  // We sort by date descending so the newest/latest dates appear first.
+  const sortedDates = [...filteredDates].sort((a, b) => new Date(b.date) - new Date(a.date))
+  const totalPages = Math.ceil(sortedDates.length / itemsPerPage) || 1
+  const currentDates = sortedDates.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -1915,38 +1949,130 @@ function CalendarTab({ calendarDates = [], addCalendarDate, deleteCalendarDate }
       <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm space-y-4">
         <div className="border-b border-[#FAF0E6] pb-3 flex items-center justify-between">
           <h3 className="font-serif text-lg font-bold text-[#3D2B20]">Managed Calendar Dates</h3>
-          <span className="text-xs text-[#3D2B20]/60">Total: {calendarDates.length} entries</span>
+          <div className="flex items-center space-x-4">
+            <div 
+              onClick={() => {
+                setStatusFilter(prev => prev === 'Booked' ? 'All' : 'Booked')
+                setCurrentPage(1)
+              }}
+              className={`flex items-center space-x-1.5 text-xs font-bold px-2 py-0.5 rounded-full border cursor-pointer transition-all ${statusFilter === 'Booked' || statusFilter === 'All' ? 'text-red-600 bg-red-50 border-red-200 hover:bg-red-100 shadow-sm ring-1 ring-red-200 ring-offset-1' : 'text-gray-400 bg-gray-50 border-gray-200 hover:bg-red-50 hover:text-red-500'}`}
+              title="Filter by Booked"
+            >
+              <span className={`w-2 h-2 rounded-full block ${statusFilter === 'Booked' || statusFilter === 'All' ? 'animate-pulse bg-red-500' : 'bg-gray-400'}`}></span>
+              <span>{searchFilteredDates.filter(d => d.status === 'Booked').length}</span>
+            </div>
+            <div 
+              onClick={() => {
+                setStatusFilter(prev => prev === 'Available' ? 'All' : 'Available')
+                setCurrentPage(1)
+              }}
+              className={`flex items-center space-x-1.5 text-xs font-bold px-2 py-0.5 rounded-full border cursor-pointer transition-all ${statusFilter === 'Available' || statusFilter === 'All' ? 'text-green-700 bg-green-50 border-green-200 hover:bg-green-100 shadow-sm ring-1 ring-green-200 ring-offset-1' : 'text-gray-400 bg-gray-50 border-gray-200 hover:bg-green-50 hover:text-green-600'}`}
+              title="Filter by Available"
+            >
+              <span className={`w-2 h-2 rounded-full block ${statusFilter === 'Available' || statusFilter === 'All' ? 'animate-pulse bg-green-500' : 'bg-gray-400'}`}></span>
+              <span>{searchFilteredDates.filter(d => d.status === 'Available').length}</span>
+            </div>
+            <span className="text-xs font-bold text-[#3D2B20]/60 border-l border-[#EAD8C8] pl-4">Total: {searchFilteredDates.length}</span>
+          </div>
         </div>
 
-        <div className="space-y-3 max-h-[450px] overflow-y-auto pr-1 text-xs">
-          {calendarDates.map((item) => (
-            <div key={item.id} className="flex items-center justify-between bg-[#FAF6F0] p-4 rounded-xl border border-[#EAD8C8]">
-              <div className="flex items-center space-x-3">
-                <span className={`w-3.5 h-3.5 rounded-full block border ${
-                  item.status === 'Booked' ? 'bg-red-50 border-red-500' : 'bg-green-50 border-green-500'
-                }`}></span>
-                <div>
-                  <span className="font-bold text-[#3D2B20] text-sm">{item.date}</span>
-                  <span className={`ml-3 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                    item.status === 'Booked' ? 'bg-red-50 text-red-700' : 'bg-green-50 text-green-700'
-                  }`}>{item.status}</span>
-                </div>
-              </div>
-              <button
-                onClick={() => {
-                  if (confirm('Delete this calendar date highlight?')) deleteCalendarDate(item.id)
-                }}
-                className="text-gray-400 hover:text-red-500 transition-colors p-2"
-                title="Remove Entry"
-              >
-                <FaTrash className="text-xs" />
-              </button>
+        {/* Search Bar */}
+        <div className="relative">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+            <FaSearch className="text-[#3D2B20]/40" />
+          </div>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              setCurrentPage(1) // Reset pagination on search
+            }}
+            placeholder="Search by date (e.g. 2026-07) or month (e.g. July)..."
+            className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl pl-10 pr-24 py-2.5 outline-none font-medium text-xs transition-colors"
+          />
+          {searchQuery && (
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <span className="bg-[#E05A10] text-white text-[10px] font-bold px-2 py-1 rounded-md">
+                {filteredDates.length} Found
+              </span>
             </div>
-          ))}
-          {calendarDates.length === 0 && (
-            <div className="py-12 text-center text-xs text-[#3D2B20]/40">No calendar overrides managed yet.</div>
           )}
         </div>
+
+        <div className="space-y-3 min-h-[300px] pr-2 custom-scrollbar text-xs">
+          {currentDates.map((item) => {
+            const dateObj = new Date(item.date)
+            const day = String(dateObj.getDate()).padStart(2, '0')
+            const monthStr = dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase()
+            const yearStr = dateObj.getFullYear()
+            const isBooked = item.status === 'Booked'
+
+            return (
+              <div key={item.id} className={`flex items-center justify-between p-4 rounded-xl border relative group transition-all duration-300 hover:shadow-md hover:-translate-y-0.5 ${isBooked ? 'bg-red-50/30 border-red-100 hover:border-red-300' : 'bg-green-50/30 border-green-100 hover:border-green-300'}`}>
+                <div className="flex items-center space-x-4">
+                  <div className={`w-12 h-12 flex flex-col items-center justify-center rounded-lg shadow-sm flex-shrink-0 ${isBooked ? 'bg-red-600 text-white' : 'bg-green-600 text-white'}`}>
+                    <span className="text-sm font-black leading-none">{day}</span>
+                    <span className="text-[8px] font-bold tracking-widest mt-0.5">{monthStr}</span>
+                  </div>
+                  <div>
+                    <div className="font-serif font-bold text-[#3D2B20] text-sm">{yearStr}</div>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <span className={`w-2 h-2 rounded-full block animate-pulse ${isBooked ? 'bg-red-500' : 'bg-green-500'}`}></span>
+                      <span className={`text-[10px] font-bold uppercase tracking-wider ${isBooked ? 'text-red-700' : 'text-green-700'}`}>{item.status}</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => {
+                    if (confirm('Delete this calendar date highlight?')) deleteCalendarDate(item.id)
+                  }}
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-white border border-[#EAD8C8] text-gray-400 hover:text-red-500 hover:border-red-200 hover:bg-red-50 transition-all shadow-sm group-hover:scale-110"
+                  title="Remove Entry"
+                >
+                  <FaTrash className="text-xs" />
+                </button>
+              </div>
+            )
+          })}
+          {calendarDates.length === 0 && (
+            <div className="py-12 text-center text-xs text-[#3D2B20]/40 flex flex-col items-center justify-center space-y-2 bg-[#FAF6F0] rounded-xl border border-dashed border-[#EAD8C8]">
+              <FaCalendarAlt className="text-3xl text-[#EAD8C8]" />
+              <span>No calendar overrides managed yet.</span>
+            </div>
+          )}
+        </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-4 border-t border-[#FAF0E6]">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                currentPage === 1 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+              }`}
+            >
+              Previous
+            </button>
+            <span className="text-xs font-bold text-[#3D2B20]/60">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                currentPage === totalPages 
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                  : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+              }`}
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Right panel: Add entry form */}
@@ -1970,7 +2096,7 @@ function CalendarTab({ calendarDates = [], addCalendarDate, deleteCalendarDate }
               className="w-full bg-[#FAF6F0] border border-[#EAD8C8] rounded-xl p-3 outline-none cursor-pointer flex justify-between items-center"
             >
               <span>{fromDate ? new Date(fromDate).toLocaleDateString('en-GB') : "Select Start Date"}</span>
-              <span className="text-gray-400">▼</span>
+              <FaChevronDown className="text-[#E05A10]" />
             </div>
             
             {showFromCalendar && (
@@ -1994,7 +2120,7 @@ function CalendarTab({ calendarDates = [], addCalendarDate, deleteCalendarDate }
               className="w-full bg-[#FAF6F0] border border-[#EAD8C8] rounded-xl p-3 outline-none cursor-pointer flex justify-between items-center"
             >
               <span>{toDate ? new Date(toDate).toLocaleDateString('en-GB') : "Select End Date"}</span>
-              <span className="text-gray-400">▼</span>
+              <FaChevronDown className="text-[#E05A10]" />
             </div>
             
             {showToCalendar && (
@@ -2011,15 +2137,31 @@ function CalendarTab({ calendarDates = [], addCalendarDate, deleteCalendarDate }
             )}
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 relative">
             <label className="font-bold text-[#3D2B20]/75 block">Availability Status (उपलब्धता स्थिति)</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-              className="w-full bg-[#FAF6F0] border border-[#EAD8C8] rounded-xl p-3 outline-none"
-            >
-              <option value="Booked">Booked (व्यस्त - लाल घेरा)</option>
-            </select>
+            <div className="relative">
+              <div
+                onClick={() => setShowStatusDropdown(!showStatusDropdown)}
+                className="w-full bg-[#FAF6F0] border border-[#EAD8C8] rounded-xl p-3 outline-none cursor-pointer flex justify-between items-center"
+              >
+                <span>{status === 'Booked' ? 'Booked (व्यस्त - लाल घेरा)' : status}</span>
+                <FaChevronDown className={`text-[#E05A10] transition-transform ${showStatusDropdown ? 'rotate-180' : ''}`} />
+              </div>
+              
+              {showStatusDropdown && (
+                <div className="absolute z-50 top-full mt-2 w-full shadow-lg rounded-xl bg-white border border-[#EAD8C8] overflow-hidden animate-fade-in-up">
+                  <div 
+                    onClick={() => {
+                      setStatus('Booked')
+                      setShowStatusDropdown(false)
+                    }}
+                    className="p-3 cursor-pointer hover:bg-[#FAF6F0] hover:text-[#E05A10] transition-colors text-[#3D2B20]"
+                  >
+                    Booked (व्यस्त - लाल घेरा)
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <button
