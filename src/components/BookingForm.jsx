@@ -4,9 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { HiOutlineUser, HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker, HiOutlineCalendar, HiOutlineChatAlt } from 'react-icons/hi'
 import { FaCheckCircle } from 'react-icons/fa'
 import { AppContext } from '../context/AppContext'
-import { statesAndDistricts } from '../utils/indiaStates'
 import SearchableSelect from './SearchableSelect'
-
 import CustomCalendar from './CustomCalendar'
 
 export default function BookingForm() {
@@ -15,6 +13,7 @@ export default function BookingForm() {
     name: '',
     phone: '',
     email: '',
+    state: '',
     city: '',
     village: '',
     pincode: '',
@@ -24,7 +23,6 @@ export default function BookingForm() {
     message: ''
   })
   
-  const [selectedState, setSelectedState] = useState('')
   const [showCalendar, setShowCalendar] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -44,6 +42,35 @@ export default function BookingForm() {
     }
   }, [location])
 
+  const fetchPincodeDetails = async (pincode, setFormState) => {
+    if (pincode && pincode.length === 6) {
+      try {
+        const response = await fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+        const data = await response.json()
+        if (data && Array.isArray(data) && data[0] && data[0].Status === 'Success' && Array.isArray(data[0].PostOffice) && data[0].PostOffice.length > 0) {
+          const postOffice = data[0].PostOffice[0]
+          
+          setFormState(prev => ({
+            ...prev,
+            state: postOffice.State || '',
+            city: postOffice.District || '',
+            village: postOffice.Name || ''
+          }))
+        } else {
+          setFormState(prev => ({ ...prev, state: '', city: '', village: '' }))
+        }
+      } catch (error) {
+        console.error('Error fetching pincode details:', error)
+      }
+    } else {
+       setFormState(prev => ({ ...prev, state: '', city: '', village: '' }))
+    }
+  }
+
+  useEffect(() => {
+    fetchPincodeDetails(formData.pincode, setFormData)
+  }, [formData.pincode])
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
@@ -53,7 +80,7 @@ export default function BookingForm() {
     e.preventDefault()
     setLoading(true)
     // Save booking request into AppContext
-    addBooking({ ...formData, state: selectedState })
+    addBooking(formData)
     // Simulate premium submission workflow
     setTimeout(() => {
       setLoading(false)
@@ -97,7 +124,10 @@ export default function BookingForm() {
               name: '',
               phone: '',
               email: '',
+              state: '',
               city: '',
+              village: '',
+              pincode: '',
               address: '',
               kathaType: 'Shrimad Bhagvat Katha',
               preferredDate: '',
@@ -178,56 +208,9 @@ export default function BookingForm() {
           </div>
         </div>
 
-        {/* State */}
-        <div className="relative">
-          <label className="block text-xs font-semibold text-dark-light mb-2 uppercase tracking-wider">State (राज्य)</label>
-          <SearchableSelect
-            options={Object.keys(statesAndDistricts)}
-            value={selectedState}
-            onChange={(val) => {
-              setSelectedState(val);
-              setFormData(prev => ({ ...prev, city: '' }));
-            }}
-            placeholder="Select State"
-            icon={<HiOutlineLocationMarker className="text-lg" />}
-          />
-        </div>
-
-        {/* City / District */}
-        <div className="relative">
-          <label className="block text-xs font-semibold text-dark-light mb-2 uppercase tracking-wider">City / District (शहर / ज़िला)</label>
-          <SearchableSelect
-            options={selectedState ? statesAndDistricts[selectedState] : []}
-            value={formData.city}
-            onChange={(val) => setFormData(prev => ({ ...prev, city: val }))}
-            placeholder={selectedState ? "Select District" : "Select State First"}
-            disabled={!selectedState}
-            icon={<HiOutlineLocationMarker className="text-lg" />}
-          />
-        </div>
-
-        {/* Village / Area */}
-        <div className="relative">
-          <label className="block text-xs font-semibold text-dark-light mb-2 uppercase tracking-wider">Village / Area</label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gold pointer-events-none">
-              <HiOutlineLocationMarker className="text-lg" />
-            </span>
-            <input
-              type="text"
-              required
-              name="village"
-              value={formData.village}
-              onChange={handleChange}
-              placeholder="e.g. Rampur"
-              className="w-full bg-cream-light/50 border border-gold/20 rounded-xl py-3 pl-11 pr-4 text-sm text-dark placeholder-dark-light/40 focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent transition-all"
-            />
-          </div>
-        </div>
-
         {/* Pincode */}
         <div className="relative">
-          <label className="block text-xs font-semibold text-dark-light mb-2 uppercase tracking-wider">Pincode</label>
+          <label className="block text-xs font-semibold text-dark-light mb-2 uppercase tracking-wider">Pincode (पिनकोड)</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gold pointer-events-none">
               <HiOutlineLocationMarker className="text-lg" />
@@ -238,11 +221,28 @@ export default function BookingForm() {
               name="pincode"
               value={formData.pincode}
               onChange={handleChange}
-              placeholder="e.g. 400001"
+              placeholder="6-digit Pincode"
               maxLength={6}
               pattern="\d{6}"
               title="Please enter a valid 6-digit Pincode"
               className="w-full bg-cream-light/50 border border-gold/20 rounded-xl py-3 pl-11 pr-4 text-sm text-dark placeholder-dark-light/40 focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent transition-all"
+            />
+          </div>
+        </div>
+
+        {/* Location Auto-fill */}
+        <div className="relative">
+          <label className="block text-xs font-semibold text-dark-light mb-2 uppercase tracking-wider">Location (स्थान)</label>
+          <div className="relative">
+            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gold pointer-events-none">
+              <HiOutlineLocationMarker className="text-lg" />
+            </span>
+            <input
+              type="text"
+              readOnly disabled
+              value={formData.state ? [formData.state, formData.city, formData.village].filter(Boolean).join(', ') : ''}
+              className="w-full bg-gray-100 border border-gold/20 rounded-xl py-3 pl-11 pr-4 text-sm text-gray-500 cursor-not-allowed transition-all"
+              placeholder="Location auto-fills"
             />
           </div>
         </div>

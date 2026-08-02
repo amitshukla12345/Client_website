@@ -19,6 +19,31 @@ const DEFAULT_ACHIEVEMENTS = [
 
 
 
+const DEFAULT_LIVE_SETTINGS = {
+  bgImage: 'https://images.unsplash.com/photo-1604085572504-a392ddf0d86a?auto=format&fit=crop&w=1920&q=80',
+  guruImage: '',
+  bannerTitle: 'LIVE KATHA DARSHAN',
+  bannerSubtitle: 'पूज्य गुरु जी के श्रीमुखारविंद से अमृतमयी कथा का श्रवण करें।',
+  topText: '|| जय श्री राम ||',
+  primaryBtnText: 'LIVE देखें',
+  primaryBtnUrl: '#',
+  secondaryBtnText: 'YOUTUBE CHANNEL',
+  secondaryBtnUrl: '#',
+  textAlign: 'center',
+  guruPos: 'right',
+  overlayOpacity: 30,
+  bgBrightness: 100,
+  heroEnabled: true,
+  isLive: false,
+  youtubeUrl: '',
+  eventDay: '',
+  eventDate: '',
+  eventTime: '',
+  eventLocation: '',
+  marqueeText: 'LIVE NOW • श्रीमद भागवत कथा का सीधा प्रसारण जारी है • YouTube Channel पर जुड़ें • जय श्री राम',
+  marqueeEnabled: true
+}
+
 export const AppProvider = ({ children }) => {
   // Authentication State
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
@@ -61,6 +86,51 @@ export const AppProvider = ({ children }) => {
   const [organizers, setOrganizers] = useState([])
   const [yajman, setYajman] = useState(null)
   
+  const [liveSettings, setLiveSettings] = useState(() => {
+    const saved = localStorage.getItem('katha_live_settings')
+    return saved ? JSON.parse(saved) : DEFAULT_LIVE_SETTINGS
+  })
+
+  const updateLiveSettings = async (newSettings) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/live-settings`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(newSettings)
+      })
+      await handleResponse(res)
+      if (res.ok) {
+        const savedSettings = await res.json()
+        setLiveSettings(savedSettings)
+        localStorage.setItem('katha_live_settings', JSON.stringify(savedSettings))
+      } else {
+        setLiveSettings(newSettings)
+      }
+    } catch(e) { 
+      console.error("Backend fetch failed, updating live settings locally", e) 
+      setLiveSettings(newSettings)
+      localStorage.setItem('katha_live_settings', JSON.stringify(newSettings))
+    }
+  }
+
+  const deleteLiveSettings = async () => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/live-settings/clear`, {
+        method: 'POST',
+        headers: getAuthHeaders()
+      })
+      await handleResponse(res)
+      if (res.ok) {
+        setLiveSettings(DEFAULT_LIVE_SETTINGS)
+        localStorage.setItem('katha_live_settings', JSON.stringify(DEFAULT_LIVE_SETTINGS))
+        return true;
+      }
+    } catch(e) {
+      console.error("Failed to delete live settings", e)
+    }
+    return false;
+  }
+  
   // Admin Profile State
   const [adminProfile, setAdminProfile] = useState({ username: '', fullname: '', email: '', role: '' })
 
@@ -78,10 +148,15 @@ export const AppProvider = ({ children }) => {
           const data = await response.json();
           if (data.contacts && data.contacts.length > 0) {
             let fetchedContacts = { ...data.contacts[0] };
-            // Override with user requested social links
-            fetchedContacts.facebook = 'https://www.facebook.com/share/1HLEzxvCT3/';
-            fetchedContacts.instagram = 'https://swamiraghavacharyaji.in/';
-            fetchedContacts.youtube = 'https://youtube.com/@jagadguruhariprapannaacharyaji';
+            
+            // Decode hidden announcement
+            if (fetchedContacts.announcement && fetchedContacts.announcement.startsWith('[HIDDEN]')) {
+              fetchedContacts.isAnnouncementActive = false;
+              fetchedContacts.announcement = fetchedContacts.announcement.substring(8);
+            } else {
+              fetchedContacts.isAnnouncementActive = true;
+            }
+            
             setContacts(fetchedContacts);
           }
           if (data.about && data.about.length > 0) setAbout(data.about[0]);
@@ -94,6 +169,10 @@ export const AppProvider = ({ children }) => {
           if (data.calendarDates && data.calendarDates.length > 0) setCalendarDates(data.calendarDates);
           if (data.yajman && data.yajman.length > 0) {
             setYajman(data.yajman[data.yajman.length - 1]);
+          }
+          if (data.liveSettings && data.liveSettings.length > 0) {
+            setLiveSettings(data.liveSettings[data.liveSettings.length - 1]);
+            localStorage.setItem('katha_live_settings', JSON.stringify(data.liveSettings[data.liveSettings.length - 1]));
           }
         }
       } catch (error) {
@@ -180,22 +259,50 @@ export const AppProvider = ({ children }) => {
   // Content Mutators
   const updateContacts = async (newContacts) => {
     try {
+      const payload = { ...contacts, ...newContacts }
+      delete payload.id // Remove ID to force backend to create a new row
+      
+      // Encode hidden announcement before saving to DB
+      if (payload.isAnnouncementActive === false) {
+        payload.announcement = '[HIDDEN]' + (payload.announcement || '');
+      }
+      
       const res = await fetch(`${API_BASE_URL}/admin/contact`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ ...contacts, ...newContacts })
+        body: JSON.stringify(payload)
       })
       await handleResponse(res)
-      if (res.ok) setContacts(await res.json())
-    } catch(e) { console.error(e) }
+      if (res.ok) {
+        const savedData = await res.json();
+        // Decode before setting state
+        if (savedData.announcement && savedData.announcement.startsWith('[HIDDEN]')) {
+          savedData.isAnnouncementActive = false;
+          savedData.announcement = savedData.announcement.substring(8);
+        } else {
+          savedData.isAnnouncementActive = true;
+        }
+        setContacts(savedData);
+        return { success: true }
+      } else {
+        const errorText = await res.text()
+        return { success: false, error: `HTTP ${res.status}: ${errorText}` }
+      }
+    } catch(e) { 
+      console.error(e)
+      return { success: false, error: e.toString() }
+    }
   }
 
   const updateAbout = async (newAbout) => {
     try {
+      const payload = { ...about, ...newAbout }
+      delete payload.id // Remove ID to force backend to create a new row
+
       const res = await fetch(`${API_BASE_URL}/admin/about`, {
         method: 'POST',
         headers: getAuthHeaders(),
-        body: JSON.stringify({ ...about, ...newAbout })
+        body: JSON.stringify(payload)
       })
       await handleResponse(res)
       if (res.ok) setAbout(await res.json())
@@ -491,7 +598,10 @@ export const AppProvider = ({ children }) => {
         changeAdminPassword,
         getAuthHeaders,
         handleResponse,
-        yajman, setYajman
+        yajman, setYajman,
+        liveSettings,
+        updateLiveSettings,
+        deleteLiveSettings
       }}
     >
       {children}

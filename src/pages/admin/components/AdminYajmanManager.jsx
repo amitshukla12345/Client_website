@@ -130,7 +130,7 @@ export default function AdminYajmanManager() {
       if (res.ok) {
         const savedData = await res.json();
         setYajman(savedData);
-        alert('Yajman details saved successfully!');
+        alert('यजमान विवरण सफलतापूर्वक सहेज लिया गया है! (Yajman details saved successfully!)');
       } else {
         alert('Failed to save Yajman details.');
       }

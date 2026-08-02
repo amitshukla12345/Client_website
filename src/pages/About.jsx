@@ -1,13 +1,14 @@
 import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FaGraduationCap, FaAward, FaHeart, FaHands, FaFileAlt, FaCheckCircle, FaPhoneAlt, FaCalendarCheck, FaPrayingHands, FaWhatsapp, FaFacebook, FaYoutube, FaInstagram, FaBookOpen, FaGlobeAmericas, FaPlayCircle, FaArrowRight, FaQuoteLeft, FaQuoteRight } from 'react-icons/fa'
+import { FaGraduationCap, FaAward, FaHeart, FaHands, FaFileAlt, FaCheckCircle, FaPhoneAlt, FaCalendarCheck, FaPrayingHands, FaWhatsapp, FaFacebook, FaYoutube, FaInstagram, FaBookOpen, FaGlobeAmericas, FaPlayCircle, FaArrowRight, FaQuoteLeft, FaQuoteRight, FaMapMarkerAlt, FaUsers, FaBook, FaOm, FaDharmachakra, FaScroll } from 'react-icons/fa'
 import { GiLotus, GiOpenBook, GiSun, GiGreekTemple } from 'react-icons/gi'
 import { AppContext } from '../context/AppContext'
 import { useTranslation } from '../context/LanguageContext'
 import logoImg from '../assets/images/logo.jpeg'
 import aboutHeroImg from '../assets/images/about_guru.png'
 import guruVicharImg from '../assets/images/guru_vichar.png'
+import guruIntroImg from '../assets/images/guru_intro_image.png'
 
 const IconMap = {
   FaGraduationCap,
@@ -26,6 +27,104 @@ export default function About() {
       {/* Hero Section */}
       <section className="relative w-full flex justify-center border-b border-gold/20">
         <img src={aboutHeroImg} alt="About Guru Hero Banner" className="w-full max-w-[1920px] h-auto block shadow-sm" />
+      </section>
+
+      {/* NEW GURU JI INTRO SECTION (As per provided image) */}
+      <section className="relative w-full overflow-hidden bg-[#FFF9F0] pt-12 pb-6 px-4 sm:px-6 lg:px-12 font-sans border-b border-gold/10">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 relative z-10">
+          
+          {/* Left Column: Info Block */}
+          <div className="lg:col-span-6 bg-[#FFFDF7] rounded-[2rem] p-8 lg:p-10 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex flex-col justify-between">
+            <div>
+              <h4 className="text-[#8A2900] font-bold text-lg mb-2 flex items-center gap-2">
+                 <GiLotus className="text-[#E05A10]" /> पूज्य गुरु जी के बारे में
+              </h4>
+              <h2 className="text-[#D35400] text-3xl md:text-4xl font-black mb-6 leading-tight drop-shadow-sm">
+                जगद्गुरु हरिप्रपन्नाचार्य जी महाराज
+              </h2>
+              {/* User Shared Image */}
+              <div className="w-full h-[280px] md:h-[350px] mb-6 rounded-2xl overflow-hidden border-[3px] border-[#EAD8C8] shadow-md relative group cursor-default">
+                <img src={guruIntroImg} alt="Guru Ji" className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              <p className="text-[#5C4033] text-sm md:text-[15px] leading-relaxed mb-6 font-medium text-justify">
+                अनंत विभूषित श्री श्री 1008 श्रीमद् जगद्गुरू रामानुजाचार्य स्वामी श्री हरिप्रपन्नाचार्य जी महाराज (हरिहरानंद) शक्तिपीठाधीश्वर चक्रसुदर्शनपूरी 221503 और महाराज जी अपने आश्रम पर अब तक 23 श्रीमद् सहस्त्र चंडी महायज्ञ सम्पन्न कर चुके है।
+              </p>
+
+              <ul className="space-y-4 mb-10 text-[#5C4033] text-[14px] md:text-[15px] font-semibold leading-relaxed">
+                <li className="flex items-start gap-3">
+                  <span className="text-[#D35400] text-xl shrink-0 mt-0.5"><GiSun/></span> 
+                  <span><span className="font-bold text-[#D35400]">पिता जी का नाम:</span> स्वर्गीय सूर्य नारायण शुक्ला</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-[#D35400] text-xl shrink-0 mt-0.5"><GiOpenBook/></span> 
+                  <span><span className="font-bold text-[#D35400]">गुरु दीक्षा:</span> गुरु दीक्षा जब महाराज जी 8-10 वर्ष के थे तभी ले चुके थे। उनके गुरु का नाम ब्रह्मलीन स्वामी श्री रघुनाथाचार्य जी महाराज है।</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-[#D35400] text-xl shrink-0 mt-0.5"><FaBookOpen/></span> 
+                  <span><span className="font-bold text-[#D35400]">प्रथम कथा:</span> महाराज जी ने अपनी पहली कथा 'श्रीराम कथा' से सन् 1990-92 में शुरू की थी।</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-[#D35400] text-xl shrink-0 mt-0.5"><FaGlobeAmericas/></span> 
+                  <span><span className="font-bold text-[#D35400]">कथा यात्रा:</span> अब तक ऐसा कोई राज्य नहीं जहाँ महाराज जी की कथा न हुई हो।</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Right Column: Parampara and Mission */}
+          <div className="lg:col-span-6 flex flex-col gap-8">
+            
+            {/* Parampara */}
+            <div className="bg-[#FFFDF7] rounded-[2rem] p-8 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex-1 flex flex-col justify-center">
+              <h4 className="text-[#8A2900] font-bold text-lg mb-8 flex items-center gap-2">
+                 <GiLotus className="text-[#E05A10]" /> गुरु परंपरा
+              </h4>
+              <div className="flex justify-between items-center px-1">
+                 <div className="flex flex-col items-center gap-4">
+                   <div className="w-[72px] h-[72px] md:w-[84px] md:h-[84px] rounded-full border-[3px] border-[#D4AF37] overflow-hidden bg-white p-1 shadow-md">
+                     <img src={guruVicharImg} className="w-full h-full object-cover rounded-full sepia contrast-125 brightness-75" alt="Param Guru" />
+                   </div>
+                   <p className="text-[11px] md:text-[13px] font-bold text-[#3D2B20] text-center leading-tight">ब्रह्मलीन<br/>परम पूज्य गुरु महाराज</p>
+                 </div>
+                 <FaArrowRight className="text-[#D35400] text-sm" />
+                 <div className="flex flex-col items-center gap-4">
+                   <div className="w-[72px] h-[72px] md:w-[84px] md:h-[84px] rounded-full border-[3px] border-[#D4AF37] overflow-hidden bg-white p-1 shadow-md">
+                     <img src={guruVicharImg} className="w-full h-full object-cover rounded-full grayscale" alt="Guru" />
+                   </div>
+                   <p className="text-[11px] md:text-[13px] font-bold text-[#3D2B20] text-center leading-tight">पूज्य गुरुधर<br/>श्री महाराज जी</p>
+                 </div>
+                 <FaArrowRight className="text-[#D35400] text-sm" />
+                 <div className="flex flex-col items-center gap-4">
+                   <div className="w-[72px] h-[72px] md:w-[84px] md:h-[84px] rounded-full border-[3px] border-[#D4AF37] overflow-hidden bg-white p-1 shadow-md">
+                     <img src={guruVicharImg} className="w-full h-full object-cover rounded-full" alt="Guru Ji" />
+                   </div>
+                   <p className="text-[11px] md:text-[13px] font-bold text-[#3D2B20] text-center leading-tight">पूज्य<br/>गुरु जी महाराज</p>
+                 </div>
+              </div>
+            </div>
+
+            {/* Mission */}
+            <div className="bg-[#FFFDF7] rounded-[2rem] p-8 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex-1 flex flex-col justify-center relative overflow-hidden group">
+              <div className="absolute -bottom-10 -right-10 text-[#E05A10] opacity-5 text-9xl group-hover:scale-110 transition-transform duration-500">
+                <GiLotus />
+              </div>
+              <h4 className="text-[#8A2900] font-bold text-lg mb-6 flex items-center gap-2 relative z-10">
+                 <GiLotus className="text-[#E05A10]" /> हमारा मिशन
+              </h4>
+              <div className="flex items-start gap-5 relative z-10">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#F5CBA7] to-[#E05A10] flex items-center justify-center shrink-0 shadow-lg text-white">
+                  <GiLotus className="text-3xl drop-shadow-md" />
+                </div>
+                <p className="text-[#5C4033] text-[13.5px] md:text-[15px] leading-relaxed font-semibold">
+                  सनातन धर्म, वेद, पुराण और भारतीय संस्कृति का प्रचार करना, युवा पीढ़ी को संस्कारयुक्त बनाना और समाज में प्रेम, सेवा और सद्भावना का भाव स्थापित करना।
+                </p>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </section>
 
       {/* Main Container for rest of the page with exact background matching the image */}
@@ -63,7 +162,7 @@ export default function About() {
                 {/* Spiritual Thoughts Cards */}
                 <div className="mt-10 w-full max-w-[460px] flex flex-col gap-7 relative z-20 mx-auto group/cards">
                   {/* Vertical Dashed Line behind cards */}
-                  <div className="absolute top-[-100px] bottom-[-15px] left-1/2 -translate-x-1/2 w-0 border-l-[2px] border-dashed border-[#D4AF37]/50 -z-10"></div>
+                  <div className="absolute top-[-100px] bottom-[-40px] left-1/2 -translate-x-1/2 w-0 border-l-[2px] border-dashed border-[#D4AF37]/50 -z-10"></div>
                   
                   <div className="bg-white/60 backdrop-blur-md border border-[#EAD8C8] rounded-full px-5 py-3 shadow-[0_4px_15px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_25px_rgba(224,90,16,0.12)] hover:-translate-y-1 transition-all duration-300 flex items-center space-x-3 group cursor-default">
                     <GiLotus className="text-[#E05A10] text-xl shrink-0 group-hover:rotate-12 transition-transform duration-300" />
@@ -93,6 +192,30 @@ export default function About() {
                     </p>
                   </div>
                 </div>
+
+                {/* Our Holy Scriptures Section */}
+                <div className="mt-8 w-full max-w-[460px] flex flex-col relative z-20 mx-auto">
+                  <h4 className="text-[#8A2900] font-bold text-[17px] md:text-lg mb-6 flex items-center justify-center gap-2">
+                     <GiLotus className="text-[#E05A10]" /> हमारे पूज्य शास्त्र
+                  </h4>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-5 md:gap-x-5 md:gap-y-6">
+                    {[
+                      { name: 'श्रीमद भागवत', icon: GiOpenBook },
+                      { name: 'शिव पुराण', icon: FaOm },
+                      { name: 'रामचरितमानस', icon: FaBook },
+                      { name: 'शिव पुराण', icon: FaOm },
+                      { name: 'भगवद गीता', icon: FaDharmachakra },
+                      { name: 'वेद एवं उपनिषद', icon: FaScroll }
+                    ].map((Shastra, idx) => (
+                      <div key={idx} className="bg-[#FFFDF7] border border-[#F2E5D5] rounded-2xl py-3.5 px-4 md:py-4 md:px-5 flex items-center gap-4 shadow-[0_2px_15px_rgba(0,0,0,0.02)] hover:bg-white hover:border-[#D35400]/40 hover:shadow-[0_8px_25px_rgba(211,84,0,0.1)] hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+                        <div className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-[#D87040] group-hover:bg-[#D35400] transition-colors duration-300 flex items-center justify-center shrink-0 shadow-sm">
+                          <Shastra.icon className="text-white text-[15px] md:text-[16px]" />
+                        </div>
+                        <span className="text-[#5C4033] text-[13.5px] md:text-[15px] font-bold leading-tight group-hover:text-[#D35400] transition-colors duration-300">{Shastra.name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Right Column: Timeline */}
@@ -117,59 +240,102 @@ export default function About() {
                   
                   {/* Horizontal line extending leftwards towards Guru Ji image to create a perfect joint (Desktop Only) */}
                   <div className="hidden lg:block absolute top-[-2px] left-[-2px] w-[30vw] max-w-[350px] xl:max-w-[450px] h-0 border-t-[2px] border-dashed border-[#D4AF37]/40 -translate-x-full pointer-events-none"></div>
-                  {/* 2008 */}
+                  
+                  {/* 1998 */}
                   <div className="relative flex items-center group">
                     <div className="absolute -left-[30px] bg-[#FFF9F0] p-1 border-2 border-[#D4AF37] rounded-full group-hover:scale-110 transition-transform shadow-md">
                       <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#E05A10] shadow-inner">
-                        <FaBookOpen className="text-lg" />
-                        <span className="text-[10px] font-bold mt-0.5">2008</span>
+                        <GiLotus className="text-lg" />
+                        <span className="text-[10px] font-bold mt-0.5">1998</span>
                       </div>
                     </div>
                     <div className="ml-16 bg-white border border-[#EAD8C8] rounded-xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] w-full relative group-hover:border-[#D4AF37]/50 transition-colors before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-b before:border-[#EAD8C8] group-hover:before:border-[#D4AF37]/50">
-                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">The Spiritual Awakening</h4>
-                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">बाल्यकाल से ही आध्यात्मिक झुकाव, शास्त्रों का अध्ययन और सत्संग में गहरी रुचि की शुरुआत।</p>
+                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">Spiritual Initiation</h4>
+                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">गुरु दीक्षा प्राप्त की।</p>
                     </div>
                   </div>
 
-                  {/* 2012 */}
+                  {/* 2000 */}
                   <div className="relative flex items-center group">
                     <div className="absolute -left-[30px] bg-[#FFF9F0] p-1 border-2 border-[#D4AF37] rounded-full group-hover:scale-110 transition-transform shadow-md">
                       <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#E05A10] shadow-inner">
-                        <GiGreekTemple className="text-lg" />
-                        <span className="text-[10px] font-bold mt-0.5">2012</span>
+                        <GiOpenBook className="text-lg" />
+                        <span className="text-[10px] font-bold mt-0.5">2000</span>
                       </div>
                     </div>
                     <div className="ml-16 bg-white border border-[#EAD8C8] rounded-xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] w-full relative group-hover:border-[#D4AF37]/50 transition-colors before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-b before:border-[#EAD8C8] group-hover:before:border-[#D4AF37]/50">
                       <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">First Shrimad Bhagavat Katha</h4>
-                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">प्रथम बार श्रीमद भागवत कथा का वाचन, अनेक श्रद्धालुओं को आध्यात्मिक मार्ग पर प्रेरित किया।</p>
+                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">प्रथम भागवत कथा।</p>
                     </div>
                   </div>
 
-                  {/* 2016 */}
+                  {/* 2005 */}
                   <div className="relative flex items-center group">
                     <div className="absolute -left-[30px] bg-[#FFF9F0] p-1 border-2 border-[#D4AF37] rounded-full group-hover:scale-110 transition-transform shadow-md">
                       <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#E05A10] shadow-inner">
-                        <FaPrayingHands className="text-lg" />
-                        <span className="text-[10px] font-bold mt-0.5">2016</span>
+                        <FaBookOpen className="text-lg" />
+                        <span className="text-[10px] font-bold mt-0.5">2005</span>
                       </div>
                     </div>
                     <div className="ml-16 bg-white border border-[#EAD8C8] rounded-xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] w-full relative group-hover:border-[#D4AF37]/50 transition-colors before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-b before:border-[#EAD8C8] group-hover:before:border-[#D4AF37]/50">
-                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">Establishment of Mission</h4>
-                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">मानव कल्याण के लिए मिशन की स्थापना, धर्म, भक्ति और सेवा को जन-जन तक पहुँचाने का संकल्प।</p>
+                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">100+ Kathas Completed</h4>
+                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">100+ कथाएं पूर्ण।</p>
                     </div>
                   </div>
 
-                  {/* 2022 */}
+                  {/* 2010 */}
+                  <div className="relative flex items-center group">
+                    <div className="absolute -left-[30px] bg-[#FFF9F0] p-1 border-2 border-[#D4AF37] rounded-full group-hover:scale-110 transition-transform shadow-md">
+                      <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#E05A10] shadow-inner">
+                        <GiGreekTemple className="text-lg" />
+                        <span className="text-[10px] font-bold mt-0.5">2010</span>
+                      </div>
+                    </div>
+                    <div className="ml-16 bg-white border border-[#EAD8C8] rounded-xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] w-full relative group-hover:border-[#D4AF37]/50 transition-colors before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-b before:border-[#EAD8C8] group-hover:before:border-[#D4AF37]/50">
+                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">Nationwide Preaching</h4>
+                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">देश भर में कथा प्रवाह।</p>
+                    </div>
+                  </div>
+
+                  {/* 2015 */}
                   <div className="relative flex items-center group">
                     <div className="absolute -left-[30px] bg-[#FFF9F0] p-1 border-2 border-[#D4AF37] rounded-full group-hover:scale-110 transition-transform shadow-md">
                       <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#E05A10] shadow-inner">
                         <FaGlobeAmericas className="text-lg" />
-                        <span className="text-[10px] font-bold mt-0.5">2022</span>
+                        <span className="text-[10px] font-bold mt-0.5">2015</span>
                       </div>
                     </div>
                     <div className="ml-16 bg-white border border-[#EAD8C8] rounded-xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] w-full relative group-hover:border-[#D4AF37]/50 transition-colors before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-b before:border-[#EAD8C8] group-hover:before:border-[#D4AF37]/50">
-                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">Global Broadcasting</h4>
-                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">कथा का सीधा प्रसारण विश्वभर के विभिन्न माध्यमों से, लाखों लोगों तक आध्यात्मिक संदेश का प्रसार।</p>
+                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">International Events</h4>
+                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">विदेशों में कथा आयोजन।</p>
+                    </div>
+                  </div>
+
+                  {/* 2020 */}
+                  <div className="relative flex items-center group">
+                    <div className="absolute -left-[30px] bg-[#FFF9F0] p-1 border-2 border-[#D4AF37] rounded-full group-hover:scale-110 transition-transform shadow-md">
+                      <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#E05A10] shadow-inner">
+                        <FaPrayingHands className="text-lg" />
+                        <span className="text-[10px] font-bold mt-0.5">2020</span>
+                      </div>
+                    </div>
+                    <div className="ml-16 bg-white border border-[#EAD8C8] rounded-xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] w-full relative group-hover:border-[#D4AF37]/50 transition-colors before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-b before:border-[#EAD8C8] group-hover:before:border-[#D4AF37]/50">
+                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">1000+ Kathas Completed</h4>
+                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">1000+ कथाएं पूर्ण।</p>
+                    </div>
+                  </div>
+
+                  {/* 2024 */}
+                  <div className="relative flex items-center group">
+                    <div className="absolute -left-[30px] bg-[#FFF9F0] p-1 border-2 border-[#D4AF37] rounded-full group-hover:scale-110 transition-transform shadow-md">
+                      <div className="w-12 h-12 bg-white rounded-full flex flex-col items-center justify-center text-[#E05A10] shadow-inner">
+                        <GiSun className="text-lg" />
+                        <span className="text-[10px] font-bold mt-0.5">2024</span>
+                      </div>
+                    </div>
+                    <div className="ml-16 bg-white border border-[#EAD8C8] rounded-xl p-5 shadow-[0_4px_15px_rgba(0,0,0,0.03)] w-full relative group-hover:border-[#D4AF37]/50 transition-colors before:absolute before:top-1/2 before:-left-2 before:-translate-y-1/2 before:w-4 before:h-4 before:bg-white before:rotate-45 before:border-l before:border-b before:border-[#EAD8C8] group-hover:before:border-[#D4AF37]/50">
+                      <h4 className="font-serif font-bold text-[#3D2B20] text-sm uppercase tracking-wide mb-1.5">Relentless Devotion</h4>
+                      <p className="text-[11px] text-[#3D2B20]/70 font-medium leading-relaxed">सनातन धर्म सेवा में निरंतर समर्पित।</p>
                     </div>
                   </div>
 
@@ -177,6 +343,122 @@ export default function About() {
               </div>
 
             </div>
+          </div>
+        </section>
+
+        {/* NEW 3-COLUMN SECTION: Services, Values, Locations */}
+        <section className="relative w-full pb-12 pt-8 z-10 font-sans border-b border-gold/10">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            {/* Box 1: हमारी सेवाएं (Our Services) */}
+            <div className="bg-[#FFFDF7] rounded-[2rem] p-8 lg:p-10 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex flex-col justify-between group">
+              <div>
+                <h4 className="text-[#8A2900] font-bold text-[19px] md:text-[22px] mb-8 flex items-center gap-2">
+                   <GiLotus className="text-[#E05A10]" /> हमारी सेवाएं
+                </h4>
+                <div className="grid grid-cols-2 gap-x-4 gap-y-5 mb-10">
+                  {[
+                    { text: 'श्रीमद भागवत कथा', icon: GiOpenBook },
+                    { text: 'श्री राम कथा', icon: GiGreekTemple },
+                    { text: 'शिव महापुराण कथा', icon: GiLotus },
+                    { text: 'श्रीमद देवी भागवत', icon: FaBookOpen },
+                    { text: 'सुंदरकाण्ड पाठ', icon: FaPrayingHands },
+                    { text: 'गुरु दीक्षा एवं मार्गदर्शन', icon: FaHeart }
+                  ].map((item, idx) => (
+                    <div key={idx} className="bg-[#FFF6E9] hover:bg-[#FFEBD4] hover:-translate-y-0.5 transition-all duration-300 rounded-xl p-3.5 flex items-center gap-3 border border-[#F5E6D3] shadow-sm cursor-default">
+                       <span className="text-[#D35400] text-xl opacity-80 shrink-0"><item.icon/></span>
+                       <span className="text-[12px] lg:text-[13px] font-bold text-[#5C4033] leading-tight">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button className="bg-[#D35400] text-white px-8 py-3.5 rounded-xl font-bold w-fit mx-auto hover:bg-[#BA4A00] transition-colors shadow-md text-sm mt-auto">
+                सभी फोटो देखें
+              </button>
+            </div>
+
+            {/* Box 2: हमारे मूल मूल्य (Core Values) */}
+            <div className="bg-[#FFFDF7] rounded-[2rem] p-8 lg:p-10 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex flex-col justify-between">
+              <div>
+                <h4 className="text-[#8A2900] font-bold text-[19px] md:text-[22px] mb-10 flex items-center gap-2">
+                   <GiLotus className="text-[#E05A10]" /> हमारे मूल मूल्य
+                </h4>
+                <div className="grid grid-cols-3 gap-x-4 gap-y-10 mb-10">
+                  {[
+                    { text: 'सत्य', icon: GiOpenBook },
+                    { text: 'धर्म', icon: GiGreekTemple },
+                    { text: 'भक्ति', icon: FaPrayingHands },
+                    { text: 'सेवा', icon: FaHands },
+                    { text: 'करुणा', icon: GiLotus },
+                    { text: 'संस्कार', icon: FaHeart }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex flex-col items-center gap-3.5">
+                      <div className="w-[64px] h-[64px] rounded-full bg-gradient-to-br from-[#FFF6E9] to-[#FDE8D0] border-[3px] border-[#F5E6D3] flex items-center justify-center text-[#D35400] text-2xl shadow-md hover:scale-110 transition-transform duration-300">
+                        <item.icon />
+                      </div>
+                      <span className="text-[14px] font-bold text-[#5C4033]">{item.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Box 3: कथा कहाँ-कहाँ (Locations) */}
+            <div className="bg-[#FFFDF7] rounded-[2rem] p-8 lg:p-10 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex flex-col justify-between overflow-hidden relative">
+              <div className="relative z-10">
+                <h4 className="text-[#8A2900] font-bold text-[19px] md:text-[22px] mb-8 flex items-center gap-2">
+                   <GiLotus className="text-[#E05A10]" /> कथा कहाँ-कहाँ
+                </h4>
+                <div className="flex flex-col md:flex-row gap-6 mb-8 items-center">
+                  {/* Map Area */}
+                  <div className="flex-1 relative w-full min-h-[220px] md:min-h-[260px] max-w-[220px] aspect-[4/5] mx-auto flex items-center justify-center">
+                    <img 
+                      src="/images/india_map.svg" 
+                      alt="India Map" 
+                      className="absolute inset-0 w-full h-full object-contain drop-shadow-sm transition-transform hover:scale-105 duration-700" 
+                    />
+                    
+                    {/* Green Map Pins covering all states */}
+                    {[
+                      {t: '10%', l: '32%'}, {t: '20%', l: '38%'}, {t: '28%', l: '28%'}, {t: '32%', l: '34%'},
+                      {t: '40%', l: '18%'}, {t: '45%', l: '25%'}, {t: '52%', l: '10%'}, {t: '58%', l: '18%'},
+                      {t: '38%', l: '45%'}, {t: '42%', l: '55%'}, {t: '45%', l: '65%'}, {t: '55%', l: '75%'},
+                      {t: '65%', l: '68%'}, {t: '55%', l: '40%'}, {t: '58%', l: '50%'}, {t: '62%', l: '58%'},
+                      {t: '68%', l: '25%'}, {t: '65%', l: '35%'}, {t: '70%', l: '45%'}, {t: '75%', l: '52%'},
+                      {t: '80%', l: '32%'}, {t: '85%', l: '38%'}, {t: '92%', l: '40%'}, {t: '90%', l: '48%'},
+                      {t: '85%', l: '45%'}, {t: '42%', l: '85%'}, {t: '38%', l: '92%'}
+                    ].map((pos, i) => (
+                      <svg 
+                        key={i}
+                        viewBox="0 0 24 24" 
+                        className="absolute text-[#22A849] drop-shadow-md w-[14px] h-[14px] md:w-[16px] md:h-[16px] hover:scale-150 transition-transform duration-300 origin-bottom cursor-pointer" 
+                        style={{top: pos.t, left: pos.l}} 
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
+                      </svg>
+                    ))}
+                  </div>
+                  
+                  {/* States List */}
+                  <div className="w-full md:w-[140px] flex flex-col gap-3 shrink-0">
+                    {[
+                      'उत्तर प्रदेश', 'मध्य प्रदेश', 'महाराष्ट्र', 'राजस्थान', 'गुजरात', 'बिहार', 'छत्तीसगढ़', 'उत्तराखंड', 'और अन्य राज्य'
+                    ].map((state, idx) => (
+                      <div key={idx} className="flex items-center gap-2.5">
+                        <GiLotus className="text-[#D35400] text-[12px] shrink-0" />
+                        <span className="text-[12.5px] font-bold text-[#5C4033]">{state}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <button className="bg-[#D35400] text-white px-8 py-3.5 rounded-xl font-bold w-fit mx-auto hover:bg-[#BA4A00] transition-colors shadow-md text-sm mt-auto relative z-10">
+                सभी वीडियो देखें
+              </button>
+            </div>
+
           </div>
         </section>
 
@@ -196,56 +478,64 @@ export default function About() {
           </div>
         </section>
 
-        {/* 2. Stats Section */}
+        {/* 2. Stats Section (Matching Screenshot) */}
         <section className="pb-16 relative z-10 px-4">
-          <div className="max-w-[1100px] mx-auto bg-white/70 backdrop-blur-md border border-[#EAD8C8] rounded-3xl shadow-[0_8px_30px_rgba(224,90,16,0.06)] hover:shadow-[0_15px_40px_rgba(224,90,16,0.12)] hover:-translate-y-1.5 transition-all duration-500 ease-out p-6 md:p-8 relative group cursor-default">
-            <div className="absolute -top-3 left-6 text-2xl text-[#EAD8C8]/40"><GiLotus /></div>
-            <div className="absolute -bottom-3 right-6 text-2xl text-[#EAD8C8]/40 rotate-180"><GiLotus /></div>
-
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-y-8 gap-x-4 md:divide-x md:divide-[#EAD8C8]/60">
+          <div className="max-w-[1200px] mx-auto bg-[#FFFDF7] border border-[#F2E5D5] rounded-3xl shadow-[0_8px_30px_rgba(224,90,16,0.05)] hover:shadow-[0_15px_40px_rgba(224,90,16,0.12)] hover:-translate-y-1 transition-all duration-500 ease-out p-6 md:p-8 relative group cursor-default">
+            
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-y-8 gap-x-2 md:divide-x md:divide-[#EAD8C8]/70 py-2">
               
               {/* Stat 1 */}
-              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left md:px-4 space-y-3 md:space-y-0 md:space-x-3 group/stat">
-                <div className="text-[#D4AF37] text-4xl shrink-0 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 group-hover/stat:rotate-[360deg] transition-all duration-700 ease-out"><FaHeart /></div>
-                <div>
-                  <div className="font-serif text-2xl font-black text-[#3D2B20] group-hover/stat:text-[#E05A10] transition-colors duration-300">25+</div>
-                  <div className="text-[11px] text-[#3D2B20]/80 font-bold mt-0.5 leading-snug">वर्षों का आध्यात्मिक<br/>सेवा अनुभव</div>
+              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left px-2 md:px-5 space-y-3 md:space-y-0 md:space-x-4 group/stat">
+                <div className="w-12 h-12 rounded-full bg-[#FFF6E9] flex items-center justify-center text-[#D35400] text-2xl shrink-0 group-hover/stat:bg-[#D35400] group-hover/stat:text-white transition-colors duration-300 shadow-inner border border-[#F2E5D5]">
+                  <FaBookOpen />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <div className="font-sans text-2xl md:text-[28px] font-black text-[#D35400] leading-none mb-1 group-hover/stat:scale-105 transition-transform origin-left">1500+</div>
+                  <div className="text-[12.5px] md:text-[13px] text-[#5C4033] font-bold leading-tight">संपूर्ण कथाएं</div>
                 </div>
               </div>
 
               {/* Stat 2 */}
-              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left md:px-4 space-y-3 md:space-y-0 md:space-x-3 group/stat">
-                <div className="text-[#D4AF37] text-4xl shrink-0 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 group-hover/stat:rotate-[360deg] transition-all duration-700 ease-out"><FaBookOpen /></div>
-                <div>
-                  <div className="font-serif text-2xl font-black text-[#3D2B20] group-hover/stat:text-[#E05A10] transition-colors duration-300">500+</div>
-                  <div className="text-[11px] text-[#3D2B20]/80 font-bold mt-0.5 leading-snug">श्रीमद भागवत<br/>कथा</div>
+              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left px-2 md:px-5 space-y-3 md:space-y-0 md:space-x-4 group/stat">
+                <div className="w-12 h-12 rounded-full bg-[#FFF6E9] flex items-center justify-center text-[#D35400] text-2xl shrink-0 group-hover/stat:bg-[#D35400] group-hover/stat:text-white transition-colors duration-300 shadow-inner border border-[#F2E5D5]">
+                  <FaUsers />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <div className="font-sans text-2xl md:text-[28px] font-black text-[#D35400] leading-none mb-1 group-hover/stat:scale-105 transition-transform origin-left">50,000+</div>
+                  <div className="text-[12.5px] md:text-[13px] text-[#5C4033] font-bold leading-tight">श्रद्धालु परिवार</div>
                 </div>
               </div>
 
               {/* Stat 3 */}
-              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left md:px-4 space-y-3 md:space-y-0 md:space-x-3 group/stat">
-                <div className="text-[#D4AF37] text-4xl shrink-0 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 group-hover/stat:rotate-[360deg] transition-all duration-700 ease-out"><FaPrayingHands /></div>
-                <div>
-                  <div className="font-serif text-2xl font-black text-[#3D2B20] group-hover/stat:text-[#E05A10] transition-colors duration-300">15,000+</div>
-                  <div className="text-[11px] text-[#3D2B20]/80 font-bold mt-0.5 leading-snug">श्रद्धालु और<br/>अनुयायी</div>
+              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left px-2 md:px-5 space-y-3 md:space-y-0 md:space-x-4 group/stat">
+                <div className="w-12 h-12 rounded-full bg-[#FFF6E9] flex items-center justify-center text-[#D35400] text-2xl shrink-0 group-hover/stat:bg-[#D35400] group-hover/stat:text-white transition-colors duration-300 shadow-inner border border-[#F2E5D5]">
+                  <FaGlobeAmericas />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <div className="font-sans text-2xl md:text-[28px] font-black text-[#D35400] leading-none mb-1 group-hover/stat:scale-105 transition-transform origin-left">100+</div>
+                  <div className="text-[12.5px] md:text-[13px] text-[#5C4033] font-bold leading-tight">शहरों में कथाएं</div>
                 </div>
               </div>
 
               {/* Stat 4 */}
-              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left md:px-4 space-y-3 md:space-y-0 md:space-x-3 group/stat">
-                <div className="text-[#D4AF37] text-4xl shrink-0 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 group-hover/stat:rotate-[360deg] transition-all duration-700 ease-out"><FaGlobeAmericas /></div>
-                <div>
-                  <div className="font-serif text-2xl font-black text-[#3D2B20] group-hover/stat:text-[#E05A10] transition-colors duration-300">20+</div>
-                  <div className="text-[11px] text-[#3D2B20]/80 font-bold mt-0.5 leading-snug">राज्यों एवं देशों में<br/>सेवा यात्रा</div>
+              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left px-2 md:px-5 space-y-3 md:space-y-0 md:space-x-4 group/stat">
+                <div className="w-12 h-12 rounded-full bg-[#FFF6E9] flex items-center justify-center text-[#D35400] text-2xl shrink-0 group-hover/stat:bg-[#D35400] group-hover/stat:text-white transition-colors duration-300 shadow-inner border border-[#F2E5D5]">
+                  <FaAward />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <div className="font-sans text-2xl md:text-[28px] font-black text-[#D35400] leading-none mb-1 group-hover/stat:scale-105 transition-transform origin-left">25+</div>
+                  <div className="text-[12.5px] md:text-[13px] text-[#5C4033] font-bold leading-tight">वर्षों का अनुभव</div>
                 </div>
               </div>
 
               {/* Stat 5 */}
-              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left md:px-4 space-y-3 md:space-y-0 md:space-x-3 col-span-2 md:col-span-1 justify-center group/stat">
-                <div className="text-[#D4AF37] text-4xl shrink-0 group-hover/stat:text-[#E05A10] group-hover/stat:scale-110 group-hover/stat:rotate-[360deg] transition-all duration-700 ease-out"><FaCalendarCheck /></div>
-                <div>
-                  <div className="font-serif text-2xl font-black text-[#3D2B20] group-hover/stat:text-[#E05A10] transition-colors duration-300">150+</div>
-                  <div className="text-[11px] text-[#3D2B20]/80 font-bold mt-0.5 leading-snug">धार्मिक एवं सामाजिक<br/>आयोजन</div>
+              <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left px-2 md:px-5 space-y-3 md:space-y-0 md:space-x-4 col-span-2 md:col-span-1 justify-center group/stat">
+                <div className="w-12 h-12 rounded-full bg-[#FFF6E9] flex items-center justify-center text-[#D35400] text-2xl shrink-0 group-hover/stat:bg-[#D35400] group-hover/stat:text-white transition-colors duration-300 shadow-inner border border-[#F2E5D5]">
+                  <FaHands />
+                </div>
+                <div className="flex flex-col justify-center">
+                  <div className="font-sans text-2xl md:text-[28px] font-black text-[#D35400] leading-none mb-1 group-hover/stat:scale-105 transition-transform origin-left">50+</div>
+                  <div className="text-[12.5px] md:text-[13px] text-[#5C4033] font-bold leading-tight">सेवा प्रकल्प</div>
                 </div>
               </div>
 

@@ -36,30 +36,6 @@ export default function Home() {
     }
   }
 
-  // 2. Highlights Row Data
-  const highlights = [
-    {
-      title: 'भागवत कथा',
-      subtitle: 'आध्यात्मिक ज्ञान का अमृत',
-      icon: GiLotus
-    },
-    {
-      title: 'भक्ति और श्रद्धा',
-      subtitle: 'जीवन में सुख और शांति',
-      icon: GiSun
-    },
-    {
-      title: 'सत्संग और सेवा',
-      subtitle: 'मानव सेवा ही परमो सेवा',
-      icon: FaRegHandshake
-    },
-    {
-      title: 'सनातन संस्कृति',
-      subtitle: 'हमारी पहचान, हमारी शान',
-      icon: GiGreekTemple
-    }
-  ]
-
   // 4. Services Data
   const services = [
     { 
@@ -127,9 +103,9 @@ export default function Home() {
     <div className="bg-[#FCF9F2] text-[#3D2B20] font-sans selection:bg-[#E05A10] selection:text-white overflow-x-hidden">
 
       {/* 1. HERO CAROUSEL SECTION */}
-      <section className="relative w-full bg-white border-b border-[#EAD8C8] overflow-hidden">
+      <section className="relative w-full bg-[#FCF9F2] border-b border-[#EAD8C8] overflow-hidden flex justify-center">
         {/* Banner Grid Container */}
-        <div className="w-full relative min-h-[460px] lg:min-h-[550px] h-auto">
+        <div className="w-full max-w-[1920px] relative min-h-[500px] lg:h-[500px] flex flex-col">
           <AnimatePresence mode="wait">
             <motion.div
               key={currentHeroSlide}
@@ -140,7 +116,7 @@ export default function Home() {
               className="w-full h-full grid grid-cols-1 lg:grid-cols-12 items-stretch"
             >
               {/* Left Column: Text content */}
-              <div className="lg:col-span-6 flex flex-col justify-center px-4 xs:px-8 sm:px-16 lg:px-24 pt-36 sm:pt-40 lg:pt-48 pb-16 lg:pb-16 bg-[#FCF9F2] text-center lg:text-left relative z-10">
+              <div className="lg:col-span-6 flex flex-col justify-start px-4 xs:px-8 sm:px-12 lg:px-12 xl:px-16 pt-36 sm:pt-40 lg:pt-[140px] pb-8 bg-[#FCF9F2] text-center lg:text-left relative z-10">
                 
                 <h2
                   className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold text-[#3D2B20] mb-3 leading-normal"
@@ -154,19 +130,60 @@ export default function Home() {
                   </p>
                 )}
 
-                {(currentBanner?.kathaDay || currentBanner?.prasang) && (
-                  <div className="flex items-center justify-center lg:justify-start gap-2 mb-4 text-xs sm:text-sm font-bold text-[#E05A10] bg-[#E05A10]/10 px-4 py-2 rounded-full w-fit mx-auto lg:mx-0">
-                    {currentBanner?.kathaDay && <span>{currentBanner.kathaDay}</span>}
-                    {currentBanner?.kathaDay && currentBanner?.prasang && <span className="opacity-60">•</span>}
-                    {currentBanner?.prasang && <span>प्रसंग: {currentBanner.prasang}</span>}
-                  </div>
-                )}
+                {/* Dynamic Metadata Pill / Ticket Bar */}
+                {(currentBanner?.kathaDay || currentBanner?.prasang || currentBanner?.date || currentBanner?.time || currentBanner?.venue) && (
+                  <div className="inline-flex flex-wrap lg:flex-nowrap items-center bg-[#F3EBE1] rounded-2xl lg:rounded-full shadow-sm mb-6 lg:mb-8 mx-auto lg:mx-0 text-[#3D2B20] border border-[#EAD8C8]/60 w-fit lg:w-max max-w-none shrink-0 overflow-hidden relative z-20">
+                    
+                    {/* Dark Red Block for Day & Prasang */}
+                    {(currentBanner?.kathaDay || currentBanner?.prasang) && (
+                      <div className="bg-[#7B241C] text-white flex flex-col items-center justify-center px-6 lg:px-8 py-2 lg:py-2.5 lg:rounded-full w-full lg:w-auto relative shadow-md shrink-0 whitespace-nowrap">
+                        <div className="absolute left-3 text-[#D4AF37] opacity-60 text-sm font-light">||</div>
+                        {currentBanner?.kathaDay && <span className="text-[11px] font-medium opacity-90">{currentBanner.kathaDay}</span>}
+                        {currentBanner?.prasang && <span className="text-base font-bold tracking-wide mt-0.5">{currentBanner.prasang}</span>}
+                        <div className="absolute right-3 text-[#D4AF37] opacity-60 text-sm font-light">||</div>
+                      </div>
+                    )}
 
-                {(currentBanner?.date || currentBanner?.time || currentBanner?.venue) && (
-                  <div className="flex flex-col gap-2 text-[#3D2B20]/70 text-xs md:text-sm font-medium mb-6 mt-2 mx-auto lg:mx-0 text-left">
-                    {currentBanner?.date && <span className="flex items-center gap-2"><FaCalendarAlt className="text-[#E05A10]"/> {currentBanner.date}</span>}
-                    {currentBanner?.time && <span className="flex items-center gap-2"><FaClock className="text-[#E05A10]"/> {currentBanner.time}</span>}
-                    {currentBanner?.venue && <span className="flex items-center gap-2"><FaMapMarkerAlt className="text-[#E05A10]"/> {currentBanner.venue}</span>}
+                    {/* Meta Details Segment */}
+                    <div className="flex flex-wrap sm:flex-nowrap items-center justify-center divide-y sm:divide-y-0 sm:divide-x divide-[#3D2B20]/15 py-1.5 w-full lg:w-auto">
+                      
+                      {/* Date Block */}
+                      {currentBanner?.date && (
+                        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto justify-center sm:justify-start shrink-0">
+                          <FaCalendarAlt className="text-[#E05A10] text-lg shrink-0" />
+                          <div className="flex flex-col text-left">
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight">{currentBanner.date}</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Time Block */}
+                      {currentBanner?.time && (
+                        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto justify-center sm:justify-start shrink-0">
+                          <FaClock className="text-[#E05A10] text-lg shrink-0" />
+                          <div className="flex flex-col text-left">
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight">{currentBanner.time}</span>
+                            <span className="text-[10px] font-medium text-[#8B6E59] leading-tight">onwards</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Location Block */}
+                      {currentBanner?.venue && (
+                        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto justify-center sm:justify-start shrink-0">
+                          <FaMapMarkerAlt className="text-[#E05A10] text-lg shrink-0" />
+                          <div className="flex flex-col text-left">
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight">{currentBanner.venue.split(',')[0]}</span>
+                            {currentBanner.venue.includes(',') && (
+                              <span className="text-[10px] font-medium text-[#8B6E59] leading-tight">
+                                {currentBanner.venue.split(',').slice(1).join(',').trim()}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                    </div>
                   </div>
                 )}
 
@@ -245,31 +262,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 2. HIGHLIGHTS ROW SECTION */}
-      <section className="py-8 bg-white border-y border-[#FAF0E6]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-            {highlights.map((item, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: idx * 0.05 }}
-                className="flex items-center space-x-4 p-4 rounded-xl bg-[#FAF6F0] border border-[#FAF0E6] hover:shadow-sm hover:border-[#E05A10]/20 transition-all"
-              >
-                <div className="w-12 h-12 rounded-xl bg-[#E05A10]/10 text-[#E05A10] flex items-center justify-center text-2xl flex-shrink-0">
-                  <item.icon />
-                </div>
-                <div>
-                  <h4 className="font-serif font-bold text-sm text-[#3D2B20]">{item.title}</h4>
-                  <p className="text-xs text-[#3D2B20]/60 font-light mt-0.5">{item.subtitle}</p>
-                </div>
-              </motion.div>
-            ))}
+      {/* ANNOUNCEMENT MARQUEE SECTION */}
+      {contacts?.announcement && contacts?.isAnnouncementActive !== false && (
+        <section className="bg-[#E05A10] text-white py-2.5 shadow-inner border-y border-[#c94d0d] relative z-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+            <div className="flex items-center gap-2 pr-4 border-r border-white/30 whitespace-nowrap">
+              <FaOm className="text-lg text-[#FDE047] animate-pulse" />
+              <span className="font-bold text-xs sm:text-sm tracking-widest uppercase text-[#FEF3C7]">{t('home.notice') || 'सूचना'}</span>
+            </div>
+            <div className="flex-1 overflow-hidden ml-4 flex items-center">
+              {/* Using native marquee for simple smooth scrolling without complex CSS configs */}
+              <marquee behavior="scroll" direction="left" scrollamount="6" className="text-sm sm:text-base font-medium font-serif tracking-wide pt-1">
+                {contacts.announcement}
+              </marquee>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* 3. DYNAMIC KATHA YAJMAN SECTION */}
       <YajmanIntro />

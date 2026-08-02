@@ -64,13 +64,13 @@ export default function Navbar() {
             </a>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-1.5 xs:gap-3 mt-1 sm:mt-0">
-            <a href="https://www.facebook.com/share/1HLEzxvCT3/" target="_blank" rel="noopener noreferrer" className="hover:text-[#E05A10] transition-colors" aria-label="Facebook">
+            <a href={contacts?.facebook || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-[#E05A10] transition-colors" aria-label="Facebook">
               <FaFacebookF className="text-[11px]" />
             </a>
-            <a href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8" target="_blank" rel="noopener noreferrer" className="hover:text-[#E05A10] transition-colors" aria-label="YouTube">
+            <a href={contacts?.youtube || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-[#E05A10] transition-colors" aria-label="YouTube">
               <FaYoutube className="text-[11px]" />
             </a>
-            <a href="https://swamiraghavacharyaji.in/" target="_blank" rel="noopener noreferrer" className="hover:text-[#E05A10] transition-colors" aria-label="Instagram">
+            <a href={contacts?.instagram || '#'} target="_blank" rel="noopener noreferrer" className="hover:text-[#E05A10] transition-colors" aria-label="Instagram">
               <FaInstagram className="text-[11px]" />
             </a>
             <a href={contacts?.whatsapp?.startsWith('http') ? contacts.whatsapp : `https://wa.me/${contacts?.whatsapp?.replace(/[^\d]/g, '') || ''}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#E05A10] transition-colors" aria-label="WhatsApp">

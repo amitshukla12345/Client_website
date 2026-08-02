@@ -9,12 +9,14 @@ import CustomCalendar from '../../components/CustomCalendar'
 import { 
   FaSignOutAlt, FaBookOpen, FaImages, FaUserEdit, FaCalendarPlus, FaCalendarAlt, FaUsers,
   FaInfoCircle, FaClipboardList, FaCheck, FaTimes, FaTrash, FaPlus, FaChevronDown, FaSearch, FaBell,
-  FaLink, FaSave, FaExternalLinkAlt, FaImage, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaGlobe, FaYoutube, FaUser, FaLock, FaEye, FaEyeSlash, FaQuoteLeft, FaBars
+  FaLink, FaSave, FaExternalLinkAlt, FaImage, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaGlobe, FaYoutube, FaUser, FaLock, FaEye, FaEyeSlash, FaQuoteLeft, FaBars, FaCloudUploadAlt
 } from 'react-icons/fa'
 import logoImg from '../../assets/images/logo.jpeg'
 import AdminBannerManager from './components/AdminBannerManager'
 import AdminYajmanManager from './components/AdminYajmanManager'
 import OverviewTab from './components/OverviewTab'
+import SettingsTab from './components/SettingsTab'
+import LiveTab from './components/LiveTab'
 
 export default function Dashboard() {
   const {
@@ -336,8 +338,8 @@ export default function Dashboard() {
           {activeTab === 'Organizers' && <div className="p-4 sm:p-8"><OrganizersTab {...{ organizers, addOrganizer, updateOrganizer, deleteOrganizer }} /></div>}
           {activeTab === 'Gallery' && <div className="p-4 sm:p-8"><GalleryTab {...{ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVideo, deleteVideo }} /></div>}
           {activeTab === 'Contact' && <div className="p-4 sm:p-8"><ContactTab {...{ contacts, updateContacts }} /></div>}
-          {activeTab === 'Live' && <div className="p-4 sm:p-8"><h2 className="text-2xl font-bold">Live Katha Management (Coming Soon)</h2></div>}
-          {activeTab === 'Settings' && <div className="p-4 sm:p-8"><h2 className="text-2xl font-bold">Settings (Coming Soon)</h2></div>}
+          {activeTab === 'Live' && <div className="p-4 sm:p-8"><LiveTab /></div>}
+          {activeTab === 'Settings' && <div className="p-4 sm:p-8 h-full"><SettingsTab adminProfile={adminProfile} updateAdminProfile={updateAdminProfile} changeAdminPassword={changeAdminPassword} /></div>}
         </div>
       </main>
 
@@ -525,12 +527,26 @@ function ChangePasswordModal({ onClose, changeAdminPassword }) {
    ========================================================================= */
 function BookingsTab({ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings }) {
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [searchQuery, setSearchQuery] = React.useState('');
   const itemsPerPage = 10;
   
+  const filteredBookings = React.useMemo(() => {
+    if (!searchQuery.trim()) return bookings;
+    const term = searchQuery.toLowerCase();
+    return bookings.filter(b => 
+      (b.name || '').toLowerCase().includes(term) ||
+      (b.kathaType || '').toLowerCase().includes(term) ||
+      (b.state || '').toLowerCase().includes(term) ||
+      (b.city || '').toLowerCase().includes(term) ||
+      (b.village || '').toLowerCase().includes(term) ||
+      (b.pincode || '').toLowerCase().includes(term)
+    );
+  }, [bookings, searchQuery]);
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = bookings.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(bookings.length / itemsPerPage);
+  const currentItems = filteredBookings.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -555,7 +571,20 @@ function BookingsTab({ bookings, updateBookingStatus, deleteBooking, selectedBoo
       <div className="px-6 py-4 border-b border-[#FAF0E6] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h3 className="font-serif text-lg font-bold text-[#3D2B20]">Customer Booking Inquiries</h3>
-          <span className="text-xs text-[#3D2B20]/60">Total: {bookings.length} requests</span>
+          <span className="text-xs text-[#3D2B20]/60">Total: {filteredBookings.length} requests</span>
+        </div>
+        <div className="relative w-full sm:w-72">
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3D2B20]/40 text-sm" />
+          <input
+            type="text"
+            placeholder="Search by name, location, katha..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="w-full pl-9 pr-4 py-2 bg-[#FAF6F0]/50 border border-[#EAD8C8] rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#E05A10]/20 focus:border-[#E05A10] transition-all placeholder:text-[#3D2B20]/40"
+          />
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -737,6 +766,7 @@ function BannersTab({ banners, updateBanners }) {
 
   const handleSave = () => {
     updateBanners(list)
+    alert('होमपेज बैनर सफलतापूर्वक सहेज लिए गए हैं! (Homepage banners saved successfully!)');
     setSuccess(true)
     setTimeout(() => setSuccess(false), 2000)
   }
@@ -913,6 +943,13 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
   const [newTimeline, setNewTimeline] = useState({ year: '', title: '', desc: '' })
   const [success, setSuccess] = useState(false)
 
+  useEffect(() => {
+    setBio(about.bio || '')
+    setImage(about.image || '')
+    setName(about.name || '')
+    setStats(about.stats || [])
+  }, [about])
+
   const handleStatsChange = (idx, field, value) => {
     const newStats = [...stats]
     newStats[idx][field] = value
@@ -921,6 +958,7 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
 
   const handleSave = () => {
     updateAbout({ bio, image, name, stats })
+    alert('कथावाचक का परिचय सफलतापूर्वक सहेज लिया गया है! (About details saved successfully!)');
     setSuccess(true)
     setTimeout(() => setSuccess(false), 2000)
   }
@@ -1459,15 +1497,79 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
   const [photoPreview, setPhotoPreview] = useState('')
   const [photoSuccess, setPhotoSuccess] = useState(false)
 
+  // Pagination for Photos
+  const [currentPhotoPage, setCurrentPhotoPage] = useState(1)
+  const photosPerPage = 8
+  const indexOfLastPhoto = currentPhotoPage * photosPerPage
+  const indexOfFirstPhoto = indexOfLastPhoto - photosPerPage
+  const currentPhotos = galleryPhotos.slice(indexOfFirstPhoto, indexOfLastPhoto)
+  const totalPhotoPages = Math.ceil(galleryPhotos.length / photosPerPage) || 1
+
   // Video State
   const [videoTitle, setVideoTitle] = useState('')
   const [youtubeId, setYoutubeId] = useState('')
   const [videoSuccess, setVideoSuccess] = useState(false)
+  const [videoSearchQuery, setVideoSearchQuery] = useState('')
+  const [currentVideoPage, setCurrentVideoPage] = useState(1)
+
+  const bilingualMap = {
+    "ram": "राम", "राम": "ram",
+    "shiv": "शिव", "शिव": "shiv",
+    "katha": "कथा", "कथा": "katha",
+    "bhagvat": "भागवत", "भागवत": "bhagvat",
+    "bhagwat": "भागवत", "भागवत": "bhagwat",
+    "sundarkand": "सुंदरकांड", "सुंदरकांड": "sundarkand",
+    "krishna": "कृष्ण", "कृष्ण": "krishna",
+    "devi": "देवी", "देवी": "devi",
+    "bhajan": "भजन", "भजन": "bhajan",
+    "day": "दिन", "दिन": "day",
+    "shrimad": "श्रीमद्", "श्रीमद्": "shrimad"
+  };
+
+  const filteredVideos = galleryVideos.filter(vid => {
+    if (!videoSearchQuery) return true;
+    const q = videoSearchQuery.toLowerCase().trim();
+    const t = vid.title.toLowerCase();
+    
+    // Direct match
+    if (t.includes(q)) return true;
+
+    // Translated match (word by word)
+    const translatedQuery = q.split(' ').map(word => bilingualMap[word] || word).join(' ');
+    if (translatedQuery !== q && t.includes(translatedQuery)) return true;
+
+    return false;
+  });
+  const videosPerPage = 4
+  const indexOfLastVideo = currentVideoPage * videosPerPage
+  const indexOfFirstVideo = indexOfLastVideo - videosPerPage
+  const currentVideos = filteredVideos.slice(indexOfFirstVideo, indexOfLastVideo)
+  const totalVideoPages = Math.ceil(filteredVideos.length / videosPerPage) || 1
 
   const extractYoutubeId = (url) => {
-    const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=|live\/)([^#\&\?]*).*/;
+    if (!url) return null;
+    url = url.trim();
+    
+    // If they just pasted an 11-character ID
+    if (url.length === 11 && !url.includes('=')) {
+      return url;
+    }
+
+    // Comprehensive regex for YouTube URLs
+    const regExp = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=|live\/|shorts\/)|youtu\.be\/)([^"&?\/\s]{11})/i;
     const match = url.match(regExp);
-    return (match && match[2].length === 11) ? match[2] : url;
+    
+    if (match && match[1] && match[1].length === 11) {
+      return match[1];
+    }
+    
+    // Fallback: search for any 11-character alphanumeric string (plus - and _)
+    const fallbackMatch = url.match(/(?<![a-zA-Z0-9_-])([a-zA-Z0-9_-]{11})(?![a-zA-Z0-9_-])/);
+    if (fallbackMatch && fallbackMatch[1]) {
+      return fallbackMatch[1];
+    }
+    
+    return null;
   };
 
   const handleFileChange = (e) => {
@@ -1503,7 +1605,14 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
   const handleVideoSubmit = (e) => {
     e.preventDefault()
     if (!videoTitle || !youtubeId) return
-    addVideo({ title: videoTitle, videoId: extractYoutubeId(youtubeId) })
+    
+    const extractedId = extractYoutubeId(youtubeId);
+    if (!extractedId) {
+      alert("Invalid YouTube Link or ID! Please paste the full valid URL of the video (e.g. https://www.youtube.com/watch?v=R-709087yAw)");
+      return;
+    }
+
+    addVideo({ title: videoTitle, videoId: extractedId })
     setVideoTitle('')
     setYoutubeId('')
     setVideoSuccess(true)
@@ -1523,8 +1632,8 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
             <span className="text-xs text-[#3D2B20]/60">Total: {galleryPhotos.length} photos</span>
           </div>
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 max-h-[300px] overflow-y-auto pr-1">
-            {galleryPhotos.map((photo, idx) => (
+          <div className="grid grid-cols-3 sm:grid-cols-4 gap-4 pr-1">
+            {currentPhotos.map((photo, idx) => (
               <div key={idx} className="relative aspect-square rounded-xl border border-[#EAD8C8] overflow-hidden group shadow-sm">
                 <img src={photo.url} alt="Gallery Preview" className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-[#3D2B20]/70 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all">
@@ -1540,7 +1649,40 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
                 </div>
               </div>
             ))}
+            {currentPhotos.length === 0 && (
+              <div className="col-span-full py-8 text-center text-[#3D2B20]/40 text-xs">No photos available.</div>
+            )}
           </div>
+          
+          {totalPhotoPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-[#FAF0E6]">
+              <button
+                onClick={() => setCurrentPhotoPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPhotoPage === 1}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  currentPhotoPage === 1 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+                }`}
+              >
+                Previous
+              </button>
+              <span className="text-xs font-bold text-[#3D2B20]/60">
+                Page {currentPhotoPage} of {totalPhotoPages}
+              </span>
+              <button
+                onClick={() => setCurrentPhotoPage(prev => Math.min(prev + 1, totalPhotoPages))}
+                disabled={currentPhotoPage === totalPhotoPages}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  currentPhotoPage === totalPhotoPages 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 2. Videos Section */}
@@ -1550,8 +1692,25 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
             <span className="text-xs text-[#3D2B20]/60">Total: {galleryVideos.length} recorded streams</span>
           </div>
 
-          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
-            {galleryVideos.map((vid) => (
+          {/* Search Bar for Videos */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FaSearch className="text-[#3D2B20]/40" />
+            </div>
+            <input
+              type="text"
+              value={videoSearchQuery}
+              onChange={(e) => {
+                setVideoSearchQuery(e.target.value)
+                setCurrentVideoPage(1)
+              }}
+              placeholder="Search video by title..."
+              className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl pl-10 pr-4 py-2 outline-none font-medium text-xs transition-colors"
+            />
+          </div>
+
+          <div className="space-y-3 pr-1">
+            {currentVideos.map((vid) => (
               <div key={vid.id} className="flex items-center justify-between bg-[#FAF6F0] p-3 rounded-xl border border-[#EAD8C8] text-xs">
                 <div className="flex items-center space-x-3">
                   <div className="w-16 h-10 bg-black rounded overflow-hidden border border-[#EAD8C8] flex-shrink-0">
@@ -1573,7 +1732,40 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
                 </button>
               </div>
             ))}
+            {currentVideos.length === 0 && (
+              <div className="py-8 text-center text-[#3D2B20]/40 text-xs">No videos found.</div>
+            )}
           </div>
+          
+          {totalVideoPages > 1 && (
+            <div className="flex items-center justify-between pt-4 border-t border-[#FAF0E6]">
+              <button
+                onClick={() => setCurrentVideoPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentVideoPage === 1}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  currentVideoPage === 1 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+                }`}
+              >
+                Previous
+              </button>
+              <span className="text-xs font-bold text-[#3D2B20]/60">
+                Page {currentVideoPage} of {totalVideoPages}
+              </span>
+              <button
+                onClick={() => setCurrentVideoPage(prev => Math.min(prev + 1, totalVideoPages))}
+                disabled={currentVideoPage === totalVideoPages}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  currentVideoPage === totalVideoPages 
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
+                    : 'bg-[#FAF6F0] text-[#E05A10] hover:bg-[#E05A10] hover:text-white border border-[#EAD8C8]'
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
 
       </div>
@@ -1596,14 +1788,17 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
 
           <form onSubmit={handlePhotoSubmit} className="space-y-4 text-xs">
             <div className="space-y-2">
-              <label className="font-bold text-[#3D2B20]/75 block">Select Image File (चित्र फ़ाइल चुनें - JPG/PNG)</label>
+              <div className="flex items-center justify-between">
+                <label className="font-bold text-[#3D2B20]/75 block">Select Image File (चित्र फ़ाइल चुनें - JPG/PNG)</label>
+                <span className="text-[10px] text-[#E05A10] font-medium bg-[#E05A10]/10 px-2 py-0.5 rounded-full">Max Size: 5MB</span>
+              </div>
               <div className="flex items-center justify-center w-full">
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-[#EAD8C8] border-dashed rounded-xl cursor-pointer bg-[#FAF6F0] hover:bg-[#FAF0E6] transition-colors relative overflow-hidden group">
                   {photoPreview ? (
                     <img src={photoPreview} alt="Upload Preview" className="absolute inset-0 w-full h-full object-cover" />
                   ) : (
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <FaImage className="text-3xl text-[#E05A10] mb-2" />
+                      <FaCloudUploadAlt className="text-4xl text-[#E05A10] mb-2" />
                       <p className="text-[10px] text-[#3D2B20]/60 font-medium">Click to upload JPG or PNG image</p>
                       <p className="text-[8px] text-[#3D2B20]/45 mt-0.5">Maximum size: 5MB</p>
                     </div>
@@ -1675,16 +1870,16 @@ function GalleryTab({ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVi
             </div>
 
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">YouTube Video ID (वीडियो आईडी)</label>
+              <label className="font-bold text-[#3D2B20]/75 block">YouTube Link or ID (वीडियो लिंक या आईडी)</label>
               <input
                 type="text"
-                placeholder="e.g. R-709087yAw"
+                placeholder="e.g. https://www.youtube.com/watch?v=R-709087yAw"
                 value={youtubeId}
                 onChange={(e) => setYoutubeId(e.target.value)}
                 className="w-full bg-[#FAF6F0] border border-[#EAD8C8] rounded-xl p-3 outline-none"
                 required
               />
-              <span className="text-[10px] text-[#3D2B20]/45 block mt-1">The unique sequence of letters/numbers at the end of the video link URL.</span>
+              <span className="text-[10px] text-[#3D2B20]/45 block mt-1">Paste the full YouTube video link or just the Video ID. (आप यहाँ पूरा यूट्यूब लिंक पेस्ट कर सकते हैं)</span>
             </div>
 
             <button
@@ -1713,14 +1908,33 @@ function ContactTab({ contacts, updateContacts }) {
   const [youtube, setYoutube] = useState(contacts.youtube)
   const [instagram, setInstagram] = useState(contacts.instagram)
   const [announcement, setAnnouncement] = useState(contacts.announcement || '|| हरि: ॐ ||')
+  const [isAnnouncementActive, setIsAnnouncementActive] = useState(contacts.isAnnouncementActive ?? true)
   const [liveKathaLink, setLiveKathaLink] = useState(contacts.liveKathaLink || '')
   const [success, setSuccess] = useState(false)
 
-  const handleSave = (e) => {
+  useEffect(() => {
+    setPhone(contacts.phone || '')
+    setEmail(contacts.email || '')
+    setAddress(contacts.address || '')
+    setWhatsapp(contacts.whatsapp || '')
+    setFacebook(contacts.facebook || '')
+    setYoutube(contacts.youtube || '')
+    setInstagram(contacts.instagram || '')
+    setAnnouncement(contacts.announcement || '|| हरि: ॐ ||')
+    setIsAnnouncementActive(contacts.isAnnouncementActive ?? true)
+    setLiveKathaLink(contacts.liveKathaLink || '')
+  }, [contacts])
+
+  const handleSave = async (e) => {
     e.preventDefault()
-    updateContacts({ phone, email, address, whatsapp, facebook, youtube, instagram, announcement, liveKathaLink })
-    setSuccess(true)
-    setTimeout(() => setSuccess(false), 2000)
+    const result = await updateContacts({ phone, email, address, whatsapp, facebook, youtube, instagram, announcement, isAnnouncementActive, liveKathaLink })
+    if (result && result.success) {
+      alert('संपर्क विवरण सफलतापूर्वक सहेज लिया गया है! (Contact details saved successfully!)');
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 2000)
+    } else {
+      alert('त्रुटि (Error): ' + (result?.error || 'Unknown Error'));
+    }
   }
 
   return (
@@ -1739,14 +1953,29 @@ function ContactTab({ contacts, updateContacts }) {
       <form onSubmit={handleSave} className="space-y-6 text-xs">
         {/* Top Header Announcement */}
         <div className="space-y-1">
-          <label className="font-bold text-[#3D2B20]/75 block">Top Header Announcement Message (घोषणा पट्टी संदेश)</label>
+          <div className="flex items-center justify-between">
+            <label className="font-bold text-[#3D2B20]/75 block">Top Header Announcement Message (घोषणा पट्टी संदेश)</label>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs font-bold ${isAnnouncementActive ? 'text-green-600' : 'text-gray-400'}`}>
+                {isAnnouncementActive ? 'ON' : 'OFF'}
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsAnnouncementActive(!isAnnouncementActive)}
+                className={`w-12 h-6 rounded-full p-1 flex items-center transition-colors duration-300 ${isAnnouncementActive ? 'bg-green-500 justify-end' : 'bg-gray-300 justify-start'}`}
+              >
+                <div className="w-4 h-4 rounded-full bg-white shadow-sm" />
+              </button>
+            </div>
+          </div>
           <input
             type="text"
             value={announcement}
             onChange={(e) => setAnnouncement(e.target.value)}
-            className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 outline-none font-medium"
+            disabled={!isAnnouncementActive}
+            className={`w-full border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 outline-none font-medium ${isAnnouncementActive ? 'bg-[#FAF6F0]' : 'bg-gray-100 text-gray-400'}`}
             placeholder="e.g. || हरि: ॐ ||"
-            required
+            required={isAnnouncementActive}
           />
         </div>
 

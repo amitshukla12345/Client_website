@@ -43,9 +43,8 @@ const CustomCombobox = ({ value, onChange, placeholder, options = [], maxLength 
           type="text"
           value={value} 
           onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setIsOpen(true)}
           maxLength={maxLength}
-          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all bg-white pr-10"
+          className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all bg-[#FAF6F0] pr-10"
           placeholder={placeholder}
         />
         <button 
@@ -109,6 +108,40 @@ const SUBTITLE_OPTIONS = [
   'धर्म और अध्यात्म',
   'मोक्ष दायिनी कथा',
   'कल्याणकारी प्रवचन'
+];
+
+const KATHA_DAY_OPTIONS = [
+  'Day 1',
+  'Day 2',
+  'Day 3',
+  'Day 4',
+  'Day 5',
+  'Day 6',
+  'Day 7',
+  'Day 8',
+  'Day 9',
+  'Day 10'
+];
+
+const TIME_OPTIONS = [
+  '08:00 AM',
+  '09:00 AM',
+  '10:00 AM',
+  '11:00 AM',
+  '12:00 PM',
+  '01:00 PM',
+  '02:00 PM',
+  '03:00 PM',
+  '04:00 PM',
+  '05:00 PM',
+  '06:00 PM',
+  '07:00 PM',
+  '08:00 PM'
+];
+
+const DATE_OPTIONS = [
+  'To be announced',
+  'Upcoming Month'
 ];
 
 // Segmented Control (Alignments)
@@ -228,7 +261,7 @@ export default function AdminBannerManager() {
     // Exclude isExpanded from saved state
     const cleanBanners = localBanners.map(({ isExpanded, ...rest }) => rest);
     if(updateBanners) updateBanners(cleanBanners);
-    alert("Banners Saved Successfully!");
+    alert("बैनर सफलतापूर्वक सेव कर लिए गए हैं! (Banners Saved Successfully!)");
   }
 
   return (
@@ -427,14 +460,20 @@ export default function AdminBannerManager() {
                                 <span>Current Katha Day (Optional)</span>
                                 <span className="text-xs font-normal text-gray-400">{(banner.kathaDay || '').length}/50</span>
                               </label>
-                              <input type="text" maxLength="50" value={banner.kathaDay || ''} onChange={e => handleUpdate(banner.id, 'kathaDay', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all" placeholder="e.g. Day 1" />
+                              <CustomCombobox 
+                                value={banner.kathaDay || ''} 
+                                onChange={val => handleUpdate(banner.id, 'kathaDay', val)}
+                                placeholder="e.g. Day 1"
+                                options={KATHA_DAY_OPTIONS}
+                                maxLength={50}
+                              />
                             </div>
                             <div>
                               <label className="flex justify-between text-sm font-semibold text-gray-700 mb-1.5">
                                 <span>Today's Prasang (Optional)</span>
                                 <span className="text-xs font-normal text-gray-400">{(banner.prasang || '').length}/255</span>
                               </label>
-                              <input type="text" maxLength="255" value={banner.prasang || ''} onChange={e => handleUpdate(banner.id, 'prasang', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all" placeholder="e.g. श्री राम जन्म" />
+                              <input type="text" maxLength="255" value={banner.prasang || ''} onChange={e => handleUpdate(banner.id, 'prasang', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all bg-[#FAF6F0]" placeholder="e.g. श्री राम जन्म" />
                             </div>
 
                             <div>
@@ -442,14 +481,62 @@ export default function AdminBannerManager() {
                                 <span>Event Date</span>
                                 <span className="text-xs font-normal text-gray-400">{(banner.date || '').length}/100</span>
                               </label>
-                              <input type="text" maxLength="100" value={banner.date || ''} onChange={e => handleUpdate(banner.id, 'date', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all" placeholder="e.g. 15th August 2026" />
+                              <div className="flex gap-2">
+                                <div className="flex-1">
+                                  <CustomCombobox 
+                                    value={banner.date || ''} 
+                                    onChange={val => handleUpdate(banner.id, 'date', val)}
+                                    placeholder="e.g. 15 August 2026"
+                                    options={DATE_OPTIONS}
+                                    maxLength={100}
+                                  />
+                                </div>
+                                <div className="relative group">
+                                  <input 
+                                    type="date" 
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    onChange={(e) => {
+                                      if (e.target.value) {
+                                        const d = new Date(e.target.value);
+                                        const eng = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+                                        handleUpdate(banner.id, 'date', eng);
+                                      }
+                                    }}
+                                  />
+                                  <button type="button" className="h-full px-3 bg-gray-100 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center font-bold text-xs" title="Select Date (English)">
+                                    EN 📅
+                                  </button>
+                                </div>
+                                <div className="relative group">
+                                  <input 
+                                    type="date" 
+                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                    onChange={(e) => {
+                                      if (e.target.value) {
+                                        const d = new Date(e.target.value);
+                                        const hi = d.toLocaleDateString('hi-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+                                        handleUpdate(banner.id, 'date', hi);
+                                      }
+                                    }}
+                                  />
+                                  <button type="button" className="h-full px-3 bg-gray-100 border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center font-bold text-xs" title="Select Date (Hindi)">
+                                    HI 📅
+                                  </button>
+                                </div>
+                              </div>
                             </div>
                             <div>
                               <label className="flex justify-between text-sm font-semibold text-gray-700 mb-1.5">
                                 <span>Event Time</span>
                                 <span className="text-xs font-normal text-gray-400">{(banner.time || '').length}/100</span>
                               </label>
-                              <input type="text" maxLength="100" value={banner.time || ''} onChange={e => handleUpdate(banner.id, 'time', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all" placeholder="e.g. 4:00 PM - 7:00 PM" />
+                              <CustomCombobox 
+                                value={banner.time || ''} 
+                                onChange={val => handleUpdate(banner.id, 'time', val)}
+                                placeholder="e.g. 4:00 PM"
+                                options={TIME_OPTIONS}
+                                maxLength={100}
+                              />
                             </div>
 
                             <div className="md:col-span-2">
@@ -457,7 +544,7 @@ export default function AdminBannerManager() {
                                 <span>Venue / Location</span>
                                 <span className="text-xs font-normal text-gray-400">{(banner.venue || '').length}/255</span>
                               </label>
-                              <input type="text" maxLength="255" value={banner.venue || ''} onChange={e => handleUpdate(banner.id, 'venue', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all" placeholder="e.g. Haridwar, Uttarakhand" />
+                              <input type="text" maxLength="255" value={banner.venue || ''} onChange={e => handleUpdate(banner.id, 'venue', e.target.value)} className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-saffron/20 focus:border-saffron outline-none transition-all bg-[#FAF6F0]" placeholder="e.g. Haridwar, Uttarakhand" />
                             </div>
                           </div>
 
@@ -468,16 +555,16 @@ export default function AdminBannerManager() {
                                 <span className="font-semibold text-gray-800">Primary Button</span>
                                 <span className={`text-xs px-2 py-1 rounded-md ${banner.enableBook ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>{banner.enableBook ? 'Enabled' : 'Disabled'}</span>
                               </div>
-                              <input type="text" value={banner.btn1Text || ''} onChange={e => handleUpdate(banner.id, 'btn1Text', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Button Text (e.g. Book Katha)" />
-                              <input type="text" value={banner.btn1Url || ''} onChange={e => handleUpdate(banner.id, 'btn1Url', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm" placeholder="URL (e.g. /book)" />
+                              <input type="text" value={banner.btn1Text || ''} onChange={e => handleUpdate(banner.id, 'btn1Text', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm bg-[#FAF6F0]" placeholder="Button Text (e.g. Book Katha)" />
+                              <input type="text" value={banner.btn1Url || ''} onChange={e => handleUpdate(banner.id, 'btn1Url', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm bg-[#FAF6F0]" placeholder="URL (e.g. /book)" />
                             </div>
                             <div className="space-y-4 bg-white p-5 rounded-xl border border-gray-100 shadow-sm">
                                <div className="flex justify-between items-center mb-2">
                                 <span className="font-semibold text-gray-800">Secondary Button</span>
                                 <span className={`text-xs px-2 py-1 rounded-md ${banner.enableLive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>{banner.enableLive ? 'Enabled' : 'Disabled'}</span>
                               </div>
-                              <input type="text" value={banner.btn2Text || ''} onChange={e => handleUpdate(banner.id, 'btn2Text', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm" placeholder="Button Text (e.g. Watch Live)" />
-                              <input type="text" value={banner.btn2Url || ''} onChange={e => handleUpdate(banner.id, 'btn2Url', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm" placeholder="URL (e.g. /live)" />
+                              <input type="text" value={banner.btn2Text || ''} onChange={e => handleUpdate(banner.id, 'btn2Text', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm bg-[#FAF6F0]" placeholder="Button Text (e.g. Watch Live)" />
+                              <input type="text" value={banner.btn2Url || ''} onChange={e => handleUpdate(banner.id, 'btn2Url', e.target.value)} className="w-full px-4 py-2 rounded-lg border border-gray-200 text-sm bg-[#FAF6F0]" placeholder="URL (e.g. /live)" />
                             </div>
                           </div>
 

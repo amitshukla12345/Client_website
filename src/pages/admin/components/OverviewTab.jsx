@@ -73,7 +73,8 @@ export default function OverviewTab({ bookings, events, galleryPhotos, galleryVi
     const typeCounts = {}
     bookings.forEach(b => {
       if (b.kathaType) {
-        typeCounts[b.kathaType] = (typeCounts[b.kathaType] || 0) + 1
+        const normalizedType = b.kathaType.split(' (')[0].trim()
+        typeCounts[normalizedType] = (typeCounts[normalizedType] || 0) + 1
       }
     })
     
@@ -284,7 +285,7 @@ export default function OverviewTab({ bookings, events, galleryPhotos, galleryVi
                     <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }}></span>
                     <span className="text-gray-600 font-medium truncate" title={item.name}>{item.name}</span>
                   </div>
-                  <span className="font-bold text-[#3D2B20]">{totalBookings > 0 ? Math.round((item.value / totalBookings) * 100) : 0}%</span>
+                  <span className="font-bold text-[#3D2B20]">{item.value} <span className="text-gray-400 font-normal ml-1">({totalBookings > 0 ? Math.round((item.value / totalBookings) * 100) : 0}%)</span></span>
                 </div>
               ))}
             </div>
@@ -321,18 +322,28 @@ export default function OverviewTab({ bookings, events, galleryPhotos, galleryVi
         {/* Recent Activity Timeline */}
         <motion.div variants={itemVariants} className="lg:col-span-4 bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm">
           <h3 className="font-serif text-lg font-bold text-[#3D2B20] mb-4 border-b border-[#FAF0E6] pb-3">Recent Bookings Activity</h3>
-          <div className="space-y-5 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
+          <div className="space-y-5 relative before:absolute before:inset-0 before:ml-2 before:-translate-x-px before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-gray-200 before:to-transparent">
             
             {(() => {
               const recentActivities = [...bookings]
                 .filter(b => b.createdAt)
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .sort((a, b) => {
+                  const dateDiff = new Date(b.createdAt) - new Date(a.createdAt);
+                  if (dateDiff !== 0) return dateDiff;
+                  return (b.id || 0) - (a.id || 0);
+                })
                 .slice(0, 4);
 
               const getRelativeTime = (dateStr) => {
                 const d = new Date(dateStr);
                 if (isNaN(d)) return '';
-                const diff = Math.floor((new Date() - d) / 1000);
+                
+                const today = new Date();
+                if (d.toDateString() === today.toDateString()) {
+                  return 'Today';
+                }
+                
+                const diff = Math.floor((today - d) / 1000);
                 if (diff < 60) return `${diff || 1}s ago`;
                 if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
                 if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
@@ -346,9 +357,9 @@ export default function OverviewTab({ bookings, events, galleryPhotos, galleryVi
               }
 
               return recentActivities.map((act, idx) => (
-                <div key={act.id || idx} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                  <div className={`flex items-center justify-center w-4 h-4 rounded-full border-2 border-white ${colors[idx % colors.length]} shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10`}></div>
-                  <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] text-xs font-medium">
+                <div key={act.id || idx} className="relative flex items-start group is-active">
+                  <div className={`flex items-center justify-center w-4 h-4 rounded-full border-2 border-white ${colors[idx % colors.length]} shadow shrink-0 z-10 mt-0.5`}></div>
+                  <div className="w-full ml-4 text-xs font-medium">
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-bold text-[#3D2B20]">New booking received</span>
                       <span className="text-[10px] text-gray-400">{getRelativeTime(act.createdAt)}</span>

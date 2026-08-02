@@ -38,13 +38,13 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center space-x-3 pt-2">
-              <a href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-red-600 hover:text-white flex items-center justify-center text-gold transition-all duration-300 hover:-translate-y-1 border border-gold/20" aria-label="YouTube">
+              <a href={contacts?.youtube || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-red-600 hover:text-white flex items-center justify-center text-gold transition-all duration-300 hover:-translate-y-1 border border-gold/20" aria-label="YouTube">
                 <FaYoutube className="text-lg" />
               </a>
-              <a href="https://www.facebook.com/share/1HLEzxvCT3/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-blue-600 hover:text-white flex items-center justify-center text-gold transition-all duration-300 hover:-translate-y-1 border border-gold/20" aria-label="Facebook">
+              <a href={contacts?.facebook || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-blue-600 hover:text-white flex items-center justify-center text-gold transition-all duration-300 hover:-translate-y-1 border border-gold/20" aria-label="Facebook">
                 <FaFacebookF className="text-md" />
               </a>
-              <a href="https://swamiraghavacharyaji.in/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-pink-600 hover:text-white flex items-center justify-center text-gold transition-all duration-300 hover:-translate-y-1 border border-gold/20" aria-label="Instagram">
+              <a href={contacts?.instagram || '#'} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-pink-600 hover:text-white flex items-center justify-center text-gold transition-all duration-300 hover:-translate-y-1 border border-gold/20" aria-label="Instagram">
                 <FaInstagram className="text-lg" />
               </a>
               <a href={contacts?.whatsapp?.startsWith('http') ? contacts.whatsapp : `https://wa.me/${contacts?.whatsapp?.replace(/[^\d]/g, '') || ''}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/5 hover:bg-green-600 hover:text-white flex items-center justify-center text-gold transition-all duration-300 hover:-translate-y-1 border border-gold/20" aria-label="WhatsApp">
