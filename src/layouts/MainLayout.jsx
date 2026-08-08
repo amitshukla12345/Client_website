@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaWhatsapp, FaArrowUp } from 'react-icons/fa'
+import { FaWhatsapp, FaArrowUp, FaBullhorn } from 'react-icons/fa'
 import { useLocation } from 'react-router-dom'
 import useScrollToTop from '../hooks/useScrollToTop'
+import { AppContext } from '../context/AppContext'
 
 export default function MainLayout({ children }) {
   const [showBackToTop, setShowBackToTop] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const location = useLocation()
   const isAdminPage = location.pathname.startsWith('/admin')
+  const { contacts } = useContext(AppContext)
 
   // Use scroll restoration hook
   useScrollToTop()
@@ -82,6 +84,25 @@ export default function MainLayout({ children }) {
         )}
       </AnimatePresence>
 
+      {/* Global Announcement Banner */}
+      <AnimatePresence>
+        {!isAdminPage && contacts?.isAnnouncementActive && contacts?.announcement && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-gradient-to-r from-saffron to-[#c94d0d] text-white w-full z-50 relative shadow-sm"
+          >
+            <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 flex items-center justify-center space-x-3 overflow-hidden">
+              <FaBullhorn className="text-white/80 flex-shrink-0 animate-pulse" />
+              <div className="text-xs sm:text-sm font-medium tracking-wide whitespace-nowrap overflow-hidden relative w-full flex items-center justify-center">
+                <span className="marquee-text-centered text-center w-full px-4">{contacts.announcement}</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Main Navigation */}
       <Navbar />
 
@@ -104,7 +125,7 @@ export default function MainLayout({ children }) {
       <Footer />
 
       {/* Floating Action Buttons Container */}
-      <div className="fixed bottom-6 right-6 z-40 flex flex-col space-y-3">
+      <div className="fixed bottom-6 right-4 sm:right-6 z-40 flex flex-col space-y-3 sm:space-y-4">
         {/* Back To Top Button */}
         <AnimatePresence>
           {showBackToTop && (
@@ -113,10 +134,10 @@ export default function MainLayout({ children }) {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0, opacity: 0 }}
               onClick={scrollToTop}
-              className="w-12 h-12 rounded-full bg-gold-dark text-white flex items-center justify-center shadow-gold-glow hover:bg-gold hover:-translate-y-1 transition-all duration-300 group border border-gold-light/20"
+              className="w-[44px] h-[44px] sm:w-[50px] sm:h-[50px] rounded-full bg-[#E05A10] text-white flex items-center justify-center shadow-md hover:bg-[#c74c0b] hover:-translate-y-1 transition-all duration-200 group border-2 border-[#D4AF37]/30"
               aria-label="Back to Top"
             >
-              <FaArrowUp className="text-lg group-hover:scale-110 transition-transform" />
+              <FaArrowUp className="text-sm sm:text-base group-hover:-translate-y-0.5 transition-transform" />
             </motion.button>
           )}
         </AnimatePresence>
@@ -126,14 +147,13 @@ export default function MainLayout({ children }) {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          href="https://wa.me/919876543210?text=Radhe%20Radhe!%20I%20want%20to%20inquire%20about%20booking%20a%20Katha."
+          href={contacts?.whatsapp ? `https://wa.me/${contacts.whatsapp.replace(/[^\d]/g, '')}?text=Radhe%20Radhe!%20I%20want%20to%20inquire%20about%20booking%20a%20Katha.` : "https://wa.me/918960292928?text=Radhe%20Radhe!"}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center shadow-lg hover:bg-green-600 hover:-translate-y-1 transition-all duration-300 animate-bounce"
-          style={{ animationDuration: '3s' }}
+          className="w-[44px] h-[44px] sm:w-[50px] sm:h-[50px] rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-md hover:bg-[#128C7E] hover:-translate-y-1 transition-all duration-200"
           aria-label="Contact on WhatsApp"
         >
-          <FaWhatsapp className="text-2xl" />
+          <FaWhatsapp className="text-[22px] sm:text-[26px]" />
         </motion.a>
       </div>
     </div>

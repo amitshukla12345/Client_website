@@ -346,9 +346,9 @@ export default function About() {
           </div>
         </section>
 
-        {/* NEW 3-COLUMN SECTION: Services, Values, Locations */}
-        <section className="relative w-full pb-12 pt-8 z-10 font-sans border-b border-gold/10">
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* NEW 2-COLUMN SECTION: Services & Values */}
+        <section className="relative w-full pb-8 pt-8 z-10 font-sans">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-8">
             
             {/* Box 1: हमारी सेवाएं (Our Services) */}
             <div className="bg-[#FFFDF7] rounded-[2rem] p-8 lg:p-10 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex flex-col justify-between group">
@@ -402,63 +402,129 @@ export default function About() {
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
-            {/* Box 3: कथा कहाँ-कहाँ (Locations) */}
-            <div className="bg-[#FFFDF7] rounded-[2rem] p-8 lg:p-10 border border-[#F2E5D5] shadow-[0_8px_30px_rgba(224,90,16,0.05)] flex flex-col justify-between overflow-hidden relative">
-              <div className="relative z-10">
-                <h4 className="text-[#8A2900] font-bold text-[19px] md:text-[22px] mb-8 flex items-center gap-2">
-                   <GiLotus className="text-[#E05A10]" /> कथा कहाँ-कहाँ
-                </h4>
-                <div className="flex flex-col md:flex-row gap-6 mb-8 items-center">
-                  {/* Map Area */}
-                  <div className="flex-1 relative w-full min-h-[220px] md:min-h-[260px] max-w-[220px] aspect-[4/5] mx-auto flex items-center justify-center">
+        {/* Custom Infographic Section: कथा कहाँ-कहाँ */}
+        <section className="relative w-full pb-12 pt-4 z-10 font-sans">
+          <div className="max-w-[1000px] mx-auto px-4 sm:px-6">
+            <div className="bg-[#FFF9F0] rounded-[2rem] border-[2px] border-[#EAD8C8] shadow-[0_15px_40px_rgba(224,90,16,0.08)] overflow-hidden p-6 md:p-8 relative">
+              
+              {/* Decorative top ornaments */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-[#D35400] to-transparent opacity-50"></div>
+              
+              {/* Header */}
+              <div className="text-center mb-8">
+                <h2 className="text-[#8A2900] text-xl md:text-[28px] font-black leading-tight drop-shadow-sm mb-2">
+                  गुरुजी सम्पूर्ण भारत के सभी राज्यों में <br className="hidden md:block"/> कथा कह चुके हैं
+                </h2>
+                <div className="flex items-center justify-center gap-3 mb-2">
+                  <div className="h-[1px] w-8 bg-[#D4AF37]/50"></div>
+                  <GiLotus className="text-[#E05A10] text-base" />
+                  <div className="h-[1px] w-8 bg-[#D4AF37]/50"></div>
+                </div>
+                <p className="text-[#5C4033] font-bold text-[13px] md:text-sm">
+                  इन राज्यों में सर्वाधिक श्रीमद्भागवत एवं अन्य दिव्य कथाओं का आयोजन सम्पन्न हुआ है।
+                </p>
+              </div>
+
+              {/* Main Content: Map & Chart */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center relative z-10">
+                
+                {/* Left: Map of India */}
+                <div className="lg:col-span-5 relative flex justify-center items-center">
+                  <div className="relative w-full max-w-[300px] aspect-[4/5]">
                     <img 
                       src="/images/india_map.svg" 
                       alt="India Map" 
-                      className="absolute inset-0 w-full h-full object-contain drop-shadow-sm transition-transform hover:scale-105 duration-700" 
+                      className="absolute inset-0 w-full h-full object-contain opacity-80 mix-blend-multiply drop-shadow-md" 
                     />
                     
-                    {/* Green Map Pins covering all states */}
+                    {/* State Pins (Approximate Positions) */}
                     {[
-                      {t: '10%', l: '32%'}, {t: '20%', l: '38%'}, {t: '28%', l: '28%'}, {t: '32%', l: '34%'},
-                      {t: '40%', l: '18%'}, {t: '45%', l: '25%'}, {t: '52%', l: '10%'}, {t: '58%', l: '18%'},
-                      {t: '38%', l: '45%'}, {t: '42%', l: '55%'}, {t: '45%', l: '65%'}, {t: '55%', l: '75%'},
-                      {t: '65%', l: '68%'}, {t: '55%', l: '40%'}, {t: '58%', l: '50%'}, {t: '62%', l: '58%'},
-                      {t: '68%', l: '25%'}, {t: '65%', l: '35%'}, {t: '70%', l: '45%'}, {t: '75%', l: '52%'},
-                      {t: '80%', l: '32%'}, {t: '85%', l: '38%'}, {t: '92%', l: '40%'}, {t: '90%', l: '48%'},
-                      {t: '85%', l: '45%'}, {t: '42%', l: '85%'}, {t: '38%', l: '92%'}
+                      { state: 'UP', t: '38%', l: '45%' }, // UP
+                      { state: 'MP', t: '52%', l: '40%' }, // MP
+                      { state: 'RJ', t: '42%', l: '25%' }, // Rajasthan
+                      { state: 'MH', t: '65%', l: '28%' }, // Maharashtra
+                      { state: 'GJ', t: '52%', l: '12%' }, // Gujarat
+                      { state: 'JH', t: '50%', l: '60%' }, // Jharkhand
+                      { state: 'CG', t: '58%', l: '52%' }, // Chhattisgarh
+                      { state: 'OD', t: '65%', l: '65%' }, // Odisha
                     ].map((pos, i) => (
-                      <svg 
-                        key={i}
-                        viewBox="0 0 24 24" 
-                        className="absolute text-[#22A849] drop-shadow-md w-[14px] h-[14px] md:w-[16px] md:h-[16px] hover:scale-150 transition-transform duration-300 origin-bottom cursor-pointer" 
-                        style={{top: pos.t, left: pos.l}} 
-                        fill="currentColor"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path fillRule="evenodd" clipRule="evenodd" d="M12 2C8.134 2 5 5.134 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.866-3.134-7-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z" />
-                      </svg>
-                    ))}
-                  </div>
-                  
-                  {/* States List */}
-                  <div className="w-full md:w-[140px] flex flex-col gap-3 shrink-0">
-                    {[
-                      'उत्तर प्रदेश', 'मध्य प्रदेश', 'महाराष्ट्र', 'राजस्थान', 'गुजरात', 'बिहार', 'छत्तीसगढ़', 'उत्तराखंड', 'और अन्य राज्य'
-                    ].map((state, idx) => (
-                      <div key={idx} className="flex items-center gap-2.5">
-                        <GiLotus className="text-[#D35400] text-[12px] shrink-0" />
-                        <span className="text-[12.5px] font-bold text-[#5C4033]">{state}</span>
+                      <div key={i} className="absolute flex flex-col items-center justify-center transform -translate-x-1/2 -translate-y-1/2 group" style={{top: pos.t, left: pos.l}}>
+                        <div className="bg-[#D35400] text-white p-1 rounded-full shadow-md animate-bounce group-hover:scale-125 transition-transform" style={{animationDelay: `${i * 0.15}s`, animationDuration: '2s'}}>
+                          <FaMapMarkerAlt className="text-[10px]" />
+                        </div>
+                        <div className="w-1.5 h-1.5 bg-[#8A2900]/30 rounded-full mt-0.5 blur-[1px]"></div>
                       </div>
                     ))}
                   </div>
                 </div>
-              </div>
-              <button className="bg-[#D35400] text-white px-8 py-3.5 rounded-xl font-bold w-fit mx-auto hover:bg-[#BA4A00] transition-colors shadow-md text-sm mt-auto relative z-10">
-                सभी वीडियो देखें
-              </button>
-            </div>
 
+                {/* Right: Bar Chart */}
+                <div className="lg:col-span-7 flex flex-col gap-4">
+                  <div className="bg-white border border-[#EAD8C8] rounded-xl p-5 md:p-6 shadow-sm">
+                    <div className="flex items-center gap-2.5 mb-5">
+                      <FaScroll className="text-[#D35400] text-lg" />
+                      <h3 className="text-[#8A2900] font-bold text-base md:text-lg border-b-2 border-[#D4AF37]/40 pb-0.5 inline-block">
+                        सर्वाधिक कथा सम्पन्न राज्य
+                      </h3>
+                    </div>
+
+                    <div className="flex flex-col gap-3">
+                      {[
+                        { rank: 1, name: 'उत्तर प्रदेश', count: '120+', width: '100%', color: 'from-[#C0392B] to-[#E74C3C]' },
+                        { rank: 2, name: 'मध्य प्रदेश', count: '95+', width: '85%', color: 'from-[#D35400] to-[#E67E22]' },
+                        { rank: 3, name: 'राजस्थान', count: '80+', width: '75%', color: 'from-[#E67E22] to-[#F39C12]' },
+                        { rank: 4, name: 'महाराष्ट्र (मुंबई)', count: '75+', width: '70%', color: 'from-[#F39C12] to-[#F1C40F]' },
+                        { rank: 5, name: 'गुजरात', count: '60+', width: '55%', color: 'from-[#F1C40F] to-[#F4D03F]' },
+                        { rank: 6, name: 'झारखंड', count: '45+', width: '45%', color: 'from-[#D4AF37] to-[#F5E6D3]' },
+                        { rank: 7, name: 'छत्तीसगढ़', count: '40+', width: '40%', color: 'from-[#EAD8C8] to-[#FFF6E9]' },
+                        { rank: 8, name: 'ओडिशा', count: '35+', width: '35%', color: 'from-[#EAD8C8] to-[#FFF6E9]' },
+                      ].map((state, idx) => (
+                        <div key={idx} className="flex items-center gap-3 group">
+                          {/* Rank Badge */}
+                          <div className={`w-6 h-6 md:w-7 md:h-7 rounded-full border-2 flex items-center justify-center shrink-0 shadow-sm font-bold text-xs
+                            ${state.rank <= 3 ? 'border-[#D4AF37] bg-gradient-to-br from-[#FFF9F0] to-[#F9E79F] text-[#8A2900]' 
+                                              : 'border-[#EAD8C8] bg-white text-[#5C4033]'}`}>
+                            {state.rank}
+                          </div>
+                          
+                          {/* State Name */}
+                          <div className="w-24 md:w-28 shrink-0">
+                            <span className="text-[#5C4033] font-bold text-[12px] md:text-[13px] group-hover:text-[#D35400] transition-colors">{state.name}</span>
+                          </div>
+
+                          {/* Progress Bar & Count */}
+                          <div className="flex-1 flex items-center gap-2">
+                            <div className="flex-1 bg-[#F5E6D3]/50 h-2.5 md:h-3 rounded-full overflow-hidden shadow-inner border border-[#EAD8C8]/50">
+                              <div 
+                                className={`h-full rounded-full bg-gradient-to-r ${state.color} shadow-sm group-hover:brightness-110 transition-all duration-500`} 
+                                style={{ width: state.width }}
+                              ></div>
+                            </div>
+                            <div className="w-8 md:w-10 shrink-0 text-right">
+                              <span className="text-[#8A2900] font-black text-[12px] md:text-[13.5px]">{state.count}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Quote */}
+              <div className="mt-8 text-center max-w-xl mx-auto px-2 relative z-10">
+                <p className="text-[#8A2900] font-serif font-bold italic text-[13px] md:text-sm leading-relaxed relative inline-block">
+                  <span className="text-[#D4AF37] text-xl absolute -top-1.5 -left-3">“</span>
+                  जहां जहां कथा हुई है, वहां वहां ईश्वर की कृपा, शांति और आनंद की अनुभूति हुई है।
+                  <span className="text-[#D4AF37] text-xl absolute -bottom-3 -right-3">”</span>
+                </p>
+              </div>
+
+            </div>
           </div>
         </section>
 

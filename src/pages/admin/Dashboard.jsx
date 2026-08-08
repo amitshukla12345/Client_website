@@ -9,7 +9,8 @@ import CustomCalendar from '../../components/CustomCalendar'
 import { 
   FaSignOutAlt, FaBookOpen, FaImages, FaUserEdit, FaCalendarPlus, FaCalendarAlt, FaUsers,
   FaInfoCircle, FaClipboardList, FaCheck, FaTimes, FaTrash, FaPlus, FaChevronDown, FaSearch, FaBell,
-  FaLink, FaSave, FaExternalLinkAlt, FaImage, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaGlobe, FaYoutube, FaUser, FaLock, FaEye, FaEyeSlash, FaQuoteLeft, FaBars, FaCloudUploadAlt
+  FaLink, FaSave, FaExternalLinkAlt, FaImage, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaGlobe, FaYoutube, FaUser, FaLock, FaEye, FaEyeSlash, FaQuoteLeft, FaBars, FaCloudUploadAlt,
+  FaHome, FaUserCircle, FaCalendarDay, FaPlayCircle, FaCog
 } from 'react-icons/fa'
 import logoImg from '../../assets/images/logo.jpeg'
 import AdminBannerManager from './components/AdminBannerManager'
@@ -32,7 +33,8 @@ export default function Dashboard() {
     bookings, updateBookingStatus, deleteBooking,
     organizers, addOrganizer, updateOrganizer, deleteOrganizer,
     calendarDates, addCalendarDate, deleteCalendarDate,
-    adminProfile, updateAdminProfile, changeAdminPassword
+    adminProfile, updateAdminProfile, changeAdminPassword,
+    liveSettings
   } = useContext(AppContext)
 
   const navigate = useNavigate()
@@ -43,8 +45,24 @@ export default function Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)
+  const [prefillEventData, setPrefillEventData] = useState(null)
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
 
-  const pendingBookingsCount = bookings?.filter(b => b.status === 'Pending')?.length || 0
+  const pendingBookings = bookings?.filter(b => b.status === 'Pending') || []
+  const pendingBookingsCount = pendingBookings.length
+
+  const headerMapping = {
+    'Overview': { title: 'OVERVIEW DASHBOARD', subtitle: 'Manage details and bookings for the spiritual website' },
+    'Bookings': { title: 'BOOKINGS', subtitle: 'Manage incoming Katha booking requests' },
+    'Yajman': { title: 'YAJMAN MANAGEMENT', subtitle: 'Manage Yajman and devotee information' },
+    'Banners': { title: 'HERO BANNERS', subtitle: 'Manage homepage hero banners and slider content' },
+    'Biography': { title: 'GURU BIOGRAPHY', subtitle: 'Manage Guru Ji biography and profile information' },
+    'Events': { title: 'UPCOMING EVENTS', subtitle: 'Manage and publish upcoming Katha events' },
+    'Gallery': { title: 'GALLERY', subtitle: 'Manage website gallery images' },
+    'Live': { title: 'LIVE KATHA', subtitle: 'Manage live Katha streaming information' },
+    'Contact': { title: 'CONTACT & NOTICE', subtitle: 'Manage contact messages and website notices' },
+    'Settings': { title: 'SETTINGS', subtitle: 'Manage administrator and website settings' }
+  };
 
   const handleBulkDelete = () => {
     if (window.confirm(`Are you sure you want to delete ${selectedBookings.length} selected booking(s)?`)) {
@@ -97,6 +115,39 @@ export default function Dashboard() {
 
   if (!isAdminLoggedIn) return null
 
+  const navGroups = [
+    {
+      title: 'MAIN',
+      items: [
+        { id: 'Overview', label: 'Overview', icon: FaHome },
+        { id: 'Bookings', label: 'Bookings', icon: FaClipboardList, badge: bookings?.filter(b => b.status === 'Pending').length || 0 },
+        { id: 'Yajman', label: 'Yajman Management', icon: FaUsers },
+      ]
+    },
+    {
+      title: 'CONTENT',
+      items: [
+        { id: 'Banners', label: 'Home Banner', icon: FaImages },
+        { id: 'Biography', label: 'Guru Biography', icon: FaUserCircle },
+        { id: 'Events', label: 'Upcoming Events', icon: FaCalendarDay, badge: events?.length || 0 },
+        { id: 'Gallery', label: 'Gallery', icon: FaImage },
+        { id: 'Live', label: 'Live Katha', icon: FaPlayCircle, isLiveIndicator: liveSettings?.isLive },
+      ]
+    },
+    {
+      title: 'COMMUNICATION',
+      items: [
+        { id: 'Contact', label: 'Contact & Notice', icon: FaGlobe },
+      ]
+    },
+    {
+      title: 'SYSTEM',
+      items: [
+        { id: 'Settings', label: 'Settings', icon: FaCog }
+      ]
+    }
+  ]
+
   return (
     <div className="flex h-screen bg-[#F3F4F6] text-[#3D2B20] font-sans overflow-hidden">
       {/* Mobile Backdrop */}
@@ -108,28 +159,28 @@ export default function Dashboard() {
       )}
       
       {/* 1. SIDEBAR */}
-      <aside className={`fixed md:relative top-0 left-0 h-full ${isSidebarCollapsed ? 'w-20' : 'w-full sm:w-64'} transition-all duration-300 bg-white border-r border-[#EAD8C8] flex flex-col justify-between flex-shrink-0 z-50 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-        {/* Logo Brand */}
-        <div className="p-4 sm:p-6 border-b border-[#FAF0E6] flex items-center justify-between flex-shrink-0">
+      <aside className={`fixed md:relative top-0 left-0 h-[100dvh] ${isSidebarCollapsed ? 'w-20' : 'w-full md:w-[280px]'} transition-all duration-300 ease-in-out bg-[#FFFDF7] border-r border-[#EAD8C8] flex flex-col justify-between flex-shrink-0 z-[100] ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        
+        {/* Header */}
+        <div className="h-[80px] border-b border-[#EAD8C8]/60 flex items-center justify-between px-4 sm:px-5 flex-shrink-0">
           <div 
-            className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-full' : 'space-x-3'} cursor-pointer hover:bg-gray-50 transition-colors p-2 rounded-lg`}
+            className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-full' : 'space-x-3'} cursor-pointer hover:bg-[#FAF0E6] transition-colors p-2 rounded-xl`}
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
             title="Toggle Sidebar"
           >
-            <div className="w-10 h-10 overflow-hidden rounded-full flex-shrink-0 border-2 border-[#D4AF37]">
+            <div className="w-[45px] h-[45px] overflow-hidden rounded-full flex-shrink-0 border-2 border-[#D4AF37] shadow-sm">
               <img src={logoImg} alt="Swami Hariprapannacharya Ji" className="w-full h-full object-cover" />
             </div>
             {!isSidebarCollapsed && (
               <div className="whitespace-nowrap pl-1">
-                <span className="font-serif text-[13px] sm:text-sm font-black tracking-wide text-[#3D2B20] block pt-1 leading-relaxed">स्वामी हरिप्रपन्नाचार्य जी</span>
-                <span className="block text-[8px] tracking-widest text-[#E05A10] uppercase font-bold -mt-1">Control Panel</span>
+                <span className="font-serif text-[15px] font-black tracking-wide text-[#3D2B20] block leading-tight">स्वामी हरिप्रपन्नाचार्य जी</span>
+                <span className="block text-[9px] tracking-widest text-[#E05A10] uppercase font-bold mt-0.5">Control Panel</span>
               </div>
             )}
           </div>
           
-          {/* Mobile Close Button */}
           <button 
-            className="md:hidden text-gray-400 hover:text-red-500 p-2 -mr-2"
+            className="md:hidden text-gray-400 hover:text-red-500 p-2"
             onClick={() => setIsMobileMenuOpen(false)}
           >
             <FaTimes className="text-xl" />
@@ -137,61 +188,77 @@ export default function Dashboard() {
         </div>
 
         {/* Nav Items */}
-        <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto">
-            {[
-              { id: 'Overview', label: 'Overview', icon: FaInfoCircle },
-              { id: 'Bookings', label: 'Bookings', icon: FaClipboardList, badge: bookings.filter(b => b.status === 'Pending').length },
-              { id: 'Yajman', label: 'Yajman Management', icon: FaUsers },
-              { id: 'Banners', label: 'Home Banner', icon: FaImages },
-              { id: 'Biography', label: 'Guru Biography', icon: FaUserEdit },
-              { id: 'Events', label: 'Upcoming Events', icon: FaCalendarPlus },
-              { id: 'Gallery', label: 'Gallery', icon: FaImage },
-              { id: 'Live', label: 'Live Katha', icon: FaYoutube },
-              { id: 'Contact', label: 'Contact Details', icon: FaGlobe },
-              { id: 'Settings', label: 'Settings', icon: FaUser }
-            ].map(item => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id)
-                  setIsMobileMenuOpen(false)
-                }}
-                title={isSidebarCollapsed ? item.label : undefined}
-                className={`w-full flex items-center px-4 py-3 rounded-xl font-medium text-sm transition-all ${isSidebarCollapsed ? 'justify-center' : 'justify-between'} ${
-                  activeTab === item.id 
-                    ? 'bg-[#E05A10] text-white shadow-md' 
-                    : 'text-[#3D2B20]/75 hover:bg-[#FAF6F0] hover:text-[#E05A10]'
-                }`}
-              >
-                <div className="flex items-center space-x-3">
-                  <item.icon className={`text-base flex-shrink-0 ${isSidebarCollapsed && 'text-xl'}`} />
-                  {!isSidebarCollapsed && <span className="whitespace-nowrap">{item.label}</span>}
-                </div>
-                {!isSidebarCollapsed && item.badge > 0 && (
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                    activeTab === item.id ? 'bg-white text-[#E05A10]' : 'bg-[#E05A10] text-white'
-                  }`}>
-                    {item.badge}
-                  </span>
-                )}
-                {isSidebarCollapsed && item.badge > 0 && (
-                  <div className={`absolute right-4 w-2 h-2 rounded-full ${activeTab === item.id ? 'bg-white' : 'bg-[#E05A10]'}`}></div>
-                )}
-              </button>
-            ))}
-          </nav>
+        <nav className="flex-1 overflow-y-auto py-4 px-3 custom-scrollbar">
+          {navGroups.map((group, gIdx) => (
+            <div key={gIdx} className="mb-6 last:mb-0">
+              {!isSidebarCollapsed && (
+                <h3 className="px-3 mb-2 text-[10px] font-bold text-[#8B7355]/60 uppercase tracking-widest">
+                  {group.title}
+                </h3>
+              )}
+              <div className="space-y-1">
+                {group.items.map(item => (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id)
+                      setIsMobileMenuOpen(false)
+                    }}
+                    title={isSidebarCollapsed ? item.label : undefined}
+                    className={`w-full flex items-center h-[50px] transition-all duration-200 group relative ${isSidebarCollapsed ? 'justify-center rounded-xl' : 'px-4 rounded-r-xl rounded-l-none justify-between'} ${
+                      activeTab === item.id 
+                        ? 'bg-[#E05A10]/10 text-[#E05A10] border-l-[3px] border-[#E05A10]' 
+                        : 'text-[#3D2B20] hover:bg-[#FAF0E6] hover:text-[#E05A10] border-l-[3px] border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <item.icon className={`text-[18px] flex-shrink-0 transition-colors ${activeTab === item.id ? 'text-[#E05A10]' : 'text-[#8B7355] group-hover:text-[#E05A10]'}`} />
+                      {!isSidebarCollapsed && <span className="whitespace-nowrap font-semibold text-[14px] ml-3">{item.label}</span>}
+                    </div>
+
+                    {!isSidebarCollapsed && (
+                      <div className="flex items-center">
+                        {item.badge > 0 && (
+                          <span className={`text-[10px] font-bold h-5 min-w-[20px] flex items-center justify-center px-1.5 rounded-full ${
+                            activeTab === item.id ? 'bg-[#E05A10] text-white' : 'bg-[#EAD8C8] text-[#E05A10] group-hover:bg-[#E05A10] group-hover:text-white transition-colors'
+                          }`}>
+                            {item.badge}
+                          </span>
+                        )}
+                        {item.isLiveIndicator && (
+                          <div className="flex items-center space-x-1.5 px-2 py-0.5 rounded-full bg-red-50 border border-red-100">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></span>
+                            <span className="text-[9px] font-bold text-red-600 tracking-wider">LIVE</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Collapsed Badges */}
+                    {isSidebarCollapsed && item.badge > 0 && (
+                      <div className={`absolute top-2 right-2 w-2 h-2 rounded-full ${activeTab === item.id ? 'bg-[#E05A10]' : 'bg-[#EAD8C8]'}`}></div>
+                    )}
+                    {isSidebarCollapsed && item.isLiveIndicator && (
+                      <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </nav>
 
         {/* Logout button */}
-        <div className="p-4 border-t border-[#FAF0E6] flex-shrink-0 bg-white">
+        <div className="p-4 border-t border-[#EAD8C8]/60 flex-shrink-0 bg-[#FFFDF7]">
           <button
             onClick={() => {
               logoutAdmin()
               navigate('/')
             }}
-            className={`w-full flex items-center justify-center ${isSidebarCollapsed ? '' : 'space-x-2'} bg-red-50 hover:bg-red-100 active:bg-red-200 text-red-600 font-serif font-bold text-xs uppercase tracking-widest py-3 rounded-xl transition-all hover:scale-[1.02] active:scale-95 shadow-sm`}
+            className={`w-full flex items-center justify-center h-[48px] ${isSidebarCollapsed ? '' : 'space-x-2'} bg-red-50 hover:bg-red-100 active:bg-red-200 text-red-600 font-bold text-[13px] uppercase tracking-widest rounded-xl transition-all duration-200 shadow-sm border border-red-100/50 group`}
             title={isSidebarCollapsed ? "Logout" : undefined}
           >
-            <FaSignOutAlt className={isSidebarCollapsed ? 'text-lg' : ''} />
+            <FaSignOutAlt className={`text-lg transition-transform group-hover:-translate-x-1`} />
             {!isSidebarCollapsed && <span>Logout</span>}
           </button>
         </div>
@@ -200,7 +267,7 @@ export default function Dashboard() {
       {/* 2. MAIN CONTENT SCREEN */}
       <main className="flex-grow flex flex-col overflow-hidden w-full relative">
         {/* Top Header */}
-        <header className="bg-white border-b border-[#EAD8C8] px-4 sm:px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between flex-shrink-0 gap-4 sm:gap-0">
+        <header className="bg-white border-b border-[#EAD8C8]/60 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between flex-shrink-0 gap-4 sm:gap-0 z-40 relative">
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <button 
               onClick={() => setIsMobileMenuOpen(true)}
@@ -209,116 +276,128 @@ export default function Dashboard() {
               <FaBars className="text-xl" />
             </button>
             <div>
-              <h2 className="font-serif text-xl font-black text-[#3D2B20] leading-tight">{activeTab} Dashboard</h2>
-              <p className="text-xs text-[#3D2B20]/50 mt-0.5 hidden sm:block">Manage details and bookings for the spiritual website</p>
+              <h2 className="font-sans text-[18px] sm:text-[22px] font-bold text-[#3D2B20] leading-tight uppercase tracking-wide truncate max-w-[200px] sm:max-w-none">
+                {headerMapping[activeTab]?.title || `${activeTab} Dashboard`}
+              </h2>
+              <p className="text-xs text-[#3D2B20]/60 mt-0.5 hidden sm:block font-medium">
+                {headerMapping[activeTab]?.subtitle || 'Manage details and bookings for the spiritual website'}
+              </p>
             </div>
           </div>
-          <div className="flex items-center space-x-2 sm:space-x-4 flex-wrap justify-end gap-y-2 w-full sm:w-auto mt-2 sm:mt-0">
-            {activeTab === 'Bookings' && (
-              <div className="flex space-x-2 flex-wrap gap-y-2">
-                {selectedBookings.length > 0 && (
-                  <button 
-                    onClick={handleBulkDelete}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 bg-red-600 text-white hover:bg-red-700 rounded-lg text-xs font-bold transition-colors shadow-sm"
-                  >
-                    <FaTrash />
-                    <span>Delete ({selectedBookings.length})</span>
-                  </button>
-                )}
-                <button 
-                  onClick={() => downloadCSV('Confirmed')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded-lg text-xs font-bold transition-colors"
-                >
-                  <span>CSV (Confirmed)</span>
-                </button>
-                <button 
-                  onClick={() => downloadCSV('Rejected')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 border border-red-200 rounded-lg text-xs font-bold transition-colors"
-                >
-                  <span>CSV (Rejected)</span>
-                </button>
-              </div>
-            )}
+          
+          <div className="flex items-center space-x-3 sm:space-x-5 flex-wrap justify-end gap-y-2 w-full sm:w-auto mt-1 sm:mt-0">
             {/* Notifications Bell */}
-            <button 
-              onClick={() => setActiveTab('Bookings')}
-              className="relative p-2 text-[#3D2B20]/60 hover:text-[#E05A10] transition-colors focus:outline-none"
-              title="View Bookings"
-            >
-              <FaBell className="text-xl" />
-              {pendingBookingsCount > 0 && (
-                <span className="absolute top-0 right-0 w-4 h-4 bg-red-600 text-white text-[9px] font-bold flex items-center justify-center rounded-full border border-white animate-pulse">
-                  {pendingBookingsCount}
-                </span>
-              )}
-            </button>
-
-            <Link 
-              to="/" 
-              className="text-xs font-serif font-bold text-[#E05A10] hover:text-white border border-[#E05A10] hover:bg-[#E05A10] px-4 py-2 rounded-xl flex items-center space-x-1.5 transition-all shadow-sm active:scale-95 hidden sm:flex"
-            >
-              <FaGlobe />
-              <span>Go To Website</span>
-            </Link>
-            <span className="text-xs text-[#3D2B20]/60 font-semibold hidden md:inline">Active User: <strong className="text-[#E05A10]">Admin</strong></span>
-            
-            {/* Admin Profile Dropdown */}
             <div className="relative">
               <button 
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="w-8 h-8 rounded-full bg-[#E05A10]/10 border border-[#E05A10]/20 flex items-center justify-center text-xs font-bold text-[#E05A10] hover:bg-[#E05A10]/20 transition-colors focus:outline-none focus:ring-2 focus:ring-[#E05A10]/50"
+                onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                className="relative p-2 text-[#3D2B20]/70 hover:text-[#E05A10] transition-colors focus:outline-none"
+                title="Notifications"
+                aria-label="Notifications"
               >
-                A
+                <FaBell className="text-[20px]" />
+                {pendingBookingsCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#E05A10] text-white text-[9px] font-bold flex items-center justify-center rounded-full border-2 border-white">
+                    {pendingBookingsCount}
+                  </span>
+                )}
               </button>
 
               <AnimatePresence>
-                {isProfileOpen && (
+                {isNotificationOpen && (
                   <>
-                    {/* Invisible overlay for click-outside-to-close */}
-                    <div className="fixed inset-0 z-40" onClick={() => setIsProfileOpen(false)} />
-                    
+                    <div className="fixed inset-0 z-40" onClick={() => setIsNotificationOpen(false)} />
                     <motion.div 
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-[#EAD8C8] overflow-hidden z-50"
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 mt-3 w-72 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-[#EAD8C8] overflow-hidden z-50"
                     >
-                      <div className="p-4 border-b border-[#FAF0E6] bg-[#FAF6F0]/50">
-                      <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E05A10] to-[#D4AF37] flex items-center justify-center text-white font-bold text-lg shadow-sm">
-                          A
+                      <div className="px-4 py-3 border-b border-[#FAF0E6] bg-[#FFFDF7]">
+                        <h3 className="text-xs font-bold text-[#3D2B20] uppercase tracking-wider">Notifications</h3>
+                      </div>
+                      <div className="max-h-[300px] overflow-y-auto">
+                        {pendingBookingsCount > 0 ? (
+                          pendingBookings.slice(0, 5).map((booking, idx) => (
+                            <div key={idx} className="p-4 border-b border-[#FAF0E6] last:border-0 hover:bg-[#FAF6F0] cursor-pointer transition-colors" onClick={() => { setActiveTab('Bookings'); setIsNotificationOpen(false); }}>
+                              <p className="text-sm font-bold text-[#E05A10] truncate">{booking.kathaType || 'Katha Booking'}</p>
+                              <p className="text-xs text-[#3D2B20]/70 mt-1">{booking.kathaStartDate ? new Date(booking.kathaStartDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Pending Date'}</p>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="p-6 text-center text-[#3D2B20]/50 text-sm">
+                            No new notifications
+                          </div>
+                        )}
+                      </div>
+                      {pendingBookingsCount > 0 && (
+                        <div className="p-3 border-t border-[#FAF0E6] bg-[#FFFDF7] text-center">
+                          <button onClick={() => { setActiveTab('Bookings'); setIsNotificationOpen(false); }} className="text-xs font-bold text-[#E05A10] hover:text-[#c74c0b] transition-colors">
+                            View All Requests →
+                          </button>
                         </div>
-                        <div>
-                          <p className="font-serif font-bold text-[#3D2B20] text-sm">{adminProfile?.fullname || 'Super Admin'}</p>
-                          <p className="text-[10px] text-[#3D2B20]/60 truncate mt-0.5">{adminProfile?.email || 'admin@katha.com'}</p>
+                      )}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
+            <Link 
+              to="/" 
+              className="text-xs font-sans font-bold text-[#E05A10] hover:text-[#c74c0b] border border-[#E05A10]/30 hover:border-[#E05A10]/60 hover:bg-[#E05A10]/5 px-4 py-2.5 rounded-xl flex items-center space-x-2 transition-all shadow-sm active:scale-95"
+              aria-label="Go to website"
+            >
+              <FaGlobe className="text-sm" />
+              <span className="hidden sm:inline">GO TO WEBSITE</span>
+            </Link>
+            
+            <div className="w-[1px] h-6 bg-[#EAD8C8] hidden sm:block mx-1"></div>
+            
+            {/* Admin Profile Dropdown */}
+            <div className="relative flex items-center space-x-3 cursor-pointer group" onClick={() => setIsProfileOpen(!isProfileOpen)} aria-label="Admin account menu">
+              <div className="hidden md:flex flex-col items-end">
+                <span className="text-[13px] text-[#3D2B20] font-bold group-hover:text-[#E05A10] transition-colors">Admin</span>
+                <span className="text-[10px] text-[#3D2B20]/60 font-medium -mt-0.5">Administrator</span>
+              </div>
+              <div className="w-[38px] h-[38px] rounded-full bg-[#FFFDF7] border-2 border-[#EAD8C8] flex items-center justify-center text-[15px] font-bold text-[#E05A10] group-hover:border-[#E05A10]/50 transition-colors shadow-sm">
+                A
+              </div>
+
+              <AnimatePresence>
+                {isProfileOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={(e) => { e.stopPropagation(); setIsProfileOpen(false); }} />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute right-0 top-full mt-3 w-56 bg-white rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.1)] border border-[#EAD8C8] overflow-hidden z-50 cursor-default"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="p-4 border-b border-[#FAF0E6] bg-[#FFFDF7]">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#E05A10] to-[#c74c0b] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                            A
+                          </div>
+                          <div>
+                            <p className="font-serif font-bold text-[#3D2B20] text-sm">{adminProfile?.fullname || 'Admin'}</p>
+                            <p className="text-[10px] text-[#3D2B20]/60 truncate mt-0.5">{adminProfile?.email || 'admin@katha.com'}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="p-2">
-                      <button onClick={() => { setIsProfileOpen(false); setIsEditProfileModalOpen(true); }} className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium text-[#3D2B20] hover:bg-[#FAF6F0] hover:text-[#E05A10] transition-colors">
-                        <FaUserEdit className="text-[#3D2B20]/50 text-base" />
-                        <span>Edit Profile</span>
-                      </button>
-                      <button onClick={() => { setIsProfileOpen(false); setIsChangePasswordModalOpen(true); }} className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium text-[#3D2B20] hover:bg-[#FAF6F0] hover:text-[#E05A10] transition-colors">
-                        <FaSignOutAlt className="text-[#3D2B20]/50 text-base rotate-180" />
-                        <span>Change Password</span>
-                      </button>
-                    </div>
-                    <div className="p-2 border-t border-[#FAF0E6]">
-                      <button 
-                        onClick={() => {
-                          setIsProfileOpen(false);
-                          logoutAdmin();
-                          navigate('/');
-                        }} 
-                        className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 transition-colors uppercase tracking-wider"
-                      >
-                        <FaSignOutAlt />
-                        <span>Logout</span>
-                      </button>
-                    </div>
-                  </motion.div>
+                      <div className="p-2">
+                        <button onClick={() => { setIsProfileOpen(false); setIsEditProfileModalOpen(true); }} className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-bold text-[#3D2B20]/80 hover:bg-[#FAF6F0] hover:text-[#E05A10] transition-colors">
+                          <FaUserEdit className="text-base" />
+                          <span>Profile</span>
+                        </button>
+                        <button onClick={() => { setIsProfileOpen(false); setIsChangePasswordModalOpen(true); }} className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-bold text-[#3D2B20]/80 hover:bg-[#FAF6F0] hover:text-[#E05A10] transition-colors">
+                          <FaLock className="text-base" />
+                          <span>Settings</span>
+                        </button>
+                      </div>
+                    </motion.div>
                   </>
                 )}
               </AnimatePresence>
@@ -329,11 +408,11 @@ export default function Dashboard() {
         {/* Scrollable Sub-Views Area */}
         <div className="flex-grow p-0 sm:p-0 overflow-y-auto bg-gray-50">
           {activeTab === 'Overview' && <div className="p-4 sm:p-8"><OverviewTab {...{ bookings, events, galleryPhotos, galleryVideos, setActiveTab }} /></div>}
-          {activeTab === 'Bookings' && <div className="p-4 sm:p-8"><BookingsTab {...{ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings }} /></div>}
+          {activeTab === 'Bookings' && <div className="p-4 sm:p-8"><BookingsTab {...{ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings, setPrefillEventData, setActiveTab }} /></div>}
           {activeTab === 'Yajman' && <AdminYajmanManager />}
           {activeTab === 'Banners' && <AdminBannerManager />}
           {activeTab === 'Biography' && <div className="p-4 sm:p-8"><BiographyTab {...{ about, updateAbout, timeline, setTimeline, achievements, setAchievements }} /></div>}
-          {activeTab === 'Events' && <div className="p-4 sm:p-8"><EventsTab {...{ events, addEvent, deleteEvent, calendarDates, addCalendarDate, deleteCalendarDate }} /></div>}
+          {activeTab === 'Events' && <div className="p-4 sm:p-8"><EventsTab {...{ events, addEvent, deleteEvent, calendarDates, addCalendarDate, deleteCalendarDate, prefillEventData, setPrefillEventData }} /></div>}
           {activeTab === 'Calendar' && <div className="p-4 sm:p-8"><CalendarTab {...{ calendarDates, addCalendarDate, deleteCalendarDate }} /></div>}
           {activeTab === 'Organizers' && <div className="p-4 sm:p-8"><OrganizersTab {...{ organizers, addOrganizer, updateOrganizer, deleteOrganizer }} /></div>}
           {activeTab === 'Gallery' && <div className="p-4 sm:p-8"><GalleryTab {...{ galleryPhotos, addPhoto, deletePhoto, galleryVideos, addVideo, deleteVideo }} /></div>}
@@ -525,7 +604,7 @@ function ChangePasswordModal({ onClose, changeAdminPassword }) {
 /* =========================================================================
    TAB: BOOKINGS MANAGER
    ========================================================================= */
-function BookingsTab({ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings }) {
+function BookingsTab({ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings, setPrefillEventData, setActiveTab }) {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchQuery, setSearchQuery] = React.useState('');
   const itemsPerPage = 10;
@@ -563,6 +642,25 @@ function BookingsTab({ bookings, updateBookingStatus, deleteBooking, selectedBoo
       setSelectedBookings(prev => prev.filter(bId => bId !== id));
     } else {
       setSelectedBookings(prev => [...prev, id]);
+    }
+  };
+
+  const handleConfirmAndPrefill = async (item) => {
+    await updateBookingStatus(item.id, 'Confirmed');
+    
+    if (setPrefillEventData && setActiveTab) {
+      const d = item.preferredDate ? new Date(item.preferredDate) : new Date();
+      setPrefillEventData({
+        title: item.kathaType || '',
+        date: isNaN(d.getTime()) ? '' : d.getDate().toString(),
+        month: isNaN(d.getTime()) ? '' : d.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
+        year: isNaN(d.getTime()) ? '' : d.getFullYear().toString(),
+        selectedState: item.state || '',
+        district: item.city || '',
+        pincode: item.pincode || '',
+        venue: item.address || ''
+      });
+      setActiveTab('Events');
     }
   };
 
@@ -647,9 +745,9 @@ function BookingsTab({ bookings, updateBookingStatus, deleteBooking, selectedBoo
                     {item.status === 'Pending' && (
                       <>
                         <button
-                          onClick={() => updateBookingStatus(item.id, 'Confirmed')}
+                          onClick={() => handleConfirmAndPrefill(item)}
                           className="p-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white rounded-lg transition-colors border border-green-200"
-                          title="Confirm Booking"
+                          title="Confirm Booking & Add Event"
                         >
                           <FaCheck className="text-[10px]" />
                         </button>
@@ -1147,9 +1245,10 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
 /* =========================================================================
    TAB: UPCOMING EVENTS
    ========================================================================= */
-function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDate, deleteCalendarDate }) {
+function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDate, deleteCalendarDate, prefillEventData, setPrefillEventData }) {
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [month, setMonth] = useState('')
   const [year, setYear] = useState(new Date().getFullYear().toString())
   const [selectedState, setSelectedState] = useState('')
@@ -1159,6 +1258,22 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
   const [image, setImage] = useState('')
   const [type, setType] = useState('Katha')
   const [success, setSuccess] = useState(false)
+
+  useEffect(() => {
+    if (prefillEventData) {
+      setTitle(prefillEventData.title || '')
+      setDate(prefillEventData.date || '')
+      setEndDate(prefillEventData.endDate || '')
+      setMonth(prefillEventData.month || '')
+      setYear(prefillEventData.year || new Date().getFullYear().toString())
+      setSelectedState(prefillEventData.selectedState || '')
+      setDistrict(prefillEventData.district || '')
+      setPincode(prefillEventData.pincode || '')
+      if (setPrefillEventData) {
+        setPrefillEventData(null);
+      }
+    }
+  }, [prefillEventData, setPrefillEventData]);
 
   // Search state
   const [eventSearchQuery, setEventSearchQuery] = useState('')
@@ -1184,6 +1299,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
     addEvent({
       title,
       date,
+      endDate,
       month: `${month} ${year}`,
       venue,
       time,
@@ -1191,8 +1307,33 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
       type
     })
 
+    if (addCalendarDate && title) {
+      const monthIndex = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'].indexOf(month)
+      if (monthIndex !== -1) {
+        const startDay = parseInt(date, 10)
+        const endDay = endDate ? parseInt(endDate, 10) : startDay
+        const y = parseInt(year, 10)
+        
+        const start = new Date(y, monthIndex, startDay)
+        const end = new Date(y, monthIndex, endDay)
+        
+        if (end >= start) {
+          const currentDate = new Date(start)
+          while (currentDate <= end) {
+            const formattedMonth = String(currentDate.getMonth() + 1).padStart(2, '0')
+            const formattedDay = String(currentDate.getDate()).padStart(2, '0')
+            const dateStr = `${currentDate.getFullYear()}-${formattedMonth}-${formattedDay}`
+            
+            addCalendarDate({ date: dateStr, status: 'Booked' })
+            currentDate.setDate(currentDate.getDate() + 1)
+          }
+        }
+      }
+    }
+
     setTitle('')
     setDate('')
+    setEndDate('')
     setMonth('')
     setYear(new Date().getFullYear().toString())
     setSelectedState('')
@@ -1348,13 +1489,23 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">Date (तारीख)</label>
+              <label className="font-bold text-[#3D2B20]/75 block">From Date (से)</label>
               <SearchableSelect
                 value={date}
                 onChange={(val) => setDate(val)}
                 placeholder="Date"
+                options={Array.from({ length: 31 }, (_, i) => String(i + 1))}
+                showSearch={false}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="font-bold text-[#3D2B20]/75 block">To Date (तक) - Opt</label>
+              <SearchableSelect
+                value={endDate}
+                onChange={(val) => setEndDate(val)}
+                placeholder="End Date"
                 options={Array.from({ length: 31 }, (_, i) => String(i + 1))}
                 showSearch={false}
               />
@@ -1470,19 +1621,6 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
           </button>
         </form>
       </div>
-      </div>
-
-      {/* Calendar Management Section embedded below Events */}
-      <div className="pt-8 border-t border-[#EAD8C8]">
-        <h2 className="font-serif text-xl font-bold text-[#3D2B20] mb-6 flex items-center space-x-2">
-          <FaCalendarAlt className="text-[#E05A10]" />
-          <span>Manage Booked Dates (कथा बुकिंग कैलेंडर)</span>
-        </h2>
-        <CalendarTab 
-          calendarDates={calendarDates} 
-          addCalendarDate={addCalendarDate} 
-          deleteCalendarDate={deleteCalendarDate} 
-        />
       </div>
     </div>
   )

@@ -24,15 +24,17 @@ export default function Home() {
     return t(fallbackKey);
   };
 
+  const activeBanners = banners ? banners.filter(b => b.status === 'Published' || (b.status === undefined && b.enabled !== false)) : [];
+
   const nextHeroSlide = () => {
-    if (banners && banners.length > 0) {
-      setCurrentHeroSlide((prev) => (prev + 1) % banners.length)
+    if (activeBanners && activeBanners.length > 0) {
+      setCurrentHeroSlide((prev) => (prev + 1) % activeBanners.length)
     }
   }
 
   const prevHeroSlide = () => {
-    if (banners && banners.length > 0) {
-      setCurrentHeroSlide((prev) => (prev - 1 + banners.length) % banners.length)
+    if (activeBanners && activeBanners.length > 0) {
+      setCurrentHeroSlide((prev) => (prev - 1 + activeBanners.length) % activeBanners.length)
     }
   }
 
@@ -97,7 +99,7 @@ export default function Home() {
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop'
     }
   ]
-  const currentBanner = banners && banners.length > 0 ? banners[currentHeroSlide] : {};
+  const currentBanner = activeBanners.length > 0 ? activeBanners[currentHeroSlide % activeBanners.length] : {};
 
   return (
     <div className="bg-[#FCF9F2] text-[#3D2B20] font-sans selection:bg-[#E05A10] selection:text-white overflow-x-hidden">
@@ -116,7 +118,7 @@ export default function Home() {
               className="w-full h-full grid grid-cols-1 lg:grid-cols-12 items-stretch"
             >
               {/* Left Column: Text content */}
-              <div className="lg:col-span-6 flex flex-col justify-start px-4 xs:px-8 sm:px-12 lg:px-12 xl:px-16 pt-36 sm:pt-40 lg:pt-[140px] pb-8 bg-[#FCF9F2] text-center lg:text-left relative z-10">
+              <div className="lg:col-span-6 flex flex-col justify-start px-12 sm:px-16 lg:pl-20 lg:pr-12 xl:pl-24 xl:pr-16 pt-36 sm:pt-40 lg:pt-[140px] pb-8 bg-[#FCF9F2] text-center lg:text-left relative z-30">
                 
                 <h2
                   className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold text-[#3D2B20] mb-3 leading-normal"
@@ -132,50 +134,50 @@ export default function Home() {
 
                 {/* Dynamic Metadata Pill / Ticket Bar */}
                 {(currentBanner?.kathaDay || currentBanner?.prasang || currentBanner?.date || currentBanner?.time || currentBanner?.venue) && (
-                  <div className="inline-flex flex-wrap lg:flex-nowrap items-center bg-[#F3EBE1] rounded-2xl lg:rounded-full shadow-sm mb-6 lg:mb-8 mx-auto lg:mx-0 text-[#3D2B20] border border-[#EAD8C8]/60 w-fit lg:w-max max-w-none shrink-0 overflow-hidden relative z-20">
+                  <div className="inline-flex flex-col lg:flex-row items-center lg:items-stretch bg-[#EAD8C8] rounded-2xl lg:rounded-full shadow-md mb-6 lg:mb-8 mx-auto lg:mx-0 text-[#3D2B20] border border-[#8B5A2B]/40 w-max max-w-none relative z-20">
                     
                     {/* Dark Red Block for Day & Prasang */}
                     {(currentBanner?.kathaDay || currentBanner?.prasang) && (
-                      <div className="bg-[#7B241C] text-white flex flex-col items-center justify-center px-6 lg:px-8 py-2 lg:py-2.5 lg:rounded-full w-full lg:w-auto relative shadow-md shrink-0 whitespace-nowrap">
-                        <div className="absolute left-3 text-[#D4AF37] opacity-60 text-sm font-light">||</div>
-                        {currentBanner?.kathaDay && <span className="text-[11px] font-medium opacity-90">{currentBanner.kathaDay}</span>}
-                        {currentBanner?.prasang && <span className="text-base font-bold tracking-wide mt-0.5">{currentBanner.prasang}</span>}
-                        <div className="absolute right-3 text-[#D4AF37] opacity-60 text-sm font-light">||</div>
+                      <div className="bg-[#7B241C] text-white flex flex-col items-center justify-center px-6 lg:px-8 py-2.5 rounded-t-2xl lg:rounded-l-full lg:rounded-tr-none lg:rounded-br-none w-full lg:w-auto relative shadow-md shrink-0">
+                        <div className="absolute left-3 text-[#D4AF37] opacity-60 text-sm font-light hidden lg:block">||</div>
+                        {currentBanner?.kathaDay && <span className="text-[11px] font-medium opacity-90 whitespace-nowrap">{currentBanner.kathaDay}</span>}
+                        {currentBanner?.prasang && <span className="text-base font-bold tracking-wide mt-0.5 whitespace-nowrap">{currentBanner.prasang}</span>}
+                        <div className="absolute right-3 text-[#D4AF37] opacity-60 text-sm font-light hidden lg:block">||</div>
                       </div>
                     )}
 
                     {/* Meta Details Segment */}
-                    <div className="flex flex-wrap sm:flex-nowrap items-center justify-center divide-y sm:divide-y-0 sm:divide-x divide-[#3D2B20]/15 py-1.5 w-full lg:w-auto">
+                    <div className="flex flex-wrap lg:flex-nowrap items-center justify-center divide-y lg:divide-y-0 lg:divide-x divide-[#3D2B20]/15 py-1.5 w-full lg:w-auto">
                       
                       {/* Date Block */}
                       {currentBanner?.date && (
-                        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto justify-center sm:justify-start shrink-0">
+                        <div className="flex items-center gap-2 px-4 lg:px-5 py-2 w-full lg:w-auto justify-center lg:justify-start shrink-0">
                           <FaCalendarAlt className="text-[#E05A10] text-lg shrink-0" />
                           <div className="flex flex-col text-left">
-                            <span className="text-sm font-bold text-[#3D2B20] leading-tight">{currentBanner.date}</span>
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight whitespace-nowrap">{currentBanner.date}</span>
                           </div>
                         </div>
                       )}
 
                       {/* Time Block */}
                       {currentBanner?.time && (
-                        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto justify-center sm:justify-start shrink-0">
+                        <div className="flex items-center gap-2 px-4 lg:px-5 py-2 w-full lg:w-auto justify-center lg:justify-start shrink-0">
                           <FaClock className="text-[#E05A10] text-lg shrink-0" />
                           <div className="flex flex-col text-left">
-                            <span className="text-sm font-bold text-[#3D2B20] leading-tight">{currentBanner.time}</span>
-                            <span className="text-[10px] font-medium text-[#8B6E59] leading-tight">onwards</span>
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight whitespace-nowrap">{currentBanner.time}</span>
+                            <span className="text-[10px] font-medium text-[#8B6E59] leading-tight whitespace-nowrap">onwards</span>
                           </div>
                         </div>
                       )}
 
                       {/* Location Block */}
                       {currentBanner?.venue && (
-                        <div className="flex items-center gap-2 px-3 sm:px-4 py-2 w-full sm:w-auto justify-center sm:justify-start shrink-0">
+                        <div className="flex items-center gap-2 pl-4 pr-5 lg:pr-8 py-2 w-full lg:w-auto justify-center lg:justify-start shrink-0">
                           <FaMapMarkerAlt className="text-[#E05A10] text-lg shrink-0" />
                           <div className="flex flex-col text-left">
-                            <span className="text-sm font-bold text-[#3D2B20] leading-tight">{currentBanner.venue.split(',')[0]}</span>
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight whitespace-nowrap">{currentBanner.venue.split(',')[0]}</span>
                             {currentBanner.venue.includes(',') && (
-                              <span className="text-[10px] font-medium text-[#8B6E59] leading-tight">
+                              <span className="text-[10px] font-medium text-[#8B6E59] leading-tight whitespace-nowrap">
                                 {currentBanner.venue.split(',').slice(1).join(',').trim()}
                               </span>
                             )}
@@ -218,14 +220,20 @@ export default function Home() {
 
               {/* Right Column: Full-height Guru Ji Image */}
               <div className="lg:col-span-6 relative h-[250px] xs:h-[300px] lg:h-full w-full overflow-hidden">
-                {/* Diagonal Slant Divider to remove straight partition */}
-                <svg className="absolute left-0 top-0 h-full w-12 lg:w-24 text-[#FCF9F2] z-10" preserveAspectRatio="none" viewBox="0 0 100 100">
-                  <polygon points="0,0 100,0 0,100" fill="currentColor" />
-                </svg>
+                {/* Soft Linear Gradient Blend to remove straight partition */}
+                <div className="absolute left-0 top-0 h-full w-32 lg:w-48 bg-gradient-to-r from-[#FCF9F2] to-transparent z-10 pointer-events-none hidden lg:block"></div>
                 <img
                   src={currentBanner?.image}
                   alt="Pujya Guru Ji Maharaj"
-                  className="w-full h-full object-cover object-top pointer-events-none"
+                  className="w-full h-full object-cover pointer-events-none"
+                  style={{
+                     objectPosition: window.innerWidth < 768 
+                         ? (currentBanner?.mobileImagePosition || '50% 50%') 
+                         : (currentBanner?.desktopImagePosition || '70% 50%'),
+                     transform: `scale(${window.innerWidth < 768 
+                         ? (currentBanner?.mobileImageZoom || 1) 
+                         : (currentBanner?.desktopImageZoom || 1)})`
+                  }}
                 />
               </div>
             </motion.div>
@@ -249,7 +257,7 @@ export default function Home() {
 
           {/* Dots Indicator Overlay on Left Text Area */}
           <div className="absolute bottom-6 left-1/2 lg:left-24 -translate-x-1/2 lg:translate-x-0 flex items-center space-x-2.5 z-20">
-            {banners.map((_, idx) => (
+            {activeBanners.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrentHeroSlide(idx)}

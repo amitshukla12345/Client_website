@@ -281,7 +281,7 @@ export default function BookingForm() {
         </div>
 
         {/* Preferred Date */}
-        <div className="relative">
+        <div className={`relative ${showCalendar ? 'z-[100]' : 'z-10'}`}>
           <label className="block text-xs font-semibold text-dark-light mb-2 uppercase tracking-wider">Preferred Date</label>
           <div className="relative">
             <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-gold pointer-events-none">
@@ -307,7 +307,7 @@ export default function BookingForm() {
             />
             
             {showCalendar && (
-              <div className="absolute z-50 top-full mt-2 w-full sm:w-[320px] left-0 shadow-2xl rounded-2xl animate-fade-in-up origin-top-left">
+              <div className="absolute z-50 top-full mt-2 w-[340px] sm:w-[380px] left-0 shadow-2xl rounded-2xl animate-fade-in-up origin-top-left -ml-2 sm:ml-0">
                 <CustomCalendar 
                   calendarDates={calendarDates} 
                   selectedDate={formData.preferredDate}

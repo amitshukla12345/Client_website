@@ -823,7 +823,7 @@ export default function Contact() {
                   </form>
                 )
               ) : (
-                <div className="animate-fade-in-up">
+                <div className="animate-fade-in-up relative z-50">
                   <BookingForm />
                 </div>
               )}
