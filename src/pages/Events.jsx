@@ -178,86 +178,117 @@ export default function Events() {
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-2xl shadow-sm border border-saffron/10 bg-white relative z-10">
-                <table className="w-full text-left border-collapse">
-                  <thead>
-                    <tr className="bg-gradient-to-r from-[#702905] via-[#A8440A] to-[#E05A10] text-white font-serif">
-                      <th className="px-6 py-6 font-bold tracking-wider rounded-tl-2xl text-[16px] border-b-0">
-                        <div className="flex items-center gap-2.5">
-                          <FaCalendarAlt className="text-white/80" /> कथा की तिथि (Date)
-                        </div>
-                      </th>
-                      <th className="px-6 py-6 font-bold tracking-wider text-[16px] border-b-0">
-                        <div className="flex items-center gap-2.5">
-                          <FaRegClock className="text-white/80" /> समय (Time)
-                        </div>
-                      </th>
-                      <th className="px-6 py-6 font-bold tracking-wider text-[16px] border-b-0">
-                        <div className="flex items-center gap-2.5">
-                          <FaBookOpen className="text-white/80" /> कथा का नाम (Event)
-                        </div>
-                      </th>
-                      <th className="px-6 py-6 font-bold tracking-wider rounded-tr-2xl text-[16px] border-b-0">
-                        <div className="flex items-center gap-2.5">
-                          <FaMapMarkerAlt className="text-white/80" /> कथा का स्थान (Location)
-                        </div>
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#F2E8D9]">
-                    {currentTableData.length > 0 ? currentTableData.map((evt, idx) => {
-                      const dayStr = evt.date || '';
-                      const endDayStr = evt.endDate ? ` - ${evt.endDate}` : '';
-                      const monthStr = evt.month ? ` ${evt.month}` : '';
-                      const fullDateString = `${dayStr}${endDayStr}${monthStr}`;
-                      
-                      return (
-                        <tr key={idx} className="hover:bg-gradient-to-r hover:from-white hover:to-[#FFF5EB] bg-white transition-all duration-300 group relative">
-                          <td className="px-6 py-6 whitespace-nowrap">
-                            <div className="flex items-center space-x-4">
-                              <div className="w-11 h-11 rounded-full bg-saffron/10 border border-saffron/20 flex items-center justify-center text-saffron group-hover:bg-saffron group-hover:text-white group-hover:shadow-md transition-all duration-300 transform group-hover:scale-110">
-                                <FaCheckCircle className="text-[18px]" />
-                              </div>
-                              <span className="font-bold text-[#3D2B20] text-[15px] tracking-wide group-hover:text-saffron transition-colors">{fullDateString}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6 whitespace-nowrap text-dark-light">
-                            <div className="flex items-center gap-3">
-                              {evt.time && (
-                                <div className="w-9 h-9 rounded-full bg-[#FAF6F0] flex items-center justify-center text-dark-light/60 group-hover:text-saffron group-hover:bg-saffron/10 transition-colors">
-                                  <FaRegClock className="text-sm" />
+              <div className="rounded-2xl shadow-sm border border-saffron/10 bg-white relative z-10">
+                {/* Desktop Table */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="bg-gradient-to-r from-[#702905] via-[#A8440A] to-[#E05A10] text-white font-serif">
+                        <th className="px-6 py-6 font-bold tracking-wider rounded-tl-2xl text-[16px] border-b-0">
+                          <div className="flex items-center gap-2.5">
+                            <FaCalendarAlt className="text-white/80" /> कथा की तिथि (Date)
+                          </div>
+                        </th>
+                        <th className="px-6 py-6 font-bold tracking-wider text-[16px] border-b-0">
+                          <div className="flex items-center gap-2.5">
+                            <FaRegClock className="text-white/80" /> समय (Time)
+                          </div>
+                        </th>
+                        <th className="px-6 py-6 font-bold tracking-wider text-[16px] border-b-0">
+                          <div className="flex items-center gap-2.5">
+                            <FaBookOpen className="text-white/80" /> कथा का नाम (Event)
+                          </div>
+                        </th>
+                        <th className="px-6 py-6 font-bold tracking-wider rounded-tr-2xl text-[16px] border-b-0">
+                          <div className="flex items-center gap-2.5">
+                            <FaMapMarkerAlt className="text-white/80" /> कथा का स्थान (Location)
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#F2E8D9]">
+                      {currentTableData.length > 0 ? currentTableData.map((evt, idx) => {
+                        const dayStr = evt.date || '';
+                        const endDayStr = evt.endDate ? ` - ${evt.endDate}` : '';
+                        const monthStr = evt.month ? ` ${evt.month}` : '';
+                        const fullDateString = `${dayStr}${endDayStr}${monthStr}`;
+                        
+                        return (
+                          <tr key={idx} className="hover:bg-gradient-to-r hover:from-white hover:to-[#FFF5EB] bg-white transition-all duration-300 group relative">
+                            <td className="px-6 py-6 whitespace-nowrap">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-11 h-11 rounded-full bg-saffron/10 border border-saffron/20 flex items-center justify-center text-saffron group-hover:bg-saffron group-hover:text-white group-hover:shadow-md transition-all duration-300 transform group-hover:scale-110">
+                                  <FaCheckCircle className="text-[18px]" />
                                 </div>
-                              )}
-                              <span className="text-[15px] font-semibold opacity-90">{evt.time || '-'}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-full bg-saffron/5 flex items-center justify-center text-[#E05A10]/70 group-hover:bg-[#E05A10] group-hover:text-white transition-colors">
-                                <FaBookOpen className="text-[15px]" />
+                                <span className="font-bold text-[#3D2B20] text-[15px] tracking-wide group-hover:text-saffron transition-colors">{fullDateString}</span>
                               </div>
-                              <span className="font-serif font-bold text-[#E05A10] text-[17px] drop-shadow-sm">{evt.title}</span>
-                            </div>
-                          </td>
-                          <td className="px-6 py-6">
-                            <div className="flex items-start space-x-3 text-dark-light">
-                              <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-saffron/60 group-hover:bg-saffron/10 flex-shrink-0 mt-0.5 transition-colors">
-                                <FaMapMarkerAlt className="text-[15px]" />
+                            </td>
+                            <td className="px-6 py-6 whitespace-nowrap text-dark-light">
+                              <div className="flex items-center gap-3">
+                                {evt.time && (
+                                  <div className="w-9 h-9 rounded-full bg-[#FAF6F0] flex items-center justify-center text-dark-light/60 group-hover:text-saffron group-hover:bg-saffron/10 transition-colors">
+                                    <FaRegClock className="text-sm" />
+                                  </div>
+                                )}
+                                <span className="text-[15px] font-semibold opacity-90">{evt.time || '-'}</span>
                               </div>
-                              <span className="text-[15px] font-medium leading-relaxed max-w-[250px]">{evt.venue}</span>
-                            </div>
+                            </td>
+                            <td className="px-6 py-6">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-full bg-saffron/5 flex items-center justify-center text-[#E05A10]/70 group-hover:bg-[#E05A10] group-hover:text-white transition-colors">
+                                  <FaBookOpen className="text-[15px]" />
+                                </div>
+                                <span className="font-serif font-bold text-[#E05A10] text-[17px] drop-shadow-sm">{evt.title}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-6">
+                              <div className="flex items-start space-x-3 text-dark-light">
+                                <div className="w-9 h-9 rounded-full bg-gray-50 flex items-center justify-center text-saffron/60 group-hover:bg-saffron/10 flex-shrink-0 mt-0.5 transition-colors">
+                                  <FaMapMarkerAlt className="text-[15px]" />
+                                </div>
+                                <span className="text-[15px] font-medium leading-relaxed max-w-[250px]">{evt.venue}</span>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      }) : (
+                        <tr>
+                          <td colSpan="4" className="px-6 py-12 text-center text-dark-light font-medium">
+                            No upcoming events found matching your search.
                           </td>
                         </tr>
-                      );
-                    }) : (
-                      <tr>
-                        <td colSpan="4" className="px-6 py-12 text-center text-dark-light font-medium">
-                          No upcoming events found matching your search.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="md:hidden flex flex-col divide-y divide-[#F2E8D9]">
+                  {currentTableData.length > 0 ? currentTableData.map((evt, idx) => {
+                    const dayStr = evt.date || '';
+                    const endDayStr = evt.endDate ? ` - ${evt.endDate}` : '';
+                    const monthStr = evt.month ? ` ${evt.month}` : '';
+                    const fullDateString = `${dayStr}${endDayStr}${monthStr}`;
+                    
+                    return (
+                      <div key={idx} className="p-5 flex flex-col gap-3 bg-white hover:bg-[#FFF5EB] transition-colors">
+                        <div className="flex items-center justify-between">
+                          <span className="font-bold text-saffron text-[15px] tracking-wide">{fullDateString}</span>
+                          <span className="text-sm font-semibold text-dark-light opacity-90">{evt.time || '-'}</span>
+                        </div>
+                        <h4 className="font-serif font-bold text-[#3D2B20] text-[18px]">{evt.title}</h4>
+                        <div className="flex items-start space-x-2 text-dark-light text-sm font-medium mt-1">
+                          <FaMapMarkerAlt className="text-saffron mt-1 flex-shrink-0" />
+                          <span>{evt.venue}</span>
+                        </div>
+                      </div>
+                    );
+                  }) : (
+                    <div className="p-8 text-center text-dark-light font-medium">
+                      No upcoming events found matching your search.
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Pagination Controls */}

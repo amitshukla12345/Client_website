@@ -4,11 +4,13 @@ import {
   FaPlayCircle, FaYoutube, FaFacebookF, FaInstagram, FaCamera, 
   FaCalendarAlt, FaHistory, FaBell, FaSearch, FaPalette,
   FaImage, FaAlignLeft, FaAlignCenter, FaCheckCircle, FaSave, FaExternalLinkAlt, FaTrash,
-  FaClock, FaMapMarkerAlt, FaChevronDown,
-  FaQuoteLeft, FaHeading, FaBookOpen, FaPen, FaLink, FaCalendarDay
+  FaClock, FaMapMarkerAlt, FaChevronDown, FaCrop,
+  FaQuoteLeft, FaHeading, FaBookOpen, FaPen, FaLink, FaCalendarDay,
+  FaDesktop, FaTabletAlt, FaMobileAlt, FaSpinner
 } from 'react-icons/fa'
 import { GiLotus } from 'react-icons/gi'
 import { AppContext } from '../../../context/AppContext'
+import SmartImageCropper from './SmartImageCropper'
 
 const EditableDropdown = ({ label, value, onChange, options, icon: Icon, maxLength }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -64,6 +66,8 @@ export default function LiveTab() {
   // 1. Hero Banner Management
   const [bgImage, setBgImage] = useState(liveSettings?.bgImage || 'https://images.unsplash.com/photo-1604085572504-a392ddf0d86a?auto=format&fit=crop&w=1920&q=80')
   const [guruImage, setGuruImage] = useState(liveSettings?.guruImage || '')
+  const [bgCropData, setBgCropData] = useState(liveSettings?.bgCropData || '')
+  const [guruCropData, setGuruCropData] = useState(liveSettings?.guruCropData || '')
   const [bannerTitle, setBannerTitle] = useState(liveSettings?.bannerTitle || 'LIVE KATHA DARSHAN')
   const [bannerSubtitle, setBannerSubtitle] = useState(liveSettings?.bannerSubtitle || 'पूज्य गुरु जी के श्रीमुखारविंद से अमृतमयी कथा का श्रवण करें।')
   const [topText, setTopText] = useState(liveSettings?.topText || '|| जय श्री राम ||')
@@ -87,6 +91,24 @@ export default function LiveTab() {
   const [marqueeText, setMarqueeText] = useState(liveSettings?.marqueeText ?? 'LIVE NOW • श्रीमद भागवत कथा का सीधा प्रसारण जारी है • YouTube Channel पर जुड़ें • जय श्री राम')
   const [marqueeEnabled, setMarqueeEnabled] = useState(liveSettings?.marqueeEnabled ?? true)
 
+  const [youtubeLiveUrl, setYoutubeLiveUrl] = useState(liveSettings?.youtubeLiveUrl || '')
+  const [facebookLiveUrl, setFacebookLiveUrl] = useState(liveSettings?.facebookLiveUrl || '')
+  const [instagramLiveUrl, setInstagramLiveUrl] = useState(liveSettings?.instagramLiveUrl || '')
+
+  // Preview & Cropper State
+  const [previewDevice, setPreviewDevice] = useState('desktop') // 'desktop', 'tablet', 'mobile'
+  const [cropModalConfig, setCropModalConfig] = useState({ isOpen: false, target: null, imageUrl: '', initialCropData: '', aspectRatio: '16/9' });
+  const [testStreamStatus, setTestStreamStatus] = useState(null) // null, 'ready', 'unavailable'
+  const [isTestingStream, setIsTestingStream] = useState(false)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+
+  // Track changes to show "Unsaved Changes" status
+  useEffect(() => {
+    setHasUnsavedChanges(true)
+  }, [bgImage, guruImage, bgCropData, guruCropData, bannerTitle, bannerSubtitle, topText, primaryBtnText, primaryBtnUrl, secondaryBtnText, secondaryBtnUrl, textAlign, guruPos, overlayOpacity, bgBrightness, heroEnabled, isLive, eventDay, eventTopic, eventDate, eventTime, eventLocation, marqueeText, marqueeEnabled, youtubeLiveUrl, facebookLiveUrl, instagramLiveUrl])
+
+  useEffect(() => { setHasUnsavedChanges(false) }, []) // initial mount
+
   const formatHindiDate = (dateStr) => {
     if (!dateStr) return '';
     if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
@@ -101,23 +123,30 @@ export default function LiveTab() {
   const [isSaved, setIsSaved] = useState(false)
 
   const handleSave = (e) => {
-    e.preventDefault()
+    e?.preventDefault()
     setIsSaving(true)
     
     // Save to AppContext
     updateLiveSettings({
-      bgImage, guruImage, bannerTitle, bannerSubtitle, topText,
+      bgImage, guruImage, bgCropData, guruCropData, bannerTitle, bannerSubtitle, topText,
       primaryBtnText, primaryBtnUrl, secondaryBtnText, secondaryBtnUrl,
       textAlign, guruPos, overlayOpacity, bgBrightness, heroEnabled, isLive,
-      eventDay, eventTopic, eventDate, eventTime, eventLocation, marqueeText, marqueeEnabled
+      eventDay, eventTopic, eventDate, eventTime, eventLocation, marqueeText, marqueeEnabled,
+      youtubeLiveUrl, facebookLiveUrl, instagramLiveUrl
     })
-    alert('लाइव सेटिंग्स सफलतापूर्वक सहेज ली गई हैं! (Live settings saved successfully!)');
 
     setTimeout(() => {
       setIsSaving(false)
       setIsSaved(true)
+      setHasUnsavedChanges(false)
       setTimeout(() => setIsSaved(false), 3000)
-    }, 1500)
+    }, 1000)
+  }
+
+  const handleReset = () => {
+    if(window.confirm("Discard unsaved changes?")) {
+      window.location.reload()
+    }
   }
 
   const [isDeleting, setIsDeleting] = useState(false)
@@ -135,59 +164,107 @@ export default function LiveTab() {
     }
   }
 
-  // --- IMAGE UPLOADS (Base64 for LocalStorage) ---
+  // --- IMAGE UPLOADS ---
   const handleBgUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
+      if(file.size > 5 * 1024 * 1024) { alert("File too large. Max 5MB."); return; }
       const reader = new FileReader()
-      reader.onloadend = () => setBgImage(reader.result)
+      reader.onloadend = () => {
+        setBgImage(reader.result)
+        setCropModalConfig({ isOpen: true, target: 'bg', imageUrl: reader.result, initialCropData: '', aspectRatio: '16/9' })
+      }
       reader.readAsDataURL(file)
     }
   }
+  
   const handleGuruUpload = (e) => {
     const file = e.target.files[0]
     if (file) {
+      if(file.size > 3 * 1024 * 1024) { alert("File too large. Max 3MB."); return; }
       const reader = new FileReader()
-      reader.onloadend = () => setGuruImage(reader.result)
+      reader.onloadend = () => {
+        setGuruImage(reader.result)
+        setCropModalConfig({ isOpen: true, target: 'guru', imageUrl: reader.result, initialCropData: '', aspectRatio: '4/5' })
+      }
       reader.readAsDataURL(file)
     }
+  }
+
+  const handleSaveCrop = (cropDataStr) => {
+    if(cropModalConfig.target === 'bg') setBgCropData(cropDataStr)
+    if(cropModalConfig.target === 'guru') setGuruCropData(cropDataStr)
+    setCropModalConfig({ isOpen: false, target: null, imageUrl: '', initialCropData: '', aspectRatio: '16/9' })
+  }
+
+  const renderCropStyle = (cropDataStr, zoomFactor = 1) => {
+    if(!cropDataStr) return {};
+    try {
+      const data = JSON.parse(cropDataStr);
+      return {
+        objectPosition: `${data.posX}% ${data.posY}%`,
+        transform: `scale(${data.zoom * zoomFactor})`
+      };
+    } catch (e) {
+      return {};
+    }
+  }
+
+  // Test Stream Logic
+  const handleTestStream = () => {
+    if(!youtubeLiveUrl) {
+      alert("Please enter a YouTube URL to test.")
+      return
+    }
+    setIsTestingStream(true)
+    setTestStreamStatus(null)
+    // Simulate API Check
+    setTimeout(() => {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+      const match = youtubeLiveUrl.match(regExp);
+      if (match && match[2].length === 11) {
+        setTestStreamStatus('ready')
+      } else {
+        setTestStreamStatus('unavailable')
+      }
+      setIsTestingStream(false)
+    }, 1500)
   }
 
   return (
     <div className="max-w-[1600px] mx-auto h-full flex flex-col font-sans">
       
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
         <div>
           <h2 className="text-3xl font-serif font-black text-[#3D2B20] flex items-center">
             <GiLotus className="text-[#D4AF37] mr-3" /> Live Katha Content Management
           </h2>
           <p className="text-gray-500 mt-2 text-sm font-medium">Control the frontend appearance, schedule, and streaming parameters in real-time.</p>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className={`px-5 py-2.5 rounded-full border shadow-sm font-bold flex items-center space-x-3 transition-colors ${isLive ? 'bg-red-50 text-[#D32F2F] border-red-200' : 'bg-gray-50 text-gray-500 border-gray-200'}`}>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className={`px-5 py-2.5 rounded-xl border shadow-sm font-bold flex items-center space-x-3 transition-colors ${isLive ? 'bg-red-50 text-[#D32F2F] border-red-200' : 'bg-gray-50 text-gray-500 border-gray-200'}`}>
             <span className={`w-2 h-2 rounded-full ${isLive ? 'bg-[#D32F2F] animate-pulse' : 'bg-gray-400'}`}></span>
             <span className="text-[10px] leading-[1.2] uppercase tracking-widest font-black flex flex-col items-start">
               <span>{isLive ? 'LIVE' : 'OFFLINE'}</span>
               {isLive && <span>NOW</span>}
             </span>
           </div>
-          <button 
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleting || isSaving}
-            className="bg-red-50 hover:bg-red-100 text-[#D32F2F] border border-red-200 px-6 py-2.5 rounded-xl font-bold uppercase tracking-widest hover:shadow-sm transition-all flex items-center space-x-3 disabled:opacity-75"
-          >
-            <FaTrash className="text-sm" />
-            <span className="text-[10px] leading-[1.2] font-black flex flex-col items-start">
-              <span>{isDeleting ? 'DELETING...' : 'DELETE'}</span>
-              {!isDeleting && <span>KATHA</span>}
-            </span>
+
+          <div className="bg-white border border-[#EAD8C8] rounded-xl flex items-center p-1 shadow-sm">
+             <button onClick={() => setPreviewDevice('desktop')} className={`p-2 rounded-lg transition-colors ${previewDevice === 'desktop' ? 'bg-[#E05A10] text-white' : 'text-[#8B5A2B] hover:bg-[#FAF0E6]'}`} title="Desktop Preview"><FaDesktop/></button>
+             <button onClick={() => setPreviewDevice('tablet')} className={`p-2 rounded-lg transition-colors ${previewDevice === 'tablet' ? 'bg-[#E05A10] text-white' : 'text-[#8B5A2B] hover:bg-[#FAF0E6]'}`} title="Tablet Preview"><FaTabletAlt/></button>
+             <button onClick={() => setPreviewDevice('mobile')} className={`p-2 rounded-lg transition-colors ${previewDevice === 'mobile' ? 'bg-[#E05A10] text-white' : 'text-[#8B5A2B] hover:bg-[#FAF0E6]'}`} title="Mobile Preview"><FaMobileAlt/></button>
+          </div>
+          
+          <button onClick={handleReset} className="bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 px-5 py-2.5 rounded-xl font-bold uppercase tracking-wider text-xs shadow-sm transition-colors">
+            Reset
           </button>
+          
           <button 
             type="button"
             onClick={handleSave}
-            disabled={isSaving || isDeleting}
+            disabled={isSaving}
             className="bg-gradient-to-r from-[#D6A035] to-[#E38128] text-white px-8 py-2.5 rounded-xl font-bold uppercase tracking-widest hover:shadow-md hover:opacity-90 transition-all flex items-center space-x-3 disabled:opacity-75 border-none"
           >
             {isSaved ? <FaCheckCircle className="text-sm" /> : <FaSave className="text-sm" />}
@@ -199,12 +276,12 @@ export default function LiveTab() {
         </div>
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-8 items-start">
+      <div className="flex flex-col xl:flex-row gap-8 items-start">
         
         {/* ========================================== */}
         {/* LEFT COLUMN - SETTINGS FORM                */}
         {/* ========================================== */}
-        <div className="w-full lg:w-3/5 xl:w-2/3 space-y-8 pb-20">
+        <div className="w-full xl:w-7/12 2xl:w-2/3 space-y-8 pb-20">
           
           {/* 1. Hero Banner Management */}
           <section className="bg-white rounded-2xl border border-[#EAD8C8] shadow-sm overflow-hidden">
@@ -222,32 +299,38 @@ export default function LiveTab() {
               {/* Image Uploads */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 block">Background Image (1920x200)</label>
+                  <div className="flex justify-between">
+                     <label className="text-sm font-bold text-gray-700 block">Background Image</label>
+                     {bgImage && <button onClick={() => setCropModalConfig({ isOpen: true, target: 'bg', imageUrl: bgImage, initialCropData: bgCropData, aspectRatio: '16/9' })} className="text-xs text-[#E05A10] font-bold hover:underline flex items-center"><FaCrop className="mr-1"/> Adjust Crop</button>}
+                  </div>
                   <div className="relative group">
-                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#D4AF37]/40 rounded-xl p-6 bg-[#FAF6F0] hover:bg-[#FFFDF5] cursor-pointer transition-colors h-32 relative overflow-hidden">
-                      {bgImage && <img src={bgImage} alt="bg" className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-10 transition-opacity" />}
+                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#D4AF37]/40 rounded-xl p-6 bg-[#FAF6F0] hover:bg-[#FFFDF5] cursor-pointer transition-colors h-36 relative overflow-hidden">
+                      {bgImage && <img src={bgImage} alt="bg" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-30 transition-opacity" style={renderCropStyle(bgCropData)} />}
                       <FaCamera className="text-2xl text-[#E67E22] mb-2 relative z-10" />
                       <span className="text-xs font-bold text-[#3D2B20] relative z-10">Upload Background</span>
                       <input type="file" className="hidden" accept="image/*" onChange={handleBgUpload} />
                     </label>
                     {bgImage && (
-                      <button onClick={() => setBgImage('')} className="absolute top-2 right-2 bg-red-100 hover:bg-red-500 text-red-600 hover:text-white p-2 rounded-lg transition-colors shadow-sm z-20">
+                      <button onClick={() => { setBgImage(''); setBgCropData('') }} className="absolute top-2 right-2 bg-red-100 hover:bg-red-500 text-red-600 hover:text-white p-2 rounded-lg transition-colors shadow-sm z-20">
                         <FaTrash className="text-xs" />
                       </button>
                     )}
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-bold text-gray-700 block">Transparent Guru Ji (PNG)</label>
+                  <div className="flex justify-between">
+                     <label className="text-sm font-bold text-gray-700 block">Transparent Guru Ji (PNG)</label>
+                     {guruImage && <button onClick={() => setCropModalConfig({ isOpen: true, target: 'guru', imageUrl: guruImage, initialCropData: guruCropData, aspectRatio: '4/5' })} className="text-xs text-[#E05A10] font-bold hover:underline flex items-center"><FaCrop className="mr-1"/> Adjust Scale</button>}
+                  </div>
                   <div className="relative group">
-                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#D4AF37]/40 rounded-xl p-6 bg-[#FAF6F0] hover:bg-[#FFFDF5] cursor-pointer transition-colors h-32 relative overflow-hidden">
-                      {guruImage && <img src={guruImage} alt="guru" className="absolute h-full object-contain right-4 opacity-50 group-hover:opacity-20 transition-opacity" />}
+                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-[#D4AF37]/40 rounded-xl p-6 bg-[#FAF6F0] hover:bg-[#FFFDF5] cursor-pointer transition-colors h-36 relative overflow-hidden">
+                      {guruImage && <img src={guruImage} alt="guru" className="absolute h-full object-contain right-4 opacity-50 group-hover:opacity-20 transition-opacity" style={renderCropStyle(guruCropData)} />}
                       <FaCamera className="text-2xl text-[#E67E22] mb-2 relative z-10" />
                       <span className="text-xs font-bold text-[#3D2B20] relative z-10">Upload Transparent PNG</span>
                       <input type="file" className="hidden" accept="image/png" onChange={handleGuruUpload} />
                     </label>
                     {guruImage && (
-                      <button onClick={() => setGuruImage('')} className="absolute top-2 right-2 bg-red-100 hover:bg-red-500 text-red-600 hover:text-white p-2 rounded-lg transition-colors shadow-sm z-20">
+                      <button onClick={() => { setGuruImage(''); setGuruCropData('') }} className="absolute top-2 right-2 bg-red-100 hover:bg-red-500 text-red-600 hover:text-white p-2 rounded-lg transition-colors shadow-sm z-20">
                         <FaTrash className="text-xs" />
                       </button>
                     )}
@@ -290,7 +373,7 @@ export default function LiveTab() {
                       <option value="पूज्य गुरुदेव के श्रीमुखारविंद से दिव्य कथा का श्रवण करें और ईश्वर की असीम कृपा का अनुभव करें।">पूज्य गुरुदेव के श्रीमुखारविंद से दिव्य कथा का श्रवण करें...</option>
                     </select>
                     <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                      <svg className="w-4 h-4 text-[#E05A10]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                      <FaChevronDown className="w-3 h-3 text-[#E05A10]" />
                     </div>
                   </div>
                 </div>
@@ -303,7 +386,7 @@ export default function LiveTab() {
                     <label className="flex items-center cursor-pointer shrink-0">
                       <div className="relative">
                         <input type="checkbox" className="sr-only" checked={marqueeEnabled} onChange={(e) => setMarqueeEnabled(e.target.checked)} />
-                        <div className={`block w-10 h-6 rounded-full transition-colors ${marqueeEnabled ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                        <div className={`block w-10 h-6 rounded-full transition-colors ${marqueeEnabled ? 'bg-[#E05A10]' : 'bg-gray-300'}`}></div>
                         <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${marqueeEnabled ? 'transform translate-x-4' : ''}`}></div>
                       </div>
                       <span className="ml-3 text-sm font-bold text-[#3D2B20]">{marqueeEnabled ? 'ON' : 'OFF'}</span>
@@ -442,7 +525,6 @@ export default function LiveTab() {
                     <FaCalendarAlt className="absolute top-3.5 left-4 text-[#E05A10] text-sm" />
                     <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)} className="w-full pl-11 pr-4 py-3 text-sm rounded-xl border border-[#EAD8C8] focus:outline-none focus:border-[#E05A10] focus:ring-2 focus:ring-[#E05A10]/30 bg-[#FCF5EB] text-[#3D2B20] shadow-sm uppercase transition-all" />
                   </div>
-                  <p className="text-[10px] text-[#8a6f27] mt-1">Pick a date from the calendar</p>
                 </div>
 
                 <EditableDropdown 
@@ -466,23 +548,29 @@ export default function LiveTab() {
               </div>
 
               <div className="space-y-4 pt-2">
-                <div className="relative">
-                  <FaYoutube className="absolute top-3.5 left-4 text-red-600 text-lg" />
-                  <input type="url" placeholder="YouTube Live Embed URL / Video ID" className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-[#EAD8C8] focus:outline-none focus:border-[#E05A10] focus:ring-2 focus:ring-[#E05A10]/30 bg-[#FCF5EB] text-[#3D2B20] shadow-sm transition-all" />
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="relative flex-grow">
+                    <FaYoutube className="absolute top-3.5 left-4 text-red-600 text-lg" />
+                    <input type="url" value={youtubeLiveUrl} onChange={e=>setYoutubeLiveUrl(e.target.value)} placeholder="YouTube Live Embed URL / Video ID" className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-[#EAD8C8] focus:outline-none focus:border-[#E05A10] focus:ring-2 focus:ring-[#E05A10]/30 bg-[#FCF5EB] text-[#3D2B20] shadow-sm transition-all" />
+                  </div>
+                  <button onClick={handleTestStream} disabled={isTestingStream || !youtubeLiveUrl} className="shrink-0 bg-white border border-[#EAD8C8] hover:bg-gray-50 text-gray-700 font-bold px-6 py-3 rounded-xl shadow-sm transition-colors flex items-center gap-2">
+                    {isTestingStream ? <FaSpinner className="animate-spin text-[#E05A10]" /> : <FaPlayCircle className="text-[#E05A10]" />} Test Stream
+                  </button>
                 </div>
+                {testStreamStatus === 'ready' && <p className="text-xs text-green-600 font-bold ml-2">🟢 Stream Ready: Valid YouTube Video ID detected.</p>}
+                {testStreamStatus === 'unavailable' && <p className="text-xs text-red-600 font-bold ml-2">🔴 Stream Unavailable: Invalid YouTube URL format.</p>}
+
                 <div className="relative">
                   <FaFacebookF className="absolute top-3.5 left-4 text-blue-600 text-lg" />
-                  <input type="url" placeholder="Facebook Live URL" className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-[#EAD8C8] focus:outline-none focus:border-[#E05A10] focus:ring-2 focus:ring-[#E05A10]/30 bg-[#FCF5EB] text-[#3D2B20] shadow-sm transition-all" />
+                  <input type="url" value={facebookLiveUrl} onChange={e=>setFacebookLiveUrl(e.target.value)} placeholder="Facebook Live URL" className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-[#EAD8C8] focus:outline-none focus:border-[#E05A10] focus:ring-2 focus:ring-[#E05A10]/30 bg-[#FCF5EB] text-[#3D2B20] shadow-sm transition-all" />
                 </div>
                 <div className="relative">
                   <FaInstagram className="absolute top-3.5 left-4 text-pink-600 text-lg" />
-                  <input type="url" placeholder="Instagram Live URL" className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-[#EAD8C8] focus:outline-none focus:border-[#E05A10] focus:ring-2 focus:ring-[#E05A10]/30 bg-[#FCF5EB] text-[#3D2B20] shadow-sm transition-all" />
+                  <input type="url" value={instagramLiveUrl} onChange={e=>setInstagramLiveUrl(e.target.value)} placeholder="Instagram Live URL" className="w-full pl-12 pr-4 py-3 text-sm rounded-xl border border-[#EAD8C8] focus:outline-none focus:border-[#E05A10] focus:ring-2 focus:ring-[#E05A10]/30 bg-[#FCF5EB] text-[#3D2B20] shadow-sm transition-all" />
                 </div>
               </div>
             </div>
           </section>
-
-          {/* 3, 4, 6, 7 Sections Removed per User Request */}
 
         </div>
 
@@ -490,111 +578,131 @@ export default function LiveTab() {
         {/* ========================================== */}
         {/* RIGHT COLUMN - LIVE PREVIEW PANEL          */}
         {/* ========================================== */}
-        <div className="w-full lg:w-2/5 xl:w-1/3 space-y-6 sticky top-6">
-          <div className="bg-white rounded-3xl border border-[#D4AF37]/50 shadow-2xl overflow-hidden shadow-[#D4AF37]/10">
+        <div className="w-full xl:w-5/12 2xl:w-1/3 space-y-6 sticky top-6">
+          
+          {hasUnsavedChanges && (
+             <div className="bg-orange-50 border border-orange-200 text-orange-800 px-4 py-3 rounded-xl flex items-center shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-orange-500 mr-3 animate-pulse"></span>
+                <span className="text-sm font-bold">You have unsaved changes.</span>
+             </div>
+          )}
+
+          <div className="bg-white rounded-3xl border border-[#EAD8C8] shadow-2xl overflow-hidden">
             <div className="bg-[#3D2B20] text-white px-4 py-3 flex justify-between items-center">
-              <h4 className="font-bold text-sm flex items-center"><FaExternalLinkAlt className="mr-2 text-[#D4AF37]"/> Frontend Live Preview</h4>
-              <span className="text-[10px] uppercase tracking-wider bg-white/20 px-2 py-1 rounded">16:9 Scale</span>
+              <h4 className="font-bold text-sm flex items-center"><FaExternalLinkAlt className="mr-2 text-[#D4AF37]"/> Live Frontend Preview</h4>
+              <span className="text-[10px] uppercase tracking-wider bg-white/20 px-2 py-1 rounded flex items-center gap-1">
+                 {previewDevice === 'desktop' && <><FaDesktop/> Desktop</>}
+                 {previewDevice === 'tablet' && <><FaTabletAlt/> Tablet</>}
+                 {previewDevice === 'mobile' && <><FaMobileAlt/> Mobile</>}
+              </span>
             </div>
 
             {/* Simulated Frontend Window */}
-            <div className="bg-[#FCF9F2] w-full aspect-[4/3] flex flex-col relative overflow-hidden">
+            <div className={`bg-[#FCF9F2] mx-auto flex flex-col relative overflow-hidden transition-all duration-300 ${previewDevice === 'desktop' ? 'w-full aspect-[16/10]' : previewDevice === 'tablet' ? 'w-[400px] aspect-[3/4]' : 'w-[280px] aspect-[9/16]'}`}>
               
               {/* Fake Navbar */}
-              <div className="h-10 bg-white border-b border-[#EAD8C8] px-4 flex justify-between items-center z-50">
-                <div className="w-8 h-8 rounded-full bg-[#E67E22]/20 flex items-center justify-center"><GiLotus className="text-[#E67E22]"/></div>
-                <div className="flex space-x-2">
-                  <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
-                  <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
-                  <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
+              <div className="h-10 shrink-0 bg-white border-b border-[#EAD8C8] px-4 flex justify-between items-center z-50">
+                <div className="w-6 h-6 rounded-full bg-[#E67E22]/20 flex items-center justify-center"><GiLotus className="text-[#E67E22] text-[10px]"/></div>
+                <div className="flex space-x-1.5">
+                  <div className="w-4 h-1 bg-gray-200 rounded-full"></div>
+                  <div className="w-4 h-1 bg-gray-200 rounded-full"></div>
+                  <div className="w-4 h-1 bg-gray-200 rounded-full"></div>
                 </div>
               </div>
 
-              {/* The Hero Banner Preview Area */}
-              {heroEnabled && (
-                <div className="relative w-full overflow-hidden" style={{ height: '35%' }}>
-                  {/* Background Image */}
-                  <div 
-                    className="absolute inset-0 bg-cover bg-center transition-all duration-300"
-                    style={{ 
-                      backgroundImage: `url(${bgImage})`,
-                      filter: `brightness(${bgBrightness}%)`
-                    }}
-                  ></div>
-                  
-                  {/* Overlay Opacity */}
-                  <div 
-                    className="absolute inset-0 bg-black transition-all duration-300"
-                    style={{ opacity: overlayOpacity / 100 }}
-                  ></div>
-
-                  {/* Guru Ji Image */}
-                  {guruImage && (
-                    <div className={`absolute bottom-0 h-[85%] z-10 transition-all duration-500 ${guruPos === 'left' ? 'left-4' : 'right-4'}`}>
-                      <img src={guruImage} alt="Guru" className="h-full w-auto object-contain object-bottom drop-shadow-2xl" />
-                    </div>
-                  )}
-
-                  {/* Text Content */}
-                  <div className={`absolute inset-0 p-4 z-20 flex flex-col justify-center transition-all duration-500 
-                    ${textAlign === 'center' ? 'items-center text-center' : 'items-start text-left'}
-                    ${guruImage ? (guruPos === 'left' ? 'pl-[40%]' : 'pr-[40%]') : 'px-8'}
-                  `}>
-                    <p className="text-[#F9E79F] font-bold text-[8px] sm:text-[10px] tracking-widest drop-shadow-md whitespace-nowrap">{topText}</p>
-                    <h1 className="text-white font-serif font-black text-lg sm:text-2xl mt-1 drop-shadow-lg leading-tight uppercase shadow-black">{bannerTitle}</h1>
-                    <p className="text-white/90 text-[7px] sm:text-[9px] mt-1 font-medium drop-shadow-md leading-snug line-clamp-2 max-w-[80%]">{bannerSubtitle}</p>
+              <div className="flex-grow overflow-y-auto overflow-x-hidden relative">
+                {/* The Hero Banner Preview Area */}
+                {heroEnabled && (
+                  <div className={`relative w-full overflow-hidden ${previewDevice === 'mobile' ? 'h-[250px]' : 'h-[280px]'}`}>
+                    {/* Background Image */}
+                    <div 
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{ 
+                        backgroundImage: `url(${bgImage})`,
+                        filter: `brightness(${bgBrightness}%)`,
+                        ...renderCropStyle(bgCropData)
+                      }}
+                    ></div>
                     
-                    {/* Buttons Preview */}
-                    <div className={`flex gap-2 mt-3 w-full ${textAlign === 'center' ? 'justify-center' : 'justify-start'}`}>
-                      {primaryBtnText && (
-                        <div className="bg-gradient-to-r from-[#D35400] to-[#E67E22] text-white text-[7px] sm:text-[8px] px-3 py-1.5 rounded font-bold whitespace-nowrap shadow flex items-center border border-white/20">
-                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse mr-1.5"></span> {primaryBtnText}
-                        </div>
-                      )}
-                      {secondaryBtnText && (
-                        <div className="bg-[#1C1C1C] text-[#F39C12] border border-[#F39C12]/50 text-[7px] sm:text-[8px] px-3 py-1.5 rounded font-bold whitespace-nowrap shadow flex items-center">
-                          <FaYoutube className="mr-1" /> {secondaryBtnText}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              )}
+                    {/* Overlay Opacity */}
+                    <div className="absolute inset-0 bg-black" style={{ opacity: overlayOpacity / 100 }}></div>
 
-              {/* Fake Content Below Banner */}
-              <div className="flex-grow bg-gradient-to-b from-gray-50 to-white p-4 relative flex flex-col items-center">
-                {isLive && (
-                  <div className="absolute top-2 right-4 bg-red-600 text-white text-[8px] font-bold px-2 py-0.5 rounded shadow-lg animate-pulse flex items-center">
-                    <span className="w-1.5 h-1.5 bg-white rounded-full mr-1"></span> LIVE NOW
+                    {/* Guru Ji Image */}
+                    {guruImage && (
+                      <div className={`absolute bottom-0 h-[85%] z-10 ${guruPos === 'left' ? 'left-2' : 'right-2'}`}>
+                        <img src={guruImage} alt="Guru" className="h-full w-auto object-contain object-bottom drop-shadow-2xl" style={renderCropStyle(guruCropData)} />
+                      </div>
+                    )}
+
+                    {/* Text Content */}
+                    <div className={`absolute inset-0 p-4 z-20 flex flex-col justify-center
+                      ${textAlign === 'center' ? 'items-center text-center' : 'items-start text-left'}
+                      ${guruImage ? (guruPos === 'left' ? 'pl-[45%]' : 'pr-[45%]') : 'px-4'}
+                    `}>
+                      <p className="text-[#F9E79F] font-bold text-[8px] sm:text-[10px] tracking-widest drop-shadow-md whitespace-nowrap">{topText}</p>
+                      <h1 className="text-white font-serif font-black text-sm sm:text-xl mt-1 drop-shadow-lg leading-tight uppercase shadow-black">{bannerTitle}</h1>
+                      <p className="text-white/90 text-[7px] sm:text-[9px] mt-1 font-medium drop-shadow-md leading-snug line-clamp-2 max-w-[90%]">{bannerSubtitle}</p>
+                      
+                      {/* Buttons Preview */}
+                      <div className={`flex gap-1.5 mt-3 w-full ${textAlign === 'center' ? 'justify-center' : 'justify-start'}`}>
+                        {primaryBtnText && (
+                          <div className="bg-gradient-to-r from-[#D35400] to-[#E67E22] text-white text-[7px] sm:text-[8px] px-2 py-1 rounded font-bold whitespace-nowrap shadow flex items-center border border-white/20">
+                            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse mr-1"></span> {primaryBtnText}
+                          </div>
+                        )}
+                        {secondaryBtnText && (
+                          <div className="bg-white/10 backdrop-blur-md text-white border border-white/30 text-[7px] sm:text-[8px] px-2 py-1 rounded font-bold whitespace-nowrap shadow flex items-center">
+                            <FaYoutube className="mr-1 text-[#E67E22]" /> {secondaryBtnText}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
-                <div className="w-[85%] bg-white aspect-video mt-4 rounded-lg shadow-xl border border-gray-200 flex items-center justify-center relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-black/5"></div>
-                  <FaPlayCircle className="text-4xl text-gray-300 group-hover:text-red-500 transition-colors drop-shadow-md z-10" />
-                </div>
-                <div className="w-[85%] mt-3 bg-[#FCF8F2] border border-[#EAD8C8] rounded-lg p-2 flex flex-col items-center justify-center text-center shadow-sm">
-                  <div className="flex items-center rounded-md overflow-hidden shadow-sm">
-                    <div className="bg-[#6B1B10] text-white text-[8px] px-2 py-1 font-bold">{eventDay}</div>
-                    <div className="bg-white text-[#6B1B10] text-[9px] px-3 py-1 font-black border-y border-r border-[#6B1B10]">{eventTopic}</div>
+
+                {/* Fake Content Below Banner */}
+                <div className="p-4 flex flex-col items-center">
+                  
+                  {isLive ? (
+                    <div className="w-full bg-black aspect-video rounded border border-gray-300 flex items-center justify-center shadow-lg relative overflow-hidden group">
+                       <FaPlayCircle className="text-2xl text-red-600/80 group-hover:text-red-500 transition-colors" />
+                       <div className="absolute top-2 left-2 bg-red-600 text-white text-[6px] font-bold px-1.5 py-0.5 rounded flex items-center"><span className="w-1 h-1 bg-white rounded-full mr-1 animate-ping"></span>LIVE</div>
+                    </div>
+                  ) : (
+                    <div className="w-full bg-white aspect-video rounded border border-[#EAD8C8] flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
+                       <div className="absolute top-0 w-full h-0.5 bg-[#D4AF37]"></div>
+                       <h4 className="font-serif font-black text-[#3D2B20] text-xs">Offline Mode</h4>
+                       <span className="text-[8px] text-gray-500 mt-1">Video hidden</span>
+                    </div>
+                  )}
+                  
+                  <div className="w-full mt-3 bg-white border border-[#EAD8C8] rounded-md p-2 flex flex-col shadow-sm">
+                    <h4 className="text-[10px] font-bold text-[#E05A10] uppercase mb-0.5">वर्तमान प्रसंग</h4>
+                    <p className="text-xs font-serif font-black text-[#3D2B20]">{eventTopic || 'श्रीमद् भागवत कथा'}</p>
+                    <p className="text-[8px] font-bold text-[#8B5A2B] mt-1">{eventDay || 'प्रथम दिवस'}</p>
                   </div>
-                  <div className="flex text-[6px] text-[#3D2B20] font-bold mt-2 gap-2">
-                    <span className="flex items-center"><FaCalendarAlt className="mr-1 text-[#6B1B10]"/> {formatHindiDate(eventDate)}</span>
-                    <span className="flex items-center text-gray-300">|</span>
-                    <span className="flex items-center"><FaClock className="mr-1 text-[#6B1B10]"/> {eventTime}</span>
-                    <span className="flex items-center text-gray-300">|</span>
-                    <span className="flex items-center"><FaMapMarkerAlt className="mr-1 text-[#6B1B10]"/> {eventLocation}</span>
-                  </div>
+                  
                 </div>
               </div>
             </div>
             
-            <div className="bg-gray-50 p-3 border-t border-gray-100 flex justify-between items-center">
-              <span className="text-xs text-gray-500">Status: <span className="font-bold text-green-600">Syncing to preview...</span></span>
-              <GiLotus className="text-gray-300" />
+            <div className="bg-[#FAF6F0] p-3 border-t border-[#EAD8C8] flex justify-between items-center text-[10px]">
+              <span className="text-gray-500">Live preview sync: <span className="font-bold text-green-600">Active</span></span>
+              <GiLotus className="text-[#D4AF37]" />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Cropper Modal */}
+      <SmartImageCropper 
+        isOpen={cropModalConfig.isOpen}
+        imageUrl={cropModalConfig.imageUrl}
+        initialCropData={cropModalConfig.initialCropData}
+        aspectRatio={cropModalConfig.aspectRatio}
+        onSave={handleSaveCrop}
+        onClose={() => setCropModalConfig({ ...cropModalConfig, isOpen: false })}
+      />
     </div>
   )
 }

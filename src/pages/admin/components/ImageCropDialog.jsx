@@ -207,6 +207,18 @@ export default function ImageCropDialog({ banner, isOpen, onClose, onSave }) {
                       className="max-w-full max-h-[300px] object-contain opacity-70"
                     />
                     
+                    {/* Safe Zone Overlay */}
+                    {activeTab === 'desktop' && (
+                      <div className="absolute inset-0 pointer-events-none flex">
+                        <div className="w-[45%] h-full bg-red-500/20 border-r border-dashed border-red-500/50 flex items-center justify-center">
+                          <span className="text-red-900/60 font-black text-[10px] uppercase tracking-widest text-center px-2">Text Safe Area</span>
+                        </div>
+                        <div className="w-[55%] h-full bg-green-500/10 flex items-center justify-center">
+                          <span className="text-green-900/60 font-black text-[10px] uppercase tracking-widest text-center px-2">Main Subject Area</span>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Focal Point Indicator */}
                     <div 
                       className="absolute w-6 h-6 border-[3px] border-[#E05A10] rounded-full flex items-center justify-center shadow-lg bg-white/50 backdrop-blur-sm transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-200"

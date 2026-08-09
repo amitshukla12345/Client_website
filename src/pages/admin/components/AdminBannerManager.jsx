@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { 
   FaUpload, FaTrash, FaCopy, FaSave, FaEye, FaChevronDown, FaChevronUp, FaPlus,
   FaAlignLeft, FaAlignCenter, FaAlignRight, FaInfoCircle, FaImage, FaCalendarAlt,
-  FaDesktop, FaTabletAlt, FaMobileAlt, FaCrosshairs, FaCheckCircle, FaMapMarkerAlt, FaClock, FaCrop
+  FaDesktop, FaTabletAlt, FaMobileAlt, FaCrosshairs, FaCheckCircle, FaMapMarkerAlt, FaClock, FaCrop, FaCheck, FaTimes
 } from 'react-icons/fa'
 import { GiLotus } from 'react-icons/gi'
 import { AppContext } from '../../../context/AppContext'
@@ -176,6 +176,9 @@ export default function AdminBannerManager() {
         desktopImageZoom: 1,
         mobileImageZoom: 1,
         overlayDarkness: 0,
+        overlayType: 'AUTO',
+        theme: 'AUTO',
+        altText: '',
         enableBook: true,
         enableLive: true,
         status: 'Draft',
@@ -228,18 +231,49 @@ export default function AdminBannerManager() {
   }
 
   const handleImageUpload = (id, e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 1024 * 1024) {
-        alert("Image exceeds 1MB limit. Please compress it.");
-        return;
+    try {
+      const file = e.target.files[0];
+      if (file) {
+        if (file.size > 5 * 1024 * 1024) {
+          alert("Image exceeds 5MB limit. Please compress it.");
+          return;
+        }
+        
+        const fileSizeKB = Math.round(file.size / 1024);
+        const format = file.type ? file.type.split('/')[1]?.toUpperCase() || 'UNKNOWN' : 'UNKNOWN';
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          try {
+            const img = new Image();
+            img.onload = () => {
+              const width = img.width || 0;
+              const height = img.height || 0;
+              const aspect = height ? (width / height).toFixed(2) : 1;
+              const isGoodRatio = aspect >= 1.8 && aspect <= 2.5; 
+              const isGoodRes = width >= 1200;
+
+              handleUpdate(id, 'imageStats', {
+                width, height, aspect, isGoodRatio, isGoodRes, fileSizeKB, format
+              });
+              handleUpdate(id, 'image', reader.result);
+              setIsCropDialogOpen(true);
+            };
+            img.onerror = () => {
+              handleUpdate(id, 'image', reader.result);
+              setIsCropDialogOpen(true);
+            };
+            img.src = reader.result;
+          } catch (err) {
+            console.error("Image processing error", err);
+            handleUpdate(id, 'image', reader.result);
+            setIsCropDialogOpen(true);
+          }
+        };
+        reader.readAsDataURL(file);
       }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        handleUpdate(id, 'image', reader.result);
-        setIsCropDialogOpen(true); // Open the smart crop dialog automatically
-      };
-      reader.readAsDataURL(file);
+    } catch (error) {
+      console.error("Upload error", error);
     }
   }
 
@@ -418,9 +452,58 @@ export default function AdminBannerManager() {
                 </div>
               </div>
 
+              {/* THEME & ACCESSIBILITY */}
+              <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#EAD8C8]">
+                <h3 className="text-xs font-black text-[#8A2900] uppercase tracking-wider mb-4 border-b border-[#FAF0E6] pb-2">4. Theme & Accessibility</h3>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#8B5A2B] uppercase mb-1.5">Color Theme</label>
+                      <select 
+                        value={activeBanner.theme || 'AUTO'} 
+                        onChange={e => handleUpdate(activeBanner.id, 'theme', e.target.value)}
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#EAD8C8] bg-[#FFFDF7] font-bold text-[#3D2B20] outline-none focus:border-[#E05A10]"
+                      >
+                        <option value="AUTO">AUTO (Cream)</option>
+                        <option value="CREAM">Cream (#FCF9F2)</option>
+                        <option value="SAFFRON">Saffron (#FFF4EB)</option>
+                        <option value="WARM GOLD">Warm Gold (#FDF9EB)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-[#8B5A2B] uppercase mb-1.5">Image Overlay</label>
+                      <select 
+                        value={activeBanner.overlayType || 'AUTO'} 
+                        onChange={e => handleUpdate(activeBanner.id, 'overlayType', e.target.value)}
+                        className="w-full px-4 py-2.5 rounded-lg border border-[#EAD8C8] bg-[#FFFDF7] font-bold text-[#3D2B20] outline-none focus:border-[#E05A10]"
+                      >
+                        <option value="AUTO">AUTO</option>
+                        <option value="GRADIENT">Gradient Only</option>
+                        <option value="WARM">Warm Wash</option>
+                        <option value="DARK">Dark Fade</option>
+                        <option value="NONE">None</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#8B5A2B] uppercase mb-1.5 flex items-center justify-between">
+                      Image Alt Text 
+                      <span className="text-[9px] font-normal text-gray-500">(For SEO & Screen Readers)</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      value={activeBanner.altText || ''} 
+                      onChange={e => handleUpdate(activeBanner.id, 'altText', e.target.value)} 
+                      className="w-full px-4 py-2.5 rounded-lg border border-[#EAD8C8] bg-[#FFFDF7] font-semibold text-sm" 
+                      placeholder="e.g. Shri Ram Katha with Pujya Guru Ji" 
+                    />
+                  </div>
+                </div>
+              </div>
+
               {/* BUTTONS */}
               <div className="bg-white rounded-2xl p-6 shadow-sm border border-[#EAD8C8]">
-                <h3 className="text-xs font-black text-[#8A2900] uppercase tracking-wider mb-4 border-b border-[#FAF0E6] pb-2">4. Buttons Configuration</h3>
+                <h3 className="text-xs font-black text-[#8A2900] uppercase tracking-wider mb-4 border-b border-[#FAF0E6] pb-2">5. Buttons Configuration</h3>
                 
                 <div className="space-y-6">
                   <div className="p-4 bg-[#FAF0E6]/50 rounded-xl border border-[#EAD8C8]/50">
@@ -461,43 +544,76 @@ export default function AdminBannerManager() {
             <div className="bg-white rounded-3xl p-6 shadow-[0_10px_40px_rgba(224,90,16,0.05)] border border-[#EAD8C8]">
               
               {/* Preview Controls Header */}
-              <div className="flex flex-col sm:flex-row items-center justify-between mb-6 gap-4">
-                <SegmentedControl 
-                  label=""
-                  value={activeTab}
-                  onChange={setActiveTab}
-                  options={[
-                    { label: 'Desktop', value: 'desktop', icon: FaDesktop },
-                    { label: 'Tablet', value: 'tablet', icon: FaTabletAlt },
-                    { label: 'Mobile', value: 'mobile', icon: FaMobileAlt },
-                  ]}
-                />
+              <div className="flex flex-col xl:flex-row items-center justify-between mb-6 gap-3">
+                <div className="shrink-0 -mb-4">
+                  <SegmentedControl 
+                    label=""
+                    value={activeTab}
+                    onChange={setActiveTab}
+                    options={[
+                      { label: 'Desktop', value: 'desktop', icon: FaDesktop },
+                      { label: 'Tablet', value: 'tablet', icon: FaTabletAlt },
+                      { label: 'Mobile', value: 'mobile', icon: FaMobileAlt },
+                    ]}
+                  />
+                </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center justify-center gap-2">
                   <button 
                     onClick={() => setIsCropDialogOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs transition-colors shadow-sm bg-[#FFF9F0] text-[#E05A10] border border-[#EAD8C8] hover:bg-[#F5E6D3]"
+                    className="flex items-center justify-center gap-2 px-3 lg:px-4 py-2.5 rounded-lg font-bold text-[11px] lg:text-xs transition-colors shadow-sm bg-[#FFF9F0] text-[#E05A10] border border-[#EAD8C8] hover:bg-[#F5E6D3] whitespace-nowrap"
                   >
-                    <FaCrop /> Smart Auto Crop & Focus
+                    <FaCrop className="text-sm shrink-0" /> <span className="hidden sm:inline">Smart</span> Auto Crop
                   </button>
                   <button 
-                    onClick={() => fileInputRefs.current[activeBanner.id].click()}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg font-bold text-xs bg-[#3D2B20] text-white hover:bg-[#2A1E17] transition-colors shadow-sm"
+                    onClick={() => fileInputRefs.current[activeBanner.id]?.click()}
+                    className="flex items-center justify-center gap-2 px-3 lg:px-4 py-2.5 rounded-lg font-bold text-[11px] lg:text-xs bg-[#3D2B20] text-white hover:bg-[#2A1E17] transition-colors shadow-sm whitespace-nowrap"
                   >
-                    <FaUpload /> Upload Image
+                    <FaUpload className="text-sm shrink-0" /> Upload Image
                   </button>
-                  <input type="file" ref={el => fileInputRefs.current[activeBanner.id] = el} onChange={e => handleImageUpload(activeBanner.id, e)} accept="image/*" className="hidden" />
+                  <input type="file" ref={el => { if(el) fileInputRefs.current[activeBanner.id] = el; }} onChange={e => handleImageUpload(activeBanner.id, e)} accept="image/*" className="hidden" />
                 </div>
               </div>
 
-              {/* Image Guidelines */}
-              <div className="mb-4 overflow-hidden">
+              {/* Image Guidelines & Quality Check */}
+              <div className="mb-4 flex flex-col gap-3">
                 <div className="bg-[#FFF9F0] border border-[#D4AF37]/50 text-[#8A2900] p-4 rounded-xl flex items-start gap-3 text-sm shadow-inner">
                   <FaInfoCircle className="mt-0.5 text-[#E05A10] text-lg flex-shrink-0" />
                   <div>
-                    Click <strong>Smart Auto Crop & Focus</strong> to intelligently fit the main subject (e.g. Guru Ji) into the hero banner for both Desktop and Mobile views.
+                    <p className="mb-1"><strong>Recommended Size:</strong> 1920 × 900 pixels (Max: 5MB) for the best resolution.</p>
+                    <p>Click <strong>Smart Auto Crop & Focus</strong> to intelligently fit the main subject (e.g. Guru Ji) into the hero banner for both Desktop and Mobile views.</p>
                   </div>
                 </div>
+
+                {/* Image Quality Report */}
+                {activeBanner?.imageStats && (
+                  <div className="bg-white border border-[#EAD8C8] p-4 rounded-xl shadow-sm text-sm">
+                    <h4 className="font-bold text-[#3D2B20] border-b border-[#FAF0E6] pb-2 mb-3 text-xs uppercase tracking-wider">Image Quality Report</h4>
+                    <div className="grid grid-cols-2 gap-y-2 gap-x-4">
+                      <div className="flex items-center gap-2">
+                        {activeBanner.imageStats.isGoodRes ? <FaCheck className="text-green-600" /> : <FaTimes className="text-red-500" />}
+                        <span className="text-[#8B5A2B]">Resolution: <strong>{activeBanner.imageStats.width} × {activeBanner.imageStats.height}</strong></span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {activeBanner.imageStats.isGoodRatio ? <FaCheck className="text-green-600" /> : <FaInfoCircle className="text-yellow-600" />}
+                        <span className="text-[#8B5A2B]">Aspect Ratio: <strong>{activeBanner.imageStats.aspect}</strong></span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaCheck className="text-green-600" />
+                        <span className="text-[#8B5A2B]">File Size: <strong>{activeBanner.imageStats.fileSizeKB} KB</strong></span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaCheck className="text-green-600" />
+                        <span className="text-[#8B5A2B]">Format: <strong>{activeBanner.imageStats.format}</strong></span>
+                      </div>
+                    </div>
+                    {!activeBanner.imageStats.isGoodRes && (
+                      <p className="text-xs text-red-600 mt-3 font-semibold bg-red-50 p-2 rounded">
+                        ⚠ Warning: Image width is less than 1200px. It may appear blurry on large screens.
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* The Actual Scalable Preview Area */}
@@ -516,7 +632,10 @@ export default function AdminBannerManager() {
                   <div className="w-full h-full flex flex-col lg:flex-row relative z-10">
                     
                     {/* Left: Text Content */}
-                    <div className={`w-full ${activeTab === 'mobile' ? 'h-[60%] pt-12 pb-6 px-6 z-30 text-center flex flex-col' : 'lg:w-1/2 flex flex-col justify-center px-12 z-30 relative bg-[#FCF9F2]'}`}>
+                    <div className={`w-full ${activeTab === 'mobile' ? 'h-[60%] pt-12 pb-6 px-6 z-30 text-center flex flex-col' : 'lg:w-1/2 flex flex-col justify-center pl-8 pr-12 z-30 relative'} ${
+                      activeBanner?.theme === 'SAFFRON' ? 'bg-[#FFF4EB]' : 
+                      activeBanner?.theme === 'WARM GOLD' ? 'bg-[#FDF9EB]' : 'bg-[#FCF9F2]'
+                    }`}>
                       
 
                       <div className="relative z-20 flex flex-col">
@@ -575,12 +694,19 @@ export default function AdminBannerManager() {
                       </div>
                     </div>
 
-                    {/* Right: Image */}
-                    <div className={`w-full ${activeTab === 'mobile' ? 'absolute inset-0 h-full w-full z-0 opacity-40 mix-blend-multiply' : 'lg:w-1/2 relative h-full overflow-hidden z-0'}`}>
-                      {/* Soft Linear Gradient Blend (desktop/tablet only) */}
-                      {activeTab !== 'mobile' && (
-                        <div className="absolute left-0 top-0 h-full w-32 lg:w-48 bg-gradient-to-r from-[#FCF9F2] to-transparent z-10 pointer-events-none"></div>
-                      )}
+                    {/* Right: Full Height Image */}
+                    <div className={`w-full ${activeTab === 'mobile' ? 'h-[40%]' : 'lg:w-1/2 h-full'} relative overflow-hidden`}>
+                      {/* Gradient Transition */}
+                      <div className={`absolute left-0 top-0 h-full w-24 z-10 pointer-events-none hidden lg:block bg-gradient-to-r to-transparent ${
+                        activeBanner?.theme === 'SAFFRON' ? 'from-[#FFF4EB]' : 
+                        activeBanner?.theme === 'WARM GOLD' ? 'from-[#FDF9EB]' : 'from-[#FCF9F2]'
+                      }`}></div>
+                      
+                      {/* Custom Overlay */}
+                      {activeBanner?.overlayType === 'DARK' && <div className="absolute inset-0 bg-black/30 pointer-events-none z-10"></div>}
+                      {activeBanner?.overlayType === 'WARM' && <div className="absolute inset-0 bg-[#8A2900]/20 pointer-events-none z-10 mix-blend-overlay"></div>}
+                      {activeBanner?.overlayType === 'GRADIENT' && <div className="absolute inset-0 bg-gradient-to-l from-black/50 via-transparent to-transparent pointer-events-none z-10"></div>}
+                      {(!activeBanner?.overlayType || activeBanner?.overlayType === 'AUTO') && <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent pointer-events-none z-10"></div>}
                       
                       {activeBanner.image ? (
                         <div 
@@ -589,15 +715,13 @@ export default function AdminBannerManager() {
                         >
                           <img 
                             src={activeBanner.image}
-                            alt="Preview"
+                            alt={activeBanner?.altText || "Preview"}
                             className="w-full h-full object-cover pointer-events-none transition-all duration-300"
                             style={{ 
                               objectPosition: activeTab === 'mobile' || activeTab === 'tablet' ? (activeBanner.mobileImagePosition || '50% 50%') : (activeBanner.desktopImagePosition || '70% 50%'),
                               transform: `scale(${activeTab === 'mobile' || activeTab === 'tablet' ? (activeBanner.mobileImageZoom || 1) : (activeBanner.desktopImageZoom || 1)})`
                             }}
                           />
-                          {/* Overlay Darkness */}
-                          <div className="absolute inset-0 bg-black pointer-events-none" style={{ opacity: (activeBanner.overlayDarkness || 0) / 100 }}></div>
                         </div>
                       ) : (
                         <div className="w-full h-full bg-[#EAD8C8]/30 flex flex-col items-center justify-center text-[#8B5A2B]/50">

@@ -1,8 +1,7 @@
 import React, { useContext } from 'react'
-import { GiLotus } from 'react-icons/gi'
-import { FaYoutube, FaExternalLinkAlt, FaPlayCircle, FaInstagram, FaFacebookF, FaCalendarAlt, FaClock, FaMapMarkerAlt } from 'react-icons/fa'
+import { GiLotus, GiSoundWaves } from 'react-icons/gi'
+import { FaYoutube, FaExternalLinkAlt, FaPlayCircle, FaInstagram, FaFacebookF, FaCalendarAlt, FaClock, FaMapMarkerAlt, FaCalendarDay, FaChevronRight } from 'react-icons/fa'
 import { AppContext } from '../context/AppContext'
-import LiveHeroImg from '../assets/images/live_hero.png'
 
 export default function Live() {
   const { contacts, galleryVideos, liveSettings } = useContext(AppContext)
@@ -16,9 +15,19 @@ export default function Live() {
     ? (latestVideoId.startsWith('http') ? latestVideoId : `https://youtube.com/watch?v=${latestVideoId}`)
     : null;
 
-  const liveLink = galleryLiveLink
+  const liveLink = liveSettings?.youtubeLiveUrl 
+    || galleryLiveLink
     || contacts.liveKathaLink
     || 'https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8';
+
+  // Extract YouTube Video ID for iframe embed
+  const getYoutubeVideoId = (url) => {
+    if(!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+  }
+  const embedVideoId = getYoutubeVideoId(liveLink);
 
   const handleWatchLive = () => {
     window.open(liveLink, '_blank', 'noopener,noreferrer')
@@ -53,302 +62,274 @@ export default function Live() {
     return { top: locStr, bottom: '' };
   }
 
+  const isLive = liveSettings?.isLive === true;
+
   return (
-    <div className="pt-[20px] lg:pt-[30px] pb-0">
-      {/* Dynamic Hero Banner */}
+    <div className="bg-[#FCF8F2] min-h-screen pt-[20px] lg:pt-[30px] pb-0 font-sans">
+      
+      {/* 1. LARGE LIVE KATHA HERO */}
       {liveSettings?.heroEnabled && (
-        <section className="relative w-full overflow-hidden min-h-[400px] lg:min-h-[500px]">
+        <section className="relative w-full overflow-hidden min-h-[500px] lg:min-h-[600px] shadow-2xl">
           {/* Background Image */}
           <div 
-            className="absolute inset-0 bg-cover bg-bottom transition-all duration-300"
+            className="absolute inset-0 bg-cover bg-center transition-all duration-300"
             style={{ 
               backgroundImage: `url(${liveSettings.bgImage})`,
-              filter: `brightness(${liveSettings.bgBrightness}%)`
+              filter: `brightness(${liveSettings.bgBrightness || 100}%)`
             }}
           ></div>
           
           {/* Overlay Opacity */}
           <div 
             className="absolute inset-0 bg-black transition-all duration-300"
-            style={{ opacity: liveSettings.overlayOpacity / 100 }}
+            style={{ opacity: (liveSettings.overlayOpacity !== undefined ? liveSettings.overlayOpacity : 30) / 100 }}
           ></div>
 
           {/* Guru Ji Image */}
           {liveSettings.guruImage && (
-            <div className={`absolute bottom-0 h-[85%] z-10 transition-all duration-500 ${liveSettings.guruPos === 'left' ? 'left-10 lg:left-32' : 'right-10 lg:right-32'}`}>
-              <img src={liveSettings.guruImage} alt="Guru" className="h-full w-auto object-contain object-bottom drop-shadow-2xl" />
+            <div className={`absolute bottom-0 h-[80%] lg:h-[90%] z-10 transition-all duration-500 ${liveSettings.guruPos === 'left' ? 'left-4 lg:left-32' : 'right-4 lg:right-32'}`}>
+              <img src={liveSettings.guruImage} alt="Guru" className="h-full w-auto object-contain object-bottom drop-shadow-[0_20px_30px_rgba(0,0,0,0.5)]" />
             </div>
           )}
 
           {/* Text Content */}
-          <div className={`relative z-20 w-full pt-16 pb-8 px-8 lg:pt-24 lg:pb-12 lg:px-20 flex flex-col justify-start transition-all duration-500 
+          <div className={`relative z-20 w-full h-full min-h-[500px] lg:min-h-[600px] pt-16 pb-12 px-6 lg:px-20 flex flex-col justify-center transition-all duration-500 
             ${liveSettings.textAlign === 'center' ? 'items-center text-center' : 'items-start text-left'}
-            ${liveSettings.guruImage ? (liveSettings.guruPos === 'left' ? 'pl-[50%] lg:pl-[40%]' : 'pr-[50%] lg:pr-[40%]') : ''}
+            ${liveSettings.guruImage ? (liveSettings.guruPos === 'left' ? 'pl-[45%] lg:pl-[40%]' : 'pr-[45%] lg:pr-[40%]') : ''}
           `}>
             
             {/* Live Badge */}
-            {liveSettings?.isLive && (
-              <div className="bg-red-600/90 text-white text-xs font-bold px-4 py-1.5 rounded-full inline-flex items-center gap-2 mb-4 w-fit shadow-lg shadow-red-900/30 border border-red-500 backdrop-blur-sm animate-pulse">
-                <span className="w-2 h-2 rounded-full bg-white"></span>
+            {isLive && (
+              <div className="bg-red-600/90 text-white text-xs lg:text-sm font-bold px-5 py-2 rounded-full inline-flex items-center gap-3 mb-6 w-fit shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500 backdrop-blur-md">
+                <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping absolute"></span>
+                <span className="w-2.5 h-2.5 rounded-full bg-white relative"></span>
                 LIVE NOW
               </div>
             )}
             
-            <p className="text-[#F9E79F] font-bold text-sm lg:text-lg tracking-widest drop-shadow-md whitespace-nowrap mb-2">{liveSettings.topText}</p>
-            <h1 className="text-white font-serif font-black text-3xl lg:text-6xl mt-1 drop-shadow-lg leading-tight uppercase shadow-black">{liveSettings.bannerTitle}</h1>
-            <p className="text-white/90 text-sm lg:text-xl mt-4 font-medium drop-shadow-md leading-snug line-clamp-2 max-w-2xl">{liveSettings.bannerSubtitle}</p>
+            <p className="text-[#F9E79F] font-bold text-sm lg:text-xl tracking-widest drop-shadow-md whitespace-nowrap mb-3">{liveSettings.topText}</p>
+            <h1 className="text-white font-serif font-black text-4xl lg:text-7xl mt-1 drop-shadow-2xl leading-tight uppercase shadow-black tracking-wide">{liveSettings.bannerTitle}</h1>
+            <p className="text-white/95 text-base lg:text-2xl mt-5 font-medium drop-shadow-md leading-relaxed max-w-3xl">{liveSettings.bannerSubtitle}</p>
             
             {/* Buttons */}
-            <div className={`flex gap-4 mt-8 w-full ${liveSettings.textAlign === 'center' ? 'justify-center' : 'justify-start'}`}>
+            <div className={`flex flex-col sm:flex-row gap-4 sm:gap-6 mt-10 w-full ${liveSettings.textAlign === 'center' ? 'justify-center' : 'justify-start'}`}>
               {liveSettings.primaryBtnText && (
-                <a href={liveSettings.primaryBtnUrl || liveLink} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-[#D35400] to-[#E67E22] hover:from-[#E67E22] hover:to-[#D35400] text-white text-sm lg:text-base px-6 py-3 rounded-lg font-bold shadow-xl flex items-center border border-white/20 transition-all hover:scale-105">
-                  <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse mr-2"></span> {liveSettings.primaryBtnText}
+                <a href={liveSettings.primaryBtnUrl || liveLink} target="_blank" rel="noopener noreferrer" className="bg-gradient-to-r from-[#D35400] to-[#E67E22] hover:from-[#E67E22] hover:to-[#D35400] text-white text-base lg:text-lg px-8 py-4 rounded-xl font-bold shadow-xl flex items-center justify-center border border-white/20 transition-all hover:scale-105 hover:shadow-2xl">
+                  {isLive && <span className="w-2.5 h-2.5 rounded-full bg-white animate-pulse mr-3"></span>}
+                  {liveSettings.primaryBtnText}
                 </a>
               )}
               {liveSettings.secondaryBtnText && (
-                <a href={liveSettings.secondaryBtnUrl || contacts.youtube} target="_blank" rel="noopener noreferrer" className="bg-[#1C1C1C] hover:bg-black text-[#F39C12] border border-[#F39C12]/50 text-sm lg:text-base px-6 py-3 rounded-lg font-bold shadow-xl flex items-center transition-all hover:scale-105">
-                  <FaYoutube className="mr-2 text-xl" /> {liveSettings.secondaryBtnText}
+                <a href={liveSettings.secondaryBtnUrl || contacts.youtube} target="_blank" rel="noopener noreferrer" className="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 text-base lg:text-lg px-8 py-4 rounded-xl font-bold shadow-xl flex items-center justify-center transition-all hover:scale-105">
+                  <FaYoutube className="mr-3 text-2xl text-[#E67E22]" /> {liveSettings.secondaryBtnText}
                 </a>
               )}
             </div>
-            {/* Event Info Bar (Floating inside Hero) */}
-            {liveSettings?.eventDay && (
-              <div className={`mt-10 bg-[#FCF5EB]/95 backdrop-blur-sm border border-[#F0E4D4]/80 p-1.5 md:p-2 rounded-2xl md:rounded-full shadow-xl flex flex-col md:flex-row items-center gap-4 md:gap-6 w-fit transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 ${liveSettings.textAlign === 'center' ? 'mx-auto' : ''}`}>
-                
-                {/* The Badge */}
-                <div className="bg-[#7A1E14] text-white rounded-xl md:rounded-full px-6 py-2.5 flex items-center justify-between gap-6 shadow-inner min-w-[200px] w-full md:w-auto transition-colors duration-300 hover:bg-[#8B2217] cursor-default">
-                  <span className="text-[#E5B869] font-bold opacity-80 tracking-widest">||</span>
-                  <div className="flex flex-col items-center">
-                    <span className="text-[11px] md:text-xs font-medium tracking-wide opacity-90">{liveSettings.eventDay}</span>
-                    <span className="text-base md:text-lg font-bold tracking-wider">{liveSettings.eventTopic}</span>
-                  </div>
-                  <span className="text-[#E5B869] font-bold opacity-80 tracking-widest">||</span>
-                </div>
-                
-                {/* Details Container */}
-                <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 lg:gap-8 px-2 md:px-6 pb-4 md:pb-0">
-                  {/* Date */}
-                  <div className="flex items-center gap-3 group cursor-default">
-                    <div className="text-[#D35400] text-xl md:text-2xl opacity-80 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100"><FaCalendarAlt /></div>
-                    <div className="flex flex-col justify-center">
-                      <span className="text-[#4A2C2A] font-bold text-sm md:text-[15px] leading-tight transition-colors duration-300 group-hover:text-[#D35400]">{formatHindiDateObj(liveSettings.eventDate).date}</span>
-                      <span className="text-[#8A5A44] font-semibold text-[10px] md:text-[11px] leading-tight mt-0.5">{formatHindiDateObj(liveSettings.eventDate).day}</span>
-                    </div>
-                  </div>
+          </div>
+        </section>
+      )}
 
-                  <div className="hidden md:block w-px h-10 bg-[#EAD8C8]"></div>
+      {/* 3. LIVE TICKER */}
+      {liveSettings?.marqueeEnabled !== false && (liveSettings?.marqueeText ?? 'LIVE NOW • श्रीमद भागवत कथा का सीधा प्रसारण जारी है • YouTube Channel पर जुड़ें • जय श्री राम') !== '' && (
+        <section className="w-full bg-gradient-to-r from-[#E05A10] via-[#D35400] to-[#E05A10] text-white py-3.5 border-y border-[#D4AF37]/50 overflow-hidden shadow-md relative z-20">
+          <div className="flex items-center w-full">
+            <div className="bg-[#8A2900] px-4 py-3.5 absolute left-0 z-30 flex items-center shadow-[4px_0_10px_rgba(0,0,0,0.2)]">
+               <GiSoundWaves className="text-[#F9E79F] text-xl animate-pulse" />
+            </div>
+            <marquee behavior="scroll" direction="left" scrollamount="5" className="w-full pl-16 font-bold text-sm md:text-base tracking-wider whitespace-nowrap drop-shadow-sm flex items-center group cursor-default" onMouseOver={e => e.target.stop()} onMouseOut={e => e.target.start()}>
+              {Array(10).fill(0).map((_, i) => (
+                <span key={i} className="mx-10 inline-flex items-center">
+                  <GiLotus className="mr-3 text-[#F9E79F] opacity-70" /> 
+                  <span dangerouslySetInnerHTML={{ __html: liveSettings?.marqueeText ?? 'LIVE NOW • श्रीमद भागवत कथा का सीधा प्रसारण जारी है • YouTube Channel पर जुड़ें • जय श्री राम' }}></span>
+                </span>
+              ))}
+            </marquee>
+          </div>
+        </section>
+      )}
 
-                  {/* Time */}
-                  <div className="flex items-center gap-3 group cursor-default">
-                    <div className="text-[#D35400] text-xl md:text-2xl opacity-80 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100"><FaClock /></div>
-                    <div className="flex flex-col justify-center">
-                      <span className="text-[#4A2C2A] font-bold text-sm md:text-[15px] leading-tight uppercase transition-colors duration-300 group-hover:text-[#D35400]">{formatTimeObj(liveSettings.eventTime).top}</span>
-                      {formatTimeObj(liveSettings.eventTime).bottom && (
-                        <span className="text-[#8A5A44] font-semibold text-[10px] md:text-[11px] leading-tight mt-0.5">{formatTimeObj(liveSettings.eventTime).bottom}</span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="hidden md:block w-px h-10 bg-[#EAD8C8]"></div>
-
-                  {/* Location */}
-                  <div className="flex items-center gap-3 group cursor-default">
-                    <div className="text-[#D35400] text-xl md:text-2xl opacity-80 transition-transform duration-300 group-hover:scale-110 group-hover:opacity-100"><FaMapMarkerAlt /></div>
-                    <div className="flex flex-col justify-center">
-                      <span className="text-[#4A2C2A] font-bold text-sm md:text-[15px] leading-tight transition-colors duration-300 group-hover:text-[#D35400]">{formatLocationObj(liveSettings.eventLocation).top}</span>
-                      {formatLocationObj(liveSettings.eventLocation).bottom && (
-                        <span className="text-[#8A5A44] font-semibold text-[10px] md:text-[11px] leading-tight mt-0.5">{formatLocationObj(liveSettings.eventLocation).bottom}</span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-16">
+        
+        {/* 4. MAIN LIVE VIDEO + CURRENT PRASANG SECTION */}
+        <section className="flex flex-col lg:flex-row gap-8">
+          
+          {/* LARGE LIVE VIDEO */}
+          <div className="w-full lg:w-[68%]">
+            {isLive && embedVideoId ? (
+              <div className="w-full aspect-video rounded-3xl overflow-hidden shadow-2xl border-4 border-white relative group bg-black">
+                <iframe
+                  src={`https://www.youtube.com/embed/${embedVideoId}?autoplay=1&mute=0`}
+                  title="Live Katha Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full absolute inset-0"
+                ></iframe>
+              </div>
+            ) : (
+              <div className="w-full aspect-video rounded-3xl overflow-hidden shadow-2xl border border-[#EAD8C8] bg-white flex flex-col items-center justify-center p-8 text-center relative">
+                 <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#D4AF37] via-[#E05A10] to-[#D4AF37]"></div>
+                 <FaPlayCircle className="text-6xl text-gray-200 mb-6" />
+                 <h2 className="font-serif text-2xl lg:text-4xl font-black text-[#3D2B20] mb-4">कथा अभी Live नहीं है</h2>
+                 <p className="text-[#8B5A2B] text-lg lg:text-xl font-medium mb-8">अगली कथा के लिए हमारे साथ जुड़े रहें</p>
+                 <a href={contacts.youtube} target="_blank" rel="noopener noreferrer" className="bg-[#E05A10] hover:bg-[#D35400] text-white px-8 py-3.5 rounded-xl font-bold uppercase tracking-wider shadow-lg flex items-center transition-all hover:scale-105">
+                   <FaYoutube className="mr-3 text-xl" /> UPCOMING KATHA
+                 </a>
               </div>
             )}
           </div>
-        </section>
-      )}
 
-      {/* Marquee Section */}
-      {liveSettings?.marqueeEnabled !== false && (liveSettings?.marqueeText ?? 'LIVE NOW • श्रीमद भागवत कथा का सीधा प्रसारण जारी है • YouTube Channel पर जुड़ें • जय श्री राम') !== '' && (
-        <section className="w-full bg-gradient-to-r from-[#8A2900] via-[#BA3800] to-[#8A2900] text-white py-3 border-y-2 border-[#D4AF37]/60 overflow-hidden shadow-[inset_0_4px_6px_rgba(0,0,0,0.3)] relative z-20">
-          <marquee behavior="scroll" direction="left" scrollamount="6" className="w-full font-bold text-sm md:text-[16px] tracking-wide whitespace-nowrap drop-shadow-md flex items-center">
-            {Array(10).fill(0).map((_, i) => (
-              <span key={i} className="mx-8 inline-flex items-center">
-                <span className="animate-pulse mr-2 text-red-500 drop-shadow-[0_0_5px_rgba(255,0,0,0.8)]">🔴</span> 
-                <span dangerouslySetInnerHTML={{ __html: liveSettings?.marqueeText ?? 'LIVE NOW • श्रीमद भागवत कथा का सीधा प्रसारण जारी है • YouTube Channel पर जुड़ें • जय श्री राम' }}></span>
-              </span>
-            ))}
-          </marquee>
-        </section>
-      )}
+          {/* CURRENT PRASANG CARD */}
+          <div className="w-full lg:w-[32%] flex flex-col">
+            <div className="bg-white rounded-3xl p-8 lg:p-10 shadow-xl border border-[#EAD8C8] flex-grow flex flex-col relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-32 h-32 bg-[#FAF0E6] rounded-bl-full -mr-16 -mt-16 opacity-50"></div>
+              
+              <div className="flex items-center gap-3 mb-8 relative z-10">
+                <div className="w-10 h-10 rounded-full bg-[#FCF5EB] flex items-center justify-center border border-[#EAD8C8]">
+                  <GiLotus className="text-[#E05A10] text-xl" />
+                </div>
+                <h3 className="font-serif font-black text-xl lg:text-2xl text-[#3D2B20] uppercase tracking-wide">वर्तमान प्रसंग</h3>
+              </div>
 
-      {/* Live Katha CTA Section */}
-      <section className="pb-8 bg-cream-light relative z-10 pt-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
-          <div className="relative bg-white rounded-3xl shadow-2xl border border-gold/20 overflow-hidden">
-
-            {/* Decorative Top Gradient */}
-            <div className="h-2 bg-gradient-to-r from-[#E05A10] via-[#D4AF37] to-[#E05A10]"></div>
-
-            {/* Main Content */}
-            <div className="p-10 sm:p-16 text-center space-y-8">
-
-              {/* Animated YouTube Icon */}
-              <div className="relative inline-flex items-center justify-center">
-                <div className="absolute inset-0 w-32 h-32 bg-red-500/10 rounded-full animate-ping" style={{ animationDuration: '2s' }}></div>
-                <div className="relative w-32 h-32 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center shadow-2xl">
-                  <FaYoutube className="text-white text-6xl" />
+              <div className="flex-grow flex flex-col justify-center space-y-6 relative z-10">
+                <div>
+                  <h4 className="text-sm font-bold text-[#E05A10] uppercase tracking-widest mb-2">कथा का नाम</h4>
+                  <p className="font-serif text-2xl lg:text-3xl font-black text-[#3D2B20] leading-tight">
+                    {liveSettings?.eventTopic || 'श्रीमद् भागवत कथा'}
+                  </p>
+                </div>
+                
+                <div className="w-16 h-px bg-[#EAD8C8]"></div>
+                
+                <div>
+                  <h4 className="text-sm font-bold text-[#E05A10] uppercase tracking-widest mb-2">दिवस</h4>
+                  <p className="text-xl font-bold text-[#8B5A2B]">
+                    {liveSettings?.eventDay || 'प्रथम दिवस'}
+                  </p>
                 </div>
               </div>
 
-              {/* Title */}
-              <div className="space-y-3">
-                <h2 className="font-serif text-3xl sm:text-4xl font-black text-[#3D2B20]">
-                  लाइव कथा देखें
-                </h2>
-                <p className="text-[#3D2B20]/60 text-sm sm:text-base max-w-lg mx-auto leading-relaxed">
-                  पूज्य गुरु जी महाराज की लाइव श्रीमद भागवत कथा YouTube पर सीधा प्रसारण हो रही है।
-                  नीचे बटन पर क्लिक करें और तुरंत लाइव कथा से जुड़ें।
-                </p>
-              </div>
-
-              {/* Live Badge */}
-              <div className="inline-flex items-center space-x-2 bg-red-50 border border-red-200 text-red-600 text-xs font-bold uppercase tracking-widest px-5 py-2.5 rounded-full">
-                <span className="relative flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                </span>
-                <span>Live Stream Active</span>
-              </div>
-
-              {/* CTA Button */}
-              <div className="w-full flex justify-center px-2">
-                <button
-                  onClick={handleWatchLive}
-                  className="group w-full sm:w-auto flex flex-col xs:flex-row items-center justify-center gap-2 xs:gap-3 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-serif font-bold text-xs xs:text-sm sm:text-xl uppercase tracking-wider px-2 xs:px-4 sm:px-14 py-3 xs:py-4 sm:py-5 rounded-xl sm:rounded-2xl shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300"
-                >
-                  <FaPlayCircle className="text-lg xs:text-2xl flex-shrink-0 group-hover:scale-110 transition-transform" />
-                  <span className="text-center">Watch Live on YouTube</span>
-                  <FaExternalLinkAlt className="text-[10px] xs:text-sm flex-shrink-0 opacity-70" />
+              <div className="mt-10 relative z-10">
+                <button onClick={handleWatchLive} className="w-full bg-[#FCF5EB] hover:bg-[#FAF0E6] text-[#E05A10] border border-[#EAD8C8] px-6 py-4 rounded-xl font-bold flex items-center justify-between transition-colors group">
+                  <span>पूर्ण विवरण देखें</span>
+                  <FaChevronRight className="group-hover:translate-x-1 transition-transform" />
                 </button>
               </div>
+            </div>
+          </div>
+        </section>
 
-              {/* Link Display */}
-              <div className="pt-4 px-2 w-full flex justify-center">
-                <a
-                  href={liveLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center space-x-2 text-[10px] sm:text-xs text-[#3D2B20]/40 hover:text-red-600 transition-colors break-all text-center max-w-full"
-                >
-                  <FaExternalLinkAlt className="text-[10px] flex-shrink-0" />
-                  <span className="break-all">{liveLink}</span>
-                </a>
+        {/* 5. KATHA INFORMATION */}
+        <section>
+          <div className="flex items-center gap-4 mb-8">
+            <h2 className="font-serif text-2xl font-black text-[#3D2B20] uppercase tracking-widest">Katha Schedule</h2>
+            <div className="flex-grow h-px bg-gradient-to-r from-[#EAD8C8] to-transparent"></div>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            
+            {/* Date Card */}
+            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaCalendarAlt className="text-[#E05A10] text-xl" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">तारीख (Date)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base">{formatHindiDateObj(liveSettings?.eventDate).date || 'Today'}</p>
+                <p className="text-xs text-[#8B5A2B] mt-0.5">{formatHindiDateObj(liveSettings?.eventDate).day}</p>
               </div>
             </div>
 
-            {/* Social Media Links */}
-            <div className="bg-white border-t border-[#EAD8C8] px-10 py-6">
-              <p className="text-center text-xs font-serif font-bold text-[#3D2B20]/50 uppercase tracking-widest mb-4">हमें फॉलो करें</p>
-              <div className="flex items-center justify-center space-x-5">
-                <a
-                  href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full bg-red-50 hover:bg-red-600 text-red-600 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-lg"
-                  aria-label="YouTube"
-                >
-                  <FaYoutube className="text-xl" />
-                </a>
-                <a
-                  href="https://swamiraghavacharyaji.in/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full bg-pink-50 hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500 text-pink-600 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-lg"
-                  aria-label="Instagram"
-                >
-                  <FaInstagram className="text-xl" />
-                </a>
-                <a
-                  href="https://www.facebook.com/share/1HLEzxvCT3/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-12 h-12 rounded-full bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-110 shadow-sm hover:shadow-lg"
-                  aria-label="Facebook"
-                >
-                  <FaFacebookF className="text-xl" />
-                </a>
+            {/* Time Card */}
+            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaClock className="text-[#E05A10] text-xl" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">समय (Time)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base uppercase">{formatTimeObj(liveSettings?.eventTime).top || '04:00 PM'}</p>
+                <p className="text-xs text-[#8B5A2B] mt-0.5">{formatTimeObj(liveSettings?.eventTime).bottom || 'onwards'}</p>
               </div>
             </div>
 
-            {/* Bottom Info Strip */}
-            <div className="bg-[#FAF0E6] border-t border-[#EAD8C8] px-10 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center space-x-2 text-xs text-[#3D2B20]/60">
-                <GiLotus className="text-[#E05A10]" />
-                <span className="font-serif font-bold">Shrimat Bhagvat Katha — सत्यम परं धीमहि</span>
+            {/* Location Card */}
+            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaMapMarkerAlt className="text-[#E05A10] text-xl" />
               </div>
-              <a
-                href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center space-x-2 text-xs font-bold text-red-600 hover:text-red-700 transition-colors"
-              >
-                <FaYoutube />
-                <span>Subscribe on YouTube</span>
-                <FaExternalLinkAlt className="text-[9px]" />
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">स्थान (Location)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base line-clamp-1">{formatLocationObj(liveSettings?.eventLocation).top || 'प्रयागराज,'}</p>
+                <p className="text-xs text-[#8B5A2B] mt-0.5 line-clamp-1">{formatLocationObj(liveSettings?.eventLocation).bottom || 'उत्तर प्रदेश'}</p>
+              </div>
+            </div>
+
+            {/* Day Card */}
+            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
+              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaCalendarDay className="text-[#E05A10] text-xl" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">दिवस (Day)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base">{liveSettings?.eventDay || 'प्रथम दिवस'}</p>
+                <p className="text-xs text-[#8B5A2B] mt-0.5">Katha Journey</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        {/* 6. QUICK ACTION CARDS */}
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <a href={liveLink} target="_blank" rel="noopener noreferrer" className="group bg-white rounded-3xl p-8 border border-[#EAD8C8] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
+            <div className="w-20 h-20 rounded-full bg-red-50 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <FaYoutube className="text-4xl text-red-600" />
+            </div>
+            <h4 className="font-serif font-black text-xl text-[#3D2B20] mb-3">Watch on YouTube</h4>
+            <p className="text-[#8B5A2B] text-sm leading-relaxed mb-6">Experience the divine Katha live or watch past sessions directly on our official channel.</p>
+            <span className="text-red-600 font-bold text-sm uppercase tracking-widest flex items-center group-hover:text-red-700">Open Channel <FaChevronRight className="ml-2 text-[10px]" /></span>
+          </a>
+
+          <a href={contacts.youtube} target="_blank" rel="noopener noreferrer" className="group bg-white rounded-3xl p-8 border border-[#EAD8C8] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center">
+            <div className="w-20 h-20 rounded-full bg-[#FCF5EB] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <FaCalendarAlt className="text-3xl text-[#E05A10]" />
+            </div>
+            <h4 className="font-serif font-black text-xl text-[#3D2B20] mb-3">Upcoming Katha</h4>
+            <p className="text-[#8B5A2B] text-sm leading-relaxed mb-6">Stay informed about Guru Ji's future Katha schedules and locations across India.</p>
+            <span className="text-[#E05A10] font-bold text-sm uppercase tracking-widest flex items-center group-hover:text-[#D35400]">View Schedule <FaChevronRight className="ml-2 text-[10px]" /></span>
+          </a>
+
+          <div className="group bg-white rounded-3xl p-8 border border-[#EAD8C8] shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center cursor-pointer">
+            <div className="w-20 h-20 rounded-full bg-[#F9F6F0] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+              <GiLotus className="text-4xl text-[#D4AF37]" />
+            </div>
+            <h4 className="font-serif font-black text-xl text-[#3D2B20] mb-3">About Katha</h4>
+            <p className="text-[#8B5A2B] text-sm leading-relaxed mb-6">Understand the spiritual significance and divine message behind the Shrimad Bhagwat Katha.</p>
+            <span className="text-[#D4AF37] font-bold text-sm uppercase tracking-widest flex items-center group-hover:text-[#B8962E]">Read More <FaChevronRight className="ml-2 text-[10px]" /></span>
+          </div>
+        </section>
+
+        {/* 7. SOCIAL / SUBSCRIBE SECTION */}
+        <section className="bg-white rounded-3xl border border-[#D4AF37]/50 shadow-lg overflow-hidden relative">
+          <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-[#D4AF37] via-[#E05A10] to-[#D4AF37]"></div>
+          <div className="flex flex-col md:flex-row items-center justify-between p-10 lg:p-14 gap-8">
+            <div className="text-center md:text-left">
+              <h3 className="font-serif font-black text-3xl lg:text-4xl text-[#3D2B20] mb-4">कथा से जुड़े रहें</h3>
+              <p className="text-[#8B5A2B] text-base lg:text-lg max-w-xl">Follow our official social media channels for daily spiritual quotes, short videos, and live updates.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-6">
+              <div className="flex gap-4">
+                <a href={contacts.youtube} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-red-50 text-red-600 flex items-center justify-center text-2xl hover:bg-red-600 hover:text-white transition-all shadow-md hover:shadow-xl hover:-translate-y-1"><FaYoutube /></a>
+                <a href={contacts.facebook} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-2xl hover:bg-blue-600 hover:text-white transition-all shadow-md hover:shadow-xl hover:-translate-y-1"><FaFacebookF /></a>
+                <a href={contacts.instagram} target="_blank" rel="noopener noreferrer" className="w-14 h-14 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center text-2xl hover:bg-gradient-to-tr hover:from-orange-500 hover:via-pink-500 hover:to-purple-600 hover:text-white transition-all shadow-md hover:shadow-xl hover:-translate-y-1"><FaInstagram /></a>
+              </div>
+              <a href={contacts.youtube} target="_blank" rel="noopener noreferrer" className="bg-[#3D2B20] hover:bg-black text-[#D4AF37] px-8 py-4 rounded-xl font-bold uppercase tracking-widest shadow-xl flex items-center transition-all hover:scale-105 border border-[#D4AF37]/30">
+                SUBSCRIBE NOW
               </a>
             </div>
           </div>
+        </section>
 
-          {/* Additional Info Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
-            <a
-              href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white rounded-2xl p-6 border border-[#D4AF37]/30 shadow-md text-center space-y-4 block hover:-translate-y-2 hover:shadow-xl transition-all duration-300 cursor-pointer"
-            >
-              <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto shadow-inner">
-                <FaYoutube className="text-red-600 text-2xl" />
-              </div>
-              <h4 className="font-serif font-bold text-base text-[#3D2B20]">YouTube Live</h4>
-              <p className="text-xs text-[#3D2B20]/80 leading-relaxed">
-                सीधा YouTube चैनल पर लाइव कथा का प्रसारण देखें
-              </p>
-            </a>
-
-            <a
-              href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white rounded-2xl p-6 border border-[#D4AF37]/30 shadow-md text-center space-y-4 block hover:-translate-y-2 hover:shadow-xl transition-all duration-300 cursor-pointer"
-            >
-              <div className="w-16 h-16 bg-saffron/10 rounded-full flex items-center justify-center mx-auto shadow-inner">
-                <GiLotus className="text-[#E05A10] text-2xl" />
-              </div>
-              <h4 className="font-serif font-bold text-base text-[#3D2B20]">निःशुल्क प्रसारण</h4>
-              <p className="text-xs text-[#3D2B20]/80 leading-relaxed">
-                कथा सुनने के लिए कोई शुल्क नहीं — पूर्णतः निःशुल्क
-              </p>
-            </a>
-
-            <a
-              href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8/videos"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white rounded-2xl p-6 border border-[#D4AF37]/30 shadow-md text-center space-y-4 block hover:-translate-y-2 hover:shadow-xl transition-all duration-300 cursor-pointer"
-            >
-              <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center mx-auto shadow-inner">
-                <FaPlayCircle className="text-[#D4AF37] text-2xl" />
-              </div>
-              <h4 className="font-serif font-bold text-base text-[#3D2B20]">कभी भी देखें</h4>
-              <p className="text-xs text-[#3D2B20]/80 leading-relaxed">
-                लाइव न हो तो पुरानी कथाओं के वीडियो चैनल पर उपलब्ध हैं
-              </p>
-            </a>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   )
 }

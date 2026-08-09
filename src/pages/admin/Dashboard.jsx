@@ -10,7 +10,7 @@ import {
   FaSignOutAlt, FaBookOpen, FaImages, FaUserEdit, FaCalendarPlus, FaCalendarAlt, FaUsers,
   FaInfoCircle, FaClipboardList, FaCheck, FaTimes, FaTrash, FaPlus, FaChevronDown, FaSearch, FaBell,
   FaLink, FaSave, FaExternalLinkAlt, FaImage, FaPhoneAlt, FaEnvelope, FaMapMarkerAlt, FaGlobe, FaYoutube, FaUser, FaLock, FaEye, FaEyeSlash, FaQuoteLeft, FaBars, FaCloudUploadAlt,
-  FaHome, FaUserCircle, FaCalendarDay, FaPlayCircle, FaCog
+  FaHome, FaUserCircle, FaCalendarDay, FaPlayCircle, FaCog, FaClock
 } from 'react-icons/fa'
 import logoImg from '../../assets/images/logo.jpeg'
 import AdminBannerManager from './components/AdminBannerManager'
@@ -18,6 +18,7 @@ import AdminYajmanManager from './components/AdminYajmanManager'
 import OverviewTab from './components/OverviewTab'
 import SettingsTab from './components/SettingsTab'
 import LiveTab from './components/LiveTab'
+import BookingsManager from './components/BookingsManager'
 
 export default function Dashboard() {
   const {
@@ -408,7 +409,7 @@ export default function Dashboard() {
         {/* Scrollable Sub-Views Area */}
         <div className="flex-grow p-0 sm:p-0 overflow-y-auto bg-gray-50">
           {activeTab === 'Overview' && <div className="p-4 sm:p-8"><OverviewTab {...{ bookings, events, galleryPhotos, galleryVideos, setActiveTab }} /></div>}
-          {activeTab === 'Bookings' && <div className="p-4 sm:p-8"><BookingsTab {...{ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings, setPrefillEventData, setActiveTab }} /></div>}
+          {activeTab === 'Bookings' && <div className="p-4 sm:p-8"><BookingsManager {...{ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings, setPrefillEventData, setActiveTab }} /></div>}
           {activeTab === 'Yajman' && <AdminYajmanManager />}
           {activeTab === 'Banners' && <AdminBannerManager />}
           {activeTab === 'Biography' && <div className="p-4 sm:p-8"><BiographyTab {...{ about, updateAbout, timeline, setTimeline, achievements, setAchievements }} /></div>}
@@ -600,228 +601,6 @@ function ChangePasswordModal({ onClose, changeAdminPassword }) {
    ========================================================================= 
    (Moved to ./components/OverviewTab.jsx)
 */
-
-/* =========================================================================
-   TAB: BOOKINGS MANAGER
-   ========================================================================= */
-function BookingsTab({ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings, setPrefillEventData, setActiveTab }) {
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const itemsPerPage = 10;
-  
-  const filteredBookings = React.useMemo(() => {
-    if (!searchQuery.trim()) return bookings;
-    const term = searchQuery.toLowerCase();
-    return bookings.filter(b => 
-      (b.name || '').toLowerCase().includes(term) ||
-      (b.kathaType || '').toLowerCase().includes(term) ||
-      (b.state || '').toLowerCase().includes(term) ||
-      (b.city || '').toLowerCase().includes(term) ||
-      (b.village || '').toLowerCase().includes(term) ||
-      (b.pincode || '').toLowerCase().includes(term)
-    );
-  }, [bookings, searchQuery]);
-
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredBookings.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredBookings.length / itemsPerPage);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedBookings(currentItems.map(b => b.id));
-    } else {
-      setSelectedBookings([]);
-    }
-  };
-
-  const handleSelectOne = (id) => {
-    if (selectedBookings.includes(id)) {
-      setSelectedBookings(prev => prev.filter(bId => bId !== id));
-    } else {
-      setSelectedBookings(prev => [...prev, id]);
-    }
-  };
-
-  const handleConfirmAndPrefill = async (item) => {
-    await updateBookingStatus(item.id, 'Confirmed');
-    
-    if (setPrefillEventData && setActiveTab) {
-      const d = item.preferredDate ? new Date(item.preferredDate) : new Date();
-      setPrefillEventData({
-        title: item.kathaType || '',
-        date: isNaN(d.getTime()) ? '' : d.getDate().toString(),
-        month: isNaN(d.getTime()) ? '' : d.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
-        year: isNaN(d.getTime()) ? '' : d.getFullYear().toString(),
-        selectedState: item.state || '',
-        district: item.city || '',
-        pincode: item.pincode || '',
-        venue: item.address || ''
-      });
-      setActiveTab('Events');
-    }
-  };
-
-  return (
-    <div className="bg-white rounded-2xl border border-[#EAD8C8] shadow-sm overflow-hidden flex flex-col min-h-[500px]">
-      <div className="px-6 py-4 border-b border-[#FAF0E6] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="font-serif text-lg font-bold text-[#3D2B20]">Customer Booking Inquiries</h3>
-          <span className="text-xs text-[#3D2B20]/60">Total: {filteredBookings.length} requests</span>
-        </div>
-        <div className="relative w-full sm:w-72">
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[#3D2B20]/40 text-sm" />
-          <input
-            type="text"
-            placeholder="Search by name, location, katha..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="w-full pl-9 pr-4 py-2 bg-[#FAF6F0]/50 border border-[#EAD8C8] rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#E05A10]/20 focus:border-[#E05A10] transition-all placeholder:text-[#3D2B20]/40"
-          />
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-[#FAF6F0] text-[#3D2B20]/70 font-semibold text-xs uppercase tracking-wider border-b border-[#EAD8C8]">
-              <th className="px-6 py-4 w-12">
-                <input 
-                  type="checkbox" 
-                  className="rounded text-[#E05A10] focus:ring-[#E05A10]"
-                  onChange={handleSelectAll}
-                  checked={currentItems.length > 0 && selectedBookings.length === currentItems.length}
-                />
-              </th>
-              <th className="px-6 py-4">Client Detail</th>
-              <th className="px-6 py-4">Katha Requested</th>
-              <th className="px-6 py-4">Proposed Date / City</th>
-              <th className="px-6 py-4">Message</th>
-              <th className="px-6 py-4">Status</th>
-              <th className="px-6 py-4 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[#FAF0E6] text-xs">
-            {currentItems.map((item) => (
-              <tr key={item.id} className={`hover:bg-[#FAF6F0]/30 transition-colors ${selectedBookings.includes(item.id) ? 'bg-orange-50/50' : ''}`}>
-                <td className="px-6 py-4">
-                  <input 
-                    type="checkbox" 
-                    className="rounded text-[#E05A10] focus:ring-[#E05A10]"
-                    checked={selectedBookings.includes(item.id)}
-                    onChange={() => handleSelectOne(item.id)}
-                  />
-                </td>
-                <td className="px-6 py-4 space-y-1">
-                  <div className="font-serif font-bold text-sm text-[#3D2B20]">{item.name}</div>
-                  <div className="text-[10px] text-[#3D2B20]/60">Ph: {item.phone}</div>
-                  <div className="text-[10px] text-[#3D2B20]/60">Email: {item.email}</div>
-                </td>
-                <td className="px-6 py-4 font-semibold text-[#E05A10]">{item.kathaType}</td>
-                <td className="px-6 py-4 space-y-1">
-                  <div className="font-bold text-[#3D2B20]">{item.city}{item.state ? `, ${item.state}` : ''}</div>
-                  {(item.village || item.pincode) && (
-                    <div className="text-[10px] text-[#3D2B20]/60">
-                      {item.village && `Vill: ${item.village}`} {item.village && item.pincode && '|'} {item.pincode && `PIN: ${item.pincode}`}
-                    </div>
-                  )}
-                  <div className="text-[10px] text-[#3D2B20]/50">{item.preferredDate}</div>
-                </td>
-                <td className="px-6 py-4 max-w-[200px] whitespace-normal leading-relaxed text-[#3D2B20]/75">{item.message}</td>
-                <td className="px-6 py-4">
-                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                    item.status === 'Confirmed' ? 'bg-green-50 text-green-700' :
-                    item.status === 'Cancelled' ? 'bg-red-50 text-red-700' : 'bg-amber-50 text-amber-700'
-                  }`}>
-                    {item.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center justify-center space-x-2">
-                    {item.status === 'Pending' && (
-                      <>
-                        <button
-                          onClick={() => handleConfirmAndPrefill(item)}
-                          className="p-1.5 bg-green-50 hover:bg-green-500 text-green-600 hover:text-white rounded-lg transition-colors border border-green-200"
-                          title="Confirm Booking & Add Event"
-                        >
-                          <FaCheck className="text-[10px]" />
-                        </button>
-                        <button
-                          onClick={() => updateBookingStatus(item.id, 'Cancelled')}
-                          className="p-1.5 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white rounded-lg transition-colors border border-red-200"
-                          title="Cancel Booking"
-                        >
-                          <FaTimes className="text-[10px]" />
-                        </button>
-                      </>
-                    )}
-                    <button
-                      onClick={() => {
-                        if (confirm('Delete this request permanent?')) deleteBooking(item.id)
-                      }}
-                      className="p-1.5 bg-gray-50 hover:bg-gray-700 text-gray-500 hover:text-white rounded-lg transition-colors border border-gray-200"
-                      title="Delete Request"
-                    >
-                      <FaTrash className="text-[10px]" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-            {bookings.length === 0 && (
-              <tr>
-                <td colSpan="6" className="py-12 text-center text-sm text-[#3D2B20]/40">No booking requests available.</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-[#FAF0E6] flex items-center justify-between bg-[#FAF6F0]/30 mt-auto">
-          <div className="text-xs text-[#3D2B20]/60">
-            Showing <span className="font-bold">{indexOfFirstItem + 1}</span> to <span className="font-bold">{Math.min(indexOfLastItem, bookings.length)}</span> of <span className="font-bold">{bookings.length}</span> entries
-          </div>
-          <div className="flex space-x-1">
-            <button
-              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="px-3 py-1 rounded-lg border border-[#EAD8C8] text-xs font-bold text-[#3D2B20] hover:bg-[#E05A10] hover:text-white hover:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Prev
-            </button>
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => paginate(i + 1)}
-                className={`w-8 h-8 rounded-lg border flex items-center justify-center text-xs font-bold transition-colors ${
-                  currentPage === i + 1
-                    ? 'bg-[#E05A10] text-white border-transparent'
-                    : 'border-[#EAD8C8] text-[#3D2B20] hover:bg-[#EAD8C8]/30'
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-            <button
-              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-              className="px-3 py-1 rounded-lg border border-[#EAD8C8] text-xs font-bold text-[#3D2B20] hover:bg-[#E05A10] hover:text-white hover:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
 
 /* =========================================================================
    TAB: HOMEPAGE BANNERS
@@ -1473,7 +1252,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div className="space-y-1">
-            <label className="font-bold text-[#3D2B20]/75 block">Katha Event Title</label>
+            <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaBookOpen className="text-[#E05A10]" /> Katha Event Title</label>
             <SearchableSelect
               value={title}
               onChange={(val) => setTitle(val)}
@@ -1491,7 +1270,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">From Date (से)</label>
+              <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaCalendarDay className="text-[#E05A10]" /> From Date (से)</label>
               <SearchableSelect
                 value={date}
                 onChange={(val) => setDate(val)}
@@ -1501,7 +1280,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
               />
             </div>
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">To Date (तक) - Opt</label>
+              <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaCalendarDay className="text-[#E05A10]" /> To Date (तक) - Opt</label>
               <SearchableSelect
                 value={endDate}
                 onChange={(val) => setEndDate(val)}
@@ -1511,7 +1290,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
               />
             </div>
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">Month (महीना)</label>
+              <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaCalendarAlt className="text-[#E05A10]" /> Month (महीना)</label>
               <SearchableSelect
                 value={month}
                 onChange={(val) => setMonth(val)}
@@ -1521,7 +1300,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
               />
             </div>
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">Year (वर्ष)</label>
+              <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaCalendarAlt className="text-[#E05A10]" /> Year (वर्ष)</label>
               <SearchableSelect
                 value={year}
                 onChange={(val) => setYear(val)}
@@ -1534,7 +1313,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">State (राज्य)</label>
+              <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#E05A10]" /> State (राज्य)</label>
               <SearchableSelect
                 value={selectedState}
                 onChange={(val) => {
@@ -1546,7 +1325,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
               />
             </div>
             <div className="space-y-1">
-              <label className="font-bold text-[#3D2B20]/75 block">District / City (शहर)</label>
+              <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#E05A10]" /> District / City (शहर)</label>
               <SearchableSelect
                 value={district}
                 onChange={(val) => setDistrict(val)}
@@ -1557,7 +1336,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
             </div>
           </div>
           <div className="space-y-1">
-            <label className="font-bold text-[#3D2B20]/75 block">Pincode (पिनकोड) - Optional</label>
+            <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaMapMarkerAlt className="text-[#E05A10]" /> Pincode (पिनकोड) - Optional</label>
             <input
               type="text"
               placeholder="e.g. 400001"
@@ -1569,7 +1348,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
           </div>
 
           <div className="space-y-1">
-            <label className="font-bold text-[#3D2B20]/75 block">Schedule Time</label>
+            <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaClock className="text-[#E05A10]" /> Schedule Time</label>
             <SearchableSelect
               value={time}
               onChange={(val) => setTime(val)}
@@ -1586,7 +1365,7 @@ function EventsTab({ events, addEvent, deleteEvent, calendarDates, addCalendarDa
 
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <label className="font-bold text-[#3D2B20]/75 block">Event Banner Image (Optional)</label>
+              <label className="font-bold text-[#3D2B20]/75 flex items-center gap-1.5"><FaImage className="text-[#E05A10]" /> Event Banner Image (Optional)</label>
               <span className="text-[10px] text-[#E05A10] font-medium bg-[#E05A10]/10 px-2 py-0.5 rounded-full">Recommended: 1200x600 | Max: 5MB</span>
             </div>
             <div className="flex items-center space-x-4 pt-1">

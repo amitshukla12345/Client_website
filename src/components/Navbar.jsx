@@ -181,9 +181,14 @@ export default function Navbar() {
         }`} onClick={() => setIsOpen(false)} />
 
       {/* Mobile Drawer */}
-      <div className={`fixed top-0 right-0 w-full md:w-[350px] h-[100dvh] bg-[#FFFDF7] z-[70] shadow-2xl transition-all duration-[400ms] ease-out transform lg:hidden flex flex-col justify-between overflow-y-auto border-l border-[#EAD8C8] ${isOpen ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+      <div className={`fixed top-0 right-0 w-full md:w-[350px] h-[100dvh] bg-[#FFFDF7] z-[70] shadow-2xl transition-transform duration-[400ms] ease-out transform lg:hidden flex flex-col justify-between overflow-y-auto border-l border-[#EAD8C8] ${isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
-        <div className="p-6 pt-[130px] overflow-y-auto flex-grow">
+        {/* Close Button */}
+        <button onClick={() => setIsOpen(false)} className="absolute top-6 right-6 p-2 bg-[#FAF0E6] text-[#E05A10] rounded-full hover:bg-[#EAD8C8] transition-colors z-50 shadow-sm border border-[#EAD8C8]">
+          <HiX className="text-xl" />
+        </button>
+
+        <div className="p-6 pt-[140px] overflow-y-auto flex-grow">
           {/* Navigation Links inside Mobile Drawer */}
           <div className="flex flex-col space-y-1">
             {navLinks.map((link) => (

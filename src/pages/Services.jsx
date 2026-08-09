@@ -82,7 +82,7 @@ export default function Services() {
   ]
 
   return (
-    <div className="pt-[60px] lg:pt-[64px] bg-[#FFFDF7] relative overflow-hidden font-sans">
+    <div className="pt-[100px] sm:pt-[105px] lg:pt-[105px] bg-[#FFFDF7] relative overflow-hidden font-sans">
       
       {/* Background Decor Layer */}
       <div className="absolute inset-0 pointer-events-none z-0">

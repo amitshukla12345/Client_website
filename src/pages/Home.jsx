@@ -14,6 +14,7 @@ export default function Home() {
   const { t } = useTranslation()
   const [activeGalleryTab, setActiveGalleryTab] = useState('Photos')
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0)
+  const [isHeroHovered, setIsHeroHovered] = useState(false)
   const [activeYajmanIdx, setActiveYajmanIdx] = useState(0)
   const [activeTestimonial, setActiveTestimonial] = useState(0)
 
@@ -37,6 +38,17 @@ export default function Home() {
       setCurrentHeroSlide((prev) => (prev - 1 + activeBanners.length) % activeBanners.length)
     }
   }
+
+  // Auto-slide effect for the Hero Banner
+  React.useEffect(() => {
+    if (activeBanners && activeBanners.length > 1 && !isHeroHovered) {
+      const slideInterval = setInterval(() => {
+        setCurrentHeroSlide((prev) => (prev + 1) % activeBanners.length)
+      }, 5000); // Change slide every 5 seconds
+      
+      return () => clearInterval(slideInterval);
+    }
+  }, [activeBanners?.length, isHeroHovered]);
 
   // 4. Services Data
   const services = [
@@ -105,7 +117,13 @@ export default function Home() {
     <div className="bg-[#FCF9F2] text-[#3D2B20] font-sans selection:bg-[#E05A10] selection:text-white overflow-x-hidden">
 
       {/* 1. HERO CAROUSEL SECTION */}
-      <section className="relative w-full bg-[#FCF9F2] border-b border-[#EAD8C8] overflow-hidden flex justify-center">
+      <section 
+        className="relative w-full bg-[#FCF9F2] border-b border-[#EAD8C8] overflow-hidden flex justify-center"
+        onMouseEnter={() => setIsHeroHovered(true)}
+        onMouseLeave={() => setIsHeroHovered(false)}
+        onTouchStart={() => setIsHeroHovered(true)}
+        onTouchEnd={() => setIsHeroHovered(false)}
+      >
         {/* Banner Grid Container */}
         <div className="w-full max-w-[1920px] relative min-h-[500px] lg:h-[500px] flex flex-col">
           <AnimatePresence mode="wait">
@@ -118,7 +136,10 @@ export default function Home() {
               className="w-full h-full grid grid-cols-1 lg:grid-cols-12 items-stretch"
             >
               {/* Left Column: Text content */}
-              <div className="lg:col-span-6 flex flex-col justify-start px-12 sm:px-16 lg:pl-20 lg:pr-12 xl:pl-24 xl:pr-16 pt-36 sm:pt-40 lg:pt-[140px] pb-8 bg-[#FCF9F2] text-center lg:text-left relative z-30">
+              <div className={`lg:col-span-6 flex flex-col justify-start px-8 sm:px-12 lg:pl-8 lg:pr-12 xl:pl-10 xl:pr-16 pt-36 sm:pt-40 lg:pt-[140px] pb-8 text-center lg:text-left relative z-30 ${
+                currentBanner?.theme === 'SAFFRON' ? 'bg-[#FFF4EB]' : 
+                currentBanner?.theme === 'WARM GOLD' ? 'bg-[#FDF9EB]' : 'bg-[#FCF9F2]'
+              }`}>
                 
                 <h2
                   className="font-serif text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-bold text-[#3D2B20] mb-3 leading-normal"
@@ -134,14 +155,14 @@ export default function Home() {
 
                 {/* Dynamic Metadata Pill / Ticket Bar */}
                 {(currentBanner?.kathaDay || currentBanner?.prasang || currentBanner?.date || currentBanner?.time || currentBanner?.venue) && (
-                  <div className="inline-flex flex-col lg:flex-row items-center lg:items-stretch bg-[#EAD8C8] rounded-2xl lg:rounded-full shadow-md mb-6 lg:mb-8 mx-auto lg:mx-0 text-[#3D2B20] border border-[#8B5A2B]/40 w-max max-w-none relative z-20">
+                  <div className="inline-flex flex-col lg:flex-row items-center lg:items-stretch bg-[#EAD8C8] rounded-2xl lg:rounded-full shadow-md mb-6 lg:mb-8 mx-auto lg:mx-0 text-[#3D2B20] border border-[#8B5A2B]/40 w-full sm:w-auto lg:w-max max-w-full relative z-20 overflow-hidden">
                     
                     {/* Dark Red Block for Day & Prasang */}
                     {(currentBanner?.kathaDay || currentBanner?.prasang) && (
-                      <div className="bg-[#7B241C] text-white flex flex-col items-center justify-center px-6 lg:px-8 py-2.5 rounded-t-2xl lg:rounded-l-full lg:rounded-tr-none lg:rounded-br-none w-full lg:w-auto relative shadow-md shrink-0">
+                      <div className="bg-[#7B241C] text-white flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-2.5 rounded-t-2xl lg:rounded-l-full lg:rounded-tr-none lg:rounded-br-none w-full lg:w-auto relative shadow-md shrink-0">
                         <div className="absolute left-3 text-[#D4AF37] opacity-60 text-sm font-light hidden lg:block">||</div>
-                        {currentBanner?.kathaDay && <span className="text-[11px] font-medium opacity-90 whitespace-nowrap">{currentBanner.kathaDay}</span>}
-                        {currentBanner?.prasang && <span className="text-base font-bold tracking-wide mt-0.5 whitespace-nowrap">{currentBanner.prasang}</span>}
+                        {currentBanner?.kathaDay && <span className="text-[11px] font-medium opacity-90 text-center whitespace-normal">{currentBanner.kathaDay}</span>}
+                        {currentBanner?.prasang && <span className="text-base font-bold tracking-wide mt-0.5 text-center whitespace-normal break-words max-w-full">{currentBanner.prasang}</span>}
                         <div className="absolute right-3 text-[#D4AF37] opacity-60 text-sm font-light hidden lg:block">||</div>
                       </div>
                     )}
@@ -151,33 +172,33 @@ export default function Home() {
                       
                       {/* Date Block */}
                       {currentBanner?.date && (
-                        <div className="flex items-center gap-2 px-4 lg:px-5 py-2 w-full lg:w-auto justify-center lg:justify-start shrink-0">
+                        <div className="flex items-center gap-2 px-4 lg:px-5 py-2.5 w-full lg:w-auto justify-center lg:justify-start">
                           <FaCalendarAlt className="text-[#E05A10] text-lg shrink-0" />
-                          <div className="flex flex-col text-left">
-                            <span className="text-sm font-bold text-[#3D2B20] leading-tight whitespace-nowrap">{currentBanner.date}</span>
+                          <div className="flex flex-col text-left overflow-hidden">
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight truncate">{currentBanner.date}</span>
                           </div>
                         </div>
                       )}
 
                       {/* Time Block */}
                       {currentBanner?.time && (
-                        <div className="flex items-center gap-2 px-4 lg:px-5 py-2 w-full lg:w-auto justify-center lg:justify-start shrink-0">
+                        <div className="flex items-center gap-2 px-4 lg:px-5 py-2.5 w-full lg:w-auto justify-center lg:justify-start">
                           <FaClock className="text-[#E05A10] text-lg shrink-0" />
-                          <div className="flex flex-col text-left">
-                            <span className="text-sm font-bold text-[#3D2B20] leading-tight whitespace-nowrap">{currentBanner.time}</span>
-                            <span className="text-[10px] font-medium text-[#8B6E59] leading-tight whitespace-nowrap">onwards</span>
+                          <div className="flex flex-col text-left overflow-hidden">
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight truncate">{currentBanner.time}</span>
+                            <span className="text-[10px] font-medium text-[#8B6E59] leading-tight">onwards</span>
                           </div>
                         </div>
                       )}
 
                       {/* Location Block */}
                       {currentBanner?.venue && (
-                        <div className="flex items-center gap-2 pl-4 pr-5 lg:pr-8 py-2 w-full lg:w-auto justify-center lg:justify-start shrink-0">
+                        <div className="flex items-center gap-2 px-4 lg:px-5 py-2.5 w-full lg:w-auto justify-center lg:justify-start">
                           <FaMapMarkerAlt className="text-[#E05A10] text-lg shrink-0" />
-                          <div className="flex flex-col text-left">
-                            <span className="text-sm font-bold text-[#3D2B20] leading-tight whitespace-nowrap">{currentBanner.venue.split(',')[0]}</span>
+                          <div className="flex flex-col text-left overflow-hidden">
+                            <span className="text-sm font-bold text-[#3D2B20] leading-tight truncate">{currentBanner.venue.split(',')[0]}</span>
                             {currentBanner.venue.includes(',') && (
-                              <span className="text-[10px] font-medium text-[#8B6E59] leading-tight whitespace-nowrap">
+                              <span className="text-[10px] font-medium text-[#8B6E59] leading-tight truncate">
                                 {currentBanner.venue.split(',').slice(1).join(',').trim()}
                               </span>
                             )}
@@ -221,10 +242,20 @@ export default function Home() {
               {/* Right Column: Full-height Guru Ji Image */}
               <div className="lg:col-span-6 relative h-[250px] xs:h-[300px] lg:h-full w-full overflow-hidden">
                 {/* Soft Linear Gradient Blend to remove straight partition */}
-                <div className="absolute left-0 top-0 h-full w-32 lg:w-48 bg-gradient-to-r from-[#FCF9F2] to-transparent z-10 pointer-events-none hidden lg:block"></div>
+                <div className={`absolute left-0 top-0 h-full w-32 lg:w-48 z-10 pointer-events-none hidden lg:block bg-gradient-to-r to-transparent ${
+                  currentBanner?.theme === 'SAFFRON' ? 'from-[#FFF4EB]' : 
+                  currentBanner?.theme === 'WARM GOLD' ? 'from-[#FDF9EB]' : 'from-[#FCF9F2]'
+                }`}></div>
+                
+                {/* Custom Overlay */}
+                {currentBanner?.overlayType === 'DARK' && <div className="absolute inset-0 bg-black/30 pointer-events-none z-10"></div>}
+                {currentBanner?.overlayType === 'WARM' && <div className="absolute inset-0 bg-[#8A2900]/20 pointer-events-none z-10 mix-blend-overlay"></div>}
+                {currentBanner?.overlayType === 'GRADIENT' && <div className="absolute inset-0 bg-gradient-to-l from-black/50 via-transparent to-transparent pointer-events-none z-10"></div>}
+                {(!currentBanner?.overlayType || currentBanner?.overlayType === 'AUTO') && <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent pointer-events-none z-10"></div>}
+                
                 <img
                   src={currentBanner?.image}
-                  alt="Pujya Guru Ji Maharaj"
+                  alt={currentBanner?.altText || "Pujya Guru Ji Maharaj"}
                   className="w-full h-full object-cover pointer-events-none"
                   style={{
                      objectPosition: window.innerWidth < 768 

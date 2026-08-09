@@ -23,7 +23,7 @@ export default function About() {
   const { t } = useTranslation()
 
   return (
-    <div className="pt-[60px] lg:pt-[64px] pb-20 bg-[#FFFDF7]">
+    <div className="pt-[100px] sm:pt-[105px] lg:pt-[105px] pb-20 bg-[#FFFDF7]">
       {/* Hero Section */}
       <section className="relative w-full flex justify-center border-b border-gold/20">
         <img src={aboutHeroImg} alt="About Guru Hero Banner" className="w-full max-w-[1920px] h-auto block shadow-sm" />

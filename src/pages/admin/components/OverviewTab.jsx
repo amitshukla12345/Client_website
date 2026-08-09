@@ -302,20 +302,38 @@ export default function OverviewTab({ bookings, events, galleryPhotos, galleryVi
             <h3 className="font-serif text-lg font-bold text-[#3D2B20]">Upcoming Events</h3>
             <button onClick={() => setActiveTab('Events')} className="text-[10px] text-[#E05A10] font-bold hover:underline uppercase tracking-wider">View All</button>
           </div>
-          <div className="space-y-4">
-            {events.slice(0, 3).map((evt, idx) => (
-              <div key={idx} className="flex items-start space-x-4">
-                <div className="w-10 h-10 bg-orange-50 text-[#E05A10] rounded-xl flex flex-col items-center justify-center flex-shrink-0 border border-orange-100">
-                  <span className="text-sm font-black leading-none">{evt.date}</span>
-                  <span className="text-[8px] uppercase tracking-widest mt-0.5 font-bold">{(evt.month || '').split(' ')[0]}</span>
+          <div className="space-y-4 pt-1">
+            {events.slice(0, 3).map((evt, idx) => {
+              const datePart = evt.date || '--';
+              const monthParts = (evt.month || '').split(' ');
+              const monthName = monthParts[0] || 'TBA';
+              const year = monthParts[1] || new Date().getFullYear();
+              const timePart = evt.time || 'Time TBA';
+              
+              return (
+                <div key={idx} className="flex items-center space-x-5 group">
+                  <div className="w-14 h-14 bg-[#FAF0E6] text-[#E05A10] rounded-2xl flex flex-col items-center justify-center flex-shrink-0 border border-[#EAD8C8] group-hover:scale-105 transition-transform shadow-sm relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#E05A10] to-[#D4AF37] opacity-50"></div>
+                    <span className="text-xl font-black leading-none">{datePart}</span>
+                    <span className="text-[9px] uppercase tracking-wider mt-1 font-bold">{monthName}</span>
+                  </div>
+                  <div className="flex-1 border-b border-[#FAF0E6] pb-4 pt-2 group-last:border-none group-last:pb-0">
+                    <h4 className="font-serif text-[15px] font-bold text-[#3D2B20] leading-tight group-hover:text-[#E05A10] transition-colors">
+                      {evt.title || 'Untitled Event'}
+                    </h4>
+                    <p className="text-[11px] font-medium text-[#8B5A2B]/70 mt-1.5 uppercase tracking-wider">
+                      {monthName} {year} <span className="text-[#E05A10]/50 mx-1">&bull;</span> {timePart}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-serif text-xs font-bold text-[#3D2B20] leading-tight">{evt.title}</h4>
-                  <p className="text-[10px] text-gray-500 mt-1">{evt.month || ''} • {(evt.time || '').split(' ')[0]}</p>
-                </div>
+              );
+            })}
+            {events.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-6 text-[#3D2B20]/40">
+                <FaCalendarPlus className="text-3xl mb-2 opacity-50" />
+                <span className="text-xs font-medium">No upcoming events scheduled.</span>
               </div>
-            ))}
-            {events.length === 0 && <div className="text-xs text-gray-400 text-center py-4">No events scheduled.</div>}
+            )}
           </div>
         </motion.div>
 
