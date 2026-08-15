@@ -19,6 +19,7 @@ import OverviewTab from './components/OverviewTab'
 import SettingsTab from './components/SettingsTab'
 import LiveTab from './components/LiveTab'
 import BookingsManager from './components/BookingsManager'
+import SmartImageCropper from './components/SmartImageCropper'
 
 export default function Dashboard() {
   const {
@@ -35,7 +36,8 @@ export default function Dashboard() {
     organizers, addOrganizer, updateOrganizer, deleteOrganizer,
     calendarDates, addCalendarDate, deleteCalendarDate,
     adminProfile, updateAdminProfile, changeAdminPassword,
-    liveSettings
+    liveSettings,
+    successor, updateSuccessor
   } = useContext(AppContext)
 
   const navigate = useNavigate()
@@ -412,7 +414,7 @@ export default function Dashboard() {
           {activeTab === 'Bookings' && <div className="p-4 sm:p-8"><BookingsManager {...{ bookings, updateBookingStatus, deleteBooking, selectedBookings, setSelectedBookings, setPrefillEventData, setActiveTab }} /></div>}
           {activeTab === 'Yajman' && <AdminYajmanManager />}
           {activeTab === 'Banners' && <AdminBannerManager />}
-          {activeTab === 'Biography' && <div className="p-4 sm:p-8"><BiographyTab {...{ about, updateAbout, timeline, setTimeline, achievements, setAchievements }} /></div>}
+          {activeTab === 'Biography' && <div className="p-4 sm:p-8"><BiographyTab {...{ about, updateAbout, timeline, setTimeline, achievements, setAchievements, successor, updateSuccessor }} /></div>}
           {activeTab === 'Events' && <div className="p-4 sm:p-8"><EventsTab {...{ events, addEvent, deleteEvent, calendarDates, addCalendarDate, deleteCalendarDate, prefillEventData, setPrefillEventData }} /></div>}
           {activeTab === 'Calendar' && <div className="p-4 sm:p-8"><CalendarTab {...{ calendarDates, addCalendarDate, deleteCalendarDate }} /></div>}
           {activeTab === 'Organizers' && <div className="p-4 sm:p-8"><OrganizersTab {...{ organizers, addOrganizer, updateOrganizer, deleteOrganizer }} /></div>}
@@ -810,22 +812,77 @@ function BannersTab({ banners, updateBanners }) {
 /* =========================================================================
    TAB: BIOGRAPHY EDITOR
    ========================================================================= */
-function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements, setAchievements }) {
+function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements, setAchievements, successor, updateSuccessor }) {
   const [bio, setBio] = useState(about.bio)
   const [image, setImage] = useState(about.image)
   const [name, setName] = useState(about.name)
   const [stats, setStats] = useState(about.stats || [])
   
+  // New Biography Fields
+  const [fatherName, setFatherName] = useState(about.fatherName || '')
+  const [guruDiksha, setGuruDiksha] = useState(about.guruDiksha || '')
+  const [firstKatha, setFirstKatha] = useState(about.firstKatha || '')
+  const [kathaYatra, setKathaYatra] = useState(about.kathaYatra || '')
+  const [originalImageUrl, setOriginalImageUrl] = useState(about.originalImageUrl || '')
+  const [cropData, setCropData] = useState(about.cropData || '')
+  const [isCropperOpen, setIsCropperOpen] = useState(false)
+  
   // Custom Achievements/Timeline fields
   const [newTimeline, setNewTimeline] = useState({ year: '', title: '', desc: '' })
   const [success, setSuccess] = useState(false)
+
+  // Successor State
+  const [succName, setSuccName] = useState(successor?.name || '')
+  const [succShortIntro, setSuccShortIntro] = useState(successor?.shortIntro || '')
+  const [succDetailedBio, setSuccDetailedBio] = useState(successor?.detailedBio || '')
+  const [succSpiritualRole, setSuccSpiritualRole] = useState(successor?.spiritualRole || '')
+  const [succProfileImage, setSuccProfileImage] = useState(successor?.profileImageUrl || '')
+  const [succOriginalImage, setSuccOriginalImage] = useState(successor?.originalImageUrl || '')
+  const [succCropData, setSuccCropData] = useState(successor?.cropData || '')
+  const [isSuccCropperOpen, setIsSuccCropperOpen] = useState(false)
+  const [succIsPublished, setSuccIsPublished] = useState(successor?.isPublished !== undefined ? successor.isPublished : (successor?.published !== undefined ? successor.published : true))
+  const [succSaving, setSuccSaving] = useState(false)
+  const [succSuccess, setSuccSuccess] = useState(false)
+
+  // Helper for rendering crops
+  const getCropStyle = (cropString) => {
+    if (!cropString) return { objectPosition: 'center', transform: 'scale(1)' };
+    try {
+      const data = JSON.parse(cropString);
+      return {
+        objectPosition: `${data.posX}% ${data.posY}%`,
+        transform: `scale(${data.zoom})`
+      };
+    } catch {
+      return { objectPosition: 'center', transform: 'scale(1)' };
+    }
+  }
 
   useEffect(() => {
     setBio(about.bio || '')
     setImage(about.image || '')
     setName(about.name || '')
     setStats(about.stats || [])
+    setFatherName(about.fatherName || '')
+    setGuruDiksha(about.guruDiksha || '')
+    setFirstKatha(about.firstKatha || '')
+    setKathaYatra(about.kathaYatra || '')
+    setOriginalImageUrl(about.originalImageUrl || '')
+    setCropData(about.cropData || '')
   }, [about])
+
+  useEffect(() => {
+    if (successor) {
+      setSuccName(successor.name || '')
+      setSuccShortIntro(successor.shortIntro || '')
+      setSuccDetailedBio(successor.detailedBio || '')
+      setSuccSpiritualRole(successor.spiritualRole || '')
+      setSuccProfileImage(successor.profileImageUrl || '')
+      setSuccOriginalImage(successor.originalImageUrl || '')
+      setSuccCropData(successor.cropData || '')
+      setSuccIsPublished(successor.isPublished !== undefined ? successor.isPublished : (successor.published !== undefined ? successor.published : true))
+    }
+  }, [successor])
 
   const handleStatsChange = (idx, field, value) => {
     const newStats = [...stats]
@@ -834,7 +891,11 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
   }
 
   const handleSave = () => {
-    updateAbout({ bio, image, name, stats })
+    updateAbout({ 
+      bio, image, name, stats, 
+      fatherName, guruDiksha, firstKatha, kathaYatra, 
+      originalImageUrl, cropData 
+    })
     alert('कथावाचक का परिचय सफलतापूर्वक सहेज लिया गया है! (About details saved successfully!)');
     setSuccess(true)
     setTimeout(() => setSuccess(false), 2000)
@@ -854,9 +915,17 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
       const reader = new FileReader()
       reader.onloadend = () => {
         setImage(reader.result)
+        setOriginalImageUrl(reader.result)
+        setCropData('{"posX":50,"posY":50,"zoom":1}')
+        setIsCropperOpen(true)
       }
       reader.readAsDataURL(file)
     }
+  }
+
+  const handleCropSave = (cropInfo) => {
+    setCropData(cropInfo)
+    setIsCropperOpen(false)
   }
 
   const handleAddTimeline = () => {
@@ -868,6 +937,56 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
 
   const handleDeleteTimeline = (idx) => {
     setTimeline(prev => prev.filter((_, i) => i !== idx))
+  }
+
+  // Successor Image Upload
+  const handleSuccessorImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      if (!['image/jpeg', 'image/png', 'image/jpg', 'image/webp'].includes(file.type)) {
+        alert('Please upload only JPG, PNG or WEBP images!')
+        return
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size exceeds 5MB! Please select a smaller image.')
+        return
+      }
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setSuccProfileImage(reader.result)
+        setSuccOriginalImage(reader.result)
+        setSuccCropData('{"posX":50,"posY":50,"zoom":1}')
+        setIsSuccCropperOpen(true)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleSuccCropSave = (cropInfo) => {
+    setSuccCropData(cropInfo)
+    setIsSuccCropperOpen(false)
+  }
+
+  const handleSuccessorSave = async () => {
+    setSuccSaving(true)
+    const result = await updateSuccessor({
+      name: succName,
+      shortIntro: succShortIntro,
+      detailedBio: succDetailedBio,
+      spiritualRole: succSpiritualRole,
+      profileImageUrl: succProfileImage,
+      originalImageUrl: succOriginalImage,
+      cropData: succCropData,
+      isPublished: succIsPublished
+    })
+    setSuccSaving(false)
+    if (result?.success) {
+      setSuccSuccess(true)
+      alert('उत्तराधिकारी की जानकारी सफलतापूर्वक सहेज ली गई! (Successor details saved successfully!)')
+      setTimeout(() => setSuccSuccess(false), 2000)
+    } else {
+      alert('Error saving successor: ' + (result?.error || 'Unknown error'))
+    }
   }
 
   return (
@@ -895,12 +1014,16 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
           <div className="space-y-3 text-xs">
             <div className="space-y-1">
               <label className="font-bold text-[#3D2B20]/75 block">Guru Ji Full Name (पूर्ण नाम)</label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 outline-none"
-              />
+              <div className="relative">
+                <FaUser className="absolute left-3.5 top-3.5 text-[#E05A10]/50 text-sm" />
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. जगद्गुरु हरिप्रपन्नाचार्य जी महाराज"
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 pl-10 outline-none"
+                />
+              </div>
             </div>
 
             <div className="space-y-1">
@@ -915,12 +1038,72 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
 
             <div className="space-y-1">
               <label className="font-bold text-[#3D2B20]/75 block">Biography Text (संक्षिप्त जीवनी - हिंदी)</label>
-              <textarea
-                value={bio}
-                rows="6"
-                onChange={(e) => setBio(e.target.value)}
-                className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 outline-none leading-relaxed"
-              />
+              <div className="relative">
+                <FaBookOpen className="absolute left-3.5 top-4 text-[#E05A10]/50 text-sm" />
+                <textarea
+                  value={bio}
+                  rows="6"
+                  onChange={(e) => setBio(e.target.value)}
+                  placeholder="विस्तृत जीवन परिचय यहाँ दर्ज करें..."
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 pl-10 outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-1">
+              <label className="font-bold text-[#3D2B20]/75 block">Father's Name (पिता जी का नाम)</label>
+              <div className="relative">
+                <FaUserCircle className="absolute left-3.5 top-3.5 text-[#E05A10]/50 text-sm" />
+                <input
+                  type="text"
+                  value={fatherName}
+                  onChange={(e) => setFatherName(e.target.value)}
+                  placeholder="e.g. स्वर्गीय सूर्य नारायण शुक्ला"
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 pl-10 outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-[#3D2B20]/75 block">Guru Diksha (गुरु दीक्षा)</label>
+              <div className="relative">
+                <FaBookOpen className="absolute left-3.5 top-4 text-[#E05A10]/50 text-sm" />
+                <textarea
+                  value={guruDiksha}
+                  rows="3"
+                  onChange={(e) => setGuruDiksha(e.target.value)}
+                  placeholder="गुरु दीक्षा का विवरण..."
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 pl-10 outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-[#3D2B20]/75 block">First Katha (प्रथम कथा)</label>
+              <div className="relative">
+                <FaCalendarAlt className="absolute left-3.5 top-4 text-[#E05A10]/50 text-sm" />
+                <textarea
+                  value={firstKatha}
+                  rows="2"
+                  onChange={(e) => setFirstKatha(e.target.value)}
+                  placeholder="पहली कथा का विवरण..."
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 pl-10 outline-none leading-relaxed"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="font-bold text-[#3D2B20]/75 block">Katha Yatra (कथा यात्रा)</label>
+              <div className="relative">
+                <FaGlobe className="absolute left-3.5 top-4 text-[#E05A10]/50 text-sm" />
+                <textarea
+                  value={kathaYatra}
+                  rows="2"
+                  onChange={(e) => setKathaYatra(e.target.value)}
+                  placeholder="कथा यात्रा का विवरण..."
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#E05A10] rounded-xl p-3 pl-10 outline-none leading-relaxed"
+                />
+              </div>
             </div>
           </div>
 
@@ -953,9 +1136,13 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
           {/* Avatar Preview Card */}
           <div className="bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex flex-col items-center">
             <h4 className="font-serif font-bold text-xs text-[#3D2B20]/60 uppercase tracking-widest mb-4">Image Preview</h4>
-            <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-[#FAF0E6] shadow shadow-[#E05A10]/10">
-              <img src={image} alt="Guru Ji Preview" className="w-full h-full object-cover object-top" />
+            <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-[#FAF0E6] shadow shadow-[#E05A10]/10 cursor-pointer relative group" onClick={() => { if(originalImageUrl) setIsCropperOpen(true); }}>
+              <img src={originalImageUrl || image} alt="Guru Ji Preview" className="w-full h-full object-cover" style={getCropStyle(cropData)} />
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <span className="text-white text-xs font-bold uppercase tracking-wider">Adjust Crop</span>
+              </div>
             </div>
+            <button onClick={() => { if(originalImageUrl) setIsCropperOpen(true); }} className="mt-3 text-[#E05A10] text-xs font-bold hover:underline">Edit Image Position & Zoom</button>
           </div>
 
           {/* Timeline Management */}
@@ -1017,9 +1204,223 @@ function BiographyTab({ about, updateAbout, timeline, setTimeline, achievements,
           </div>
         </div>
       </div>
+
+      {/* ================================================================
+         GURU MAHARAJ'S SON & SUCCESSOR SECTION
+         ================================================================ */}
+      <div className="mt-12 pt-10 border-t-2 border-dashed border-[#D4AF37]/30">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h3 className="font-serif text-lg font-bold text-[#3D2B20] flex items-center gap-2">
+              <FaUser className="text-[#D4AF37]" />
+              Guru Maharaj's Son & Successor
+            </h3>
+            <p className="text-xs text-[#3D2B20]/60 mt-1">गुरु महाराज के पुत्र एवं उत्तराधिकारी — Manage successor profile displayed on the About page</p>
+          </div>
+          <button
+            onClick={handleSuccessorSave}
+            disabled={succSaving}
+            className="bg-[#D4AF37] hover:bg-[#b8952e] disabled:opacity-50 text-white text-xs font-serif font-bold uppercase tracking-widest px-6 py-3 rounded-xl flex items-center space-x-2 shadow transition-all shrink-0"
+          >
+            <FaSave />
+            <span>{succSaving ? 'Saving...' : 'Save Successor'}</span>
+          </button>
+        </div>
+
+        {succSuccess && (
+          <div className="p-4 rounded-xl bg-green-50 border border-green-200 text-green-700 text-xs font-bold text-center mb-6">
+            Successor details saved successfully! उत्तराधिकारी की जानकारी सफलतापूर्वक सहेज ली गई!
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Left: Form Fields */}
+          <div className="lg:col-span-7 bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm space-y-5">
+
+            {/* Display Toggle */}
+            <div className="flex items-center justify-between bg-[#FAF6F0] p-4 rounded-xl border border-[#EAD8C8]">
+              <div>
+                <label className="font-bold text-[#3D2B20] text-xs block">Display on Website</label>
+                <p className="text-[10px] text-[#3D2B20]/50 mt-0.5">Toggle OFF to hide this section from the frontend About page</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSuccIsPublished(!succIsPublished)}
+                className={`relative w-14 h-7 rounded-full transition-colors duration-300 ${succIsPublished ? 'bg-green-500' : 'bg-gray-300'}`}
+              >
+                <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform duration-300 ${succIsPublished ? 'translate-x-7' : 'translate-x-0'}`}></span>
+              </button>
+            </div>
+
+            {/* Name */}
+            <div className="space-y-1 text-xs">
+              <label className="font-bold text-[#3D2B20]/75 block">Successor Name / उत्तराधिकारी का नाम</label>
+              <div className="relative">
+                <FaUser className="absolute left-3.5 top-3.5 text-[#D4AF37]/50 text-sm" />
+                <input
+                  type="text"
+                  value={succName}
+                  onChange={(e) => setSuccName(e.target.value)}
+                  placeholder="उत्तराधिकारी का पूर्ण नाम दर्ज करें"
+                  maxLength={100}
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#D4AF37] rounded-xl p-3 pl-10 outline-none"
+                />
+              </div>
+              <p className="text-right text-[10px] text-[#3D2B20]/40">{succName.length}/100</p>
+            </div>
+
+            {/* Spiritual Role */}
+            <div className="space-y-1 text-xs">
+              <label className="font-bold text-[#3D2B20]/75 block">Spiritual Role / आध्यात्मिक भूमिका</label>
+              <div className="relative">
+                <FaBookOpen className="absolute left-3.5 top-3.5 text-[#D4AF37]/50 text-sm" />
+                <input
+                  type="text"
+                  value={succSpiritualRole}
+                  onChange={(e) => setSuccSpiritualRole(e.target.value.slice(0, 500))}
+                  placeholder="उदाहरण: शक्तिपीठाधीश्वर, कथावाचक"
+                  maxLength={500}
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#D4AF37] rounded-xl p-3 pl-10 outline-none"
+                />
+              </div>
+              <p className="text-right text-[10px] text-[#3D2B20]/40">{succSpiritualRole.length}/500</p>
+            </div>
+
+            {/* Short Introduction */}
+            <div className="space-y-1 text-xs">
+              <label className="font-bold text-[#3D2B20]/75 block">Short Introduction / संक्षिप्त परिचय</label>
+              <div className="relative">
+                <FaQuoteLeft className="absolute left-3.5 top-4 text-[#D4AF37]/50 text-sm" />
+                <textarea
+                  value={succShortIntro}
+                  onChange={(e) => setSuccShortIntro(e.target.value.slice(0, 500))}
+                  rows="3"
+                  placeholder="संक्षिप्त परिचय हिंदी में लिखें (2-3 पंक्तियाँ)"
+                  maxLength={500}
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#D4AF37] rounded-xl p-3 pl-10 outline-none leading-relaxed"
+                />
+              </div>
+              <p className="text-right text-[10px] text-[#3D2B20]/40">{succShortIntro.length}/500</p>
+            </div>
+
+            {/* Detailed Biography */}
+            <div className="space-y-1 text-xs">
+              <label className="font-bold text-[#3D2B20]/75 block">Detailed Biography / विस्तृत परिचय</label>
+              <div className="relative">
+                <FaClipboardList className="absolute left-3.5 top-4 text-[#D4AF37]/50 text-sm" />
+                <textarea
+                  value={succDetailedBio}
+                  onChange={(e) => setSuccDetailedBio(e.target.value.slice(0, 2000))}
+                  rows="6"
+                  placeholder="विस्तृत जीवन परिचय हिंदी में लिखें"
+                  maxLength={2000}
+                  className="w-full bg-[#FAF6F0] border border-[#EAD8C8] focus:border-[#D4AF37] rounded-xl p-3 pl-10 outline-none leading-relaxed"
+                />
+              </div>
+              <p className="text-right text-[10px] text-[#3D2B20]/40">{succDetailedBio.length}/2000</p>
+            </div>
+          </div>
+
+          {/* Right: Image Upload & Preview */}
+          <div className="lg:col-span-5 space-y-6">
+            {/* Image Preview */}
+            <div className="bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex flex-col items-center">
+              <h4 className="font-serif font-bold text-xs text-[#3D2B20]/60 uppercase tracking-widest mb-4">Successor Image Preview</h4>
+              <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-[#D4AF37]/30 shadow bg-[#FAF0E6] cursor-pointer relative group" onClick={() => { if(succOriginalImage) setIsSuccCropperOpen(true); }}>
+                {succOriginalImage || succProfileImage ? (
+                  <img src={succOriginalImage || succProfileImage} alt="Successor Preview" className="w-full h-full object-cover" style={getCropStyle(succCropData)} />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[#D4AF37]/50">
+                    <FaUser className="text-5xl" />
+                  </div>
+                )}
+                {(succOriginalImage || succProfileImage) && (
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span className="text-white text-[10px] font-bold uppercase tracking-wider">Adjust Crop</span>
+                  </div>
+                )}
+              </div>
+              <button onClick={() => { if(succOriginalImage) setIsSuccCropperOpen(true); }} className="mt-3 text-[#D4AF37] text-xs font-bold hover:underline">Edit Image Position & Zoom</button>
+
+              {/* Upload / Replace / Remove Controls */}
+              <div className="mt-5 w-full space-y-3">
+                <label className="w-full flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#b8952e] text-white text-xs font-bold uppercase tracking-wider py-2.5 px-4 rounded-xl cursor-pointer transition-colors shadow-sm">
+                  <FaCloudUploadAlt className="text-sm" />
+                  <span>{succProfileImage ? 'Replace Image' : 'Upload Image'}</span>
+                  <input
+                    type="file"
+                    accept="image/png, image/jpeg, image/jpg, image/webp"
+                    onChange={handleSuccessorImageUpload}
+                    className="hidden"
+                  />
+                </label>
+                {succProfileImage && (
+                  <button
+                    type="button"
+                    onClick={() => { setSuccProfileImage(''); setSuccOriginalImage(''); }}
+                    className="w-full flex items-center justify-center gap-2 border border-red-300 text-red-500 hover:bg-red-50 text-xs font-bold uppercase tracking-wider py-2.5 px-4 rounded-xl transition-colors"
+                  >
+                    <FaTrash className="text-[10px]" />
+                    <span>Remove Image</span>
+                  </button>
+                )}
+              </div>
+              <p className="text-[10px] text-[#3D2B20]/40 text-center mt-3">Supported: JPG, PNG, WEBP (Max 5MB). Image will display as a circular portrait.</p>
+            </div>
+
+            {/* Frontend Preview Card */}
+            <div className="bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm">
+              <h4 className="font-serif font-bold text-xs text-[#3D2B20]/60 uppercase tracking-widest mb-4">Frontend Preview</h4>
+              <div className="bg-[#FFFDF7] rounded-2xl p-5 border border-[#F2E5D5]">
+                <div className="flex items-start gap-4">
+                  <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#D4AF37] shrink-0 bg-[#FAF0E6]">
+                    {succOriginalImage || succProfileImage ? (
+                      <img src={succOriginalImage || succProfileImage} alt="Preview" className="w-full h-full object-cover" style={getCropStyle(succCropData)} />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#D4AF37]/50">
+                        <FaUser className="text-xl" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] text-[#E05A10] font-semibold uppercase tracking-wider">{succSpiritualRole || 'Spiritual Role'}</p>
+                    <p className="text-sm font-bold text-[#3D2B20] truncate">{succName || 'Successor Name'}</p>
+                    <p className="text-[11px] text-[#5C4033]/70 mt-1 line-clamp-2">{succShortIntro || 'Short introduction will appear here...'}</p>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${succIsPublished ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}`}>
+                    {succIsPublished ? '● VISIBLE' : '● HIDDEN'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <SmartImageCropper 
+        isOpen={isCropperOpen}
+        imageUrl={originalImageUrl}
+        initialCropData={cropData}
+        aspectRatio="16/9" // Use 16/9 landscape crop for Guru Hero Image
+        onSave={handleCropSave}
+        onClose={() => setIsCropperOpen(false)}
+        title="CROP GURU JI AVATAR"
+      />
+      <SmartImageCropper 
+        isOpen={isSuccCropperOpen}
+        imageUrl={succOriginalImage}
+        initialCropData={succCropData}
+        aspectRatio="1/1" // Use 1:1 portrait crop for Successor
+        onSave={handleSuccCropSave}
+        onClose={() => setIsSuccCropperOpen(false)}
+        title="CROP SUCCESSOR AVATAR"
+      />
     </div>
   )
 }
+
 
 /* =========================================================================
    TAB: UPCOMING EVENTS

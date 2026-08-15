@@ -167,13 +167,13 @@ export default function Live() {
                 ></iframe>
               </div>
             ) : (
-              <div className="w-full aspect-video rounded-3xl overflow-hidden shadow-2xl border border-[#EAD8C8] bg-white flex flex-col items-center justify-center p-8 text-center relative">
+              <div className="w-full min-h-[300px] sm:min-h-[400px] lg:aspect-video rounded-3xl overflow-hidden shadow-2xl border border-[#EAD8C8] bg-white flex flex-col items-center justify-center p-8 sm:p-12 text-center relative">
                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#D4AF37] via-[#E05A10] to-[#D4AF37]"></div>
-                 <FaPlayCircle className="text-6xl text-gray-200 mb-6" />
-                 <h2 className="font-serif text-2xl lg:text-4xl font-black text-[#3D2B20] mb-4">कथा अभी Live नहीं है</h2>
-                 <p className="text-[#8B5A2B] text-lg lg:text-xl font-medium mb-8">अगली कथा के लिए हमारे साथ जुड़े रहें</p>
-                 <a href={contacts.youtube} target="_blank" rel="noopener noreferrer" className="bg-[#E05A10] hover:bg-[#D35400] text-white px-8 py-3.5 rounded-xl font-bold uppercase tracking-wider shadow-lg flex items-center transition-all hover:scale-105">
-                   <FaYoutube className="mr-3 text-xl" /> UPCOMING KATHA
+                 <FaPlayCircle className="text-5xl sm:text-6xl text-gray-200 mb-4 sm:mb-6" />
+                 <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-black text-[#3D2B20] mb-3 sm:mb-4 leading-tight">कथा अभी Live नहीं है</h2>
+                 <p className="text-[#8B5A2B] text-base sm:text-lg lg:text-xl font-medium mb-6 sm:mb-8 leading-relaxed">अगली कथा के लिए हमारे साथ जुड़े रहें</p>
+                 <a href={contacts.youtube} target="_blank" rel="noopener noreferrer" className="bg-[#E05A10] hover:bg-[#D35400] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-bold uppercase tracking-wider shadow-lg flex items-center transition-all hover:scale-105 text-sm sm:text-base">
+                   <FaYoutube className="mr-2 sm:mr-3 text-lg sm:text-xl" /> UPCOMING KATHA
                  </a>
               </div>
             )}
@@ -228,50 +228,50 @@ export default function Live() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
             
             {/* Date Card */}
-            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
-                <FaCalendarAlt className="text-[#E05A10] text-xl" />
+            <div className="bg-white p-4 md:p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-3 md:gap-4 transition-transform hover:-translate-y-1 overflow-hidden">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaCalendarAlt className="text-[#E05A10] text-lg md:text-xl" />
               </div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">तारीख (Date)</p>
-                <p className="font-bold text-[#3D2B20] text-sm md:text-base">{formatHindiDateObj(liveSettings?.eventDate).date || 'Today'}</p>
-                <p className="text-xs text-[#8B5A2B] mt-0.5">{formatHindiDateObj(liveSettings?.eventDate).day}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 break-words">तारीख (Date)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base break-words">{formatHindiDateObj(liveSettings?.eventDate).date || 'Today'}</p>
+                <p className="text-[10px] md:text-xs text-[#8B5A2B] mt-0.5 break-words">{formatHindiDateObj(liveSettings?.eventDate).day}</p>
               </div>
             </div>
 
             {/* Time Card */}
-            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
-                <FaClock className="text-[#E05A10] text-xl" />
+            <div className="bg-white p-4 md:p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-3 md:gap-4 transition-transform hover:-translate-y-1 overflow-hidden">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaClock className="text-[#E05A10] text-lg md:text-xl" />
               </div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">समय (Time)</p>
-                <p className="font-bold text-[#3D2B20] text-sm md:text-base uppercase">{formatTimeObj(liveSettings?.eventTime).top || '04:00 PM'}</p>
-                <p className="text-xs text-[#8B5A2B] mt-0.5">{formatTimeObj(liveSettings?.eventTime).bottom || 'onwards'}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 break-words">समय (Time)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base uppercase break-words">{formatTimeObj(liveSettings?.eventTime).top || '04:00 PM'}</p>
+                <p className="text-[10px] md:text-xs text-[#8B5A2B] mt-0.5 break-words">{formatTimeObj(liveSettings?.eventTime).bottom || 'onwards'}</p>
               </div>
             </div>
 
             {/* Location Card */}
-            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
-                <FaMapMarkerAlt className="text-[#E05A10] text-xl" />
+            <div className="bg-white p-4 md:p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-3 md:gap-4 transition-transform hover:-translate-y-1 overflow-hidden">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaMapMarkerAlt className="text-[#E05A10] text-lg md:text-xl" />
               </div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">स्थान (Location)</p>
-                <p className="font-bold text-[#3D2B20] text-sm md:text-base line-clamp-1">{formatLocationObj(liveSettings?.eventLocation).top || 'प्रयागराज,'}</p>
-                <p className="text-xs text-[#8B5A2B] mt-0.5 line-clamp-1">{formatLocationObj(liveSettings?.eventLocation).bottom || 'उत्तर प्रदेश'}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 break-words">स्थान (Loc)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base line-clamp-1 break-words">{formatLocationObj(liveSettings?.eventLocation).top || 'प्रयागराज,'}</p>
+                <p className="text-[10px] md:text-xs text-[#8B5A2B] mt-0.5 line-clamp-1 break-words">{formatLocationObj(liveSettings?.eventLocation).bottom || 'उत्तर प्रदेश'}</p>
               </div>
             </div>
 
             {/* Day Card */}
-            <div className="bg-white p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-4 transition-transform hover:-translate-y-1">
-              <div className="w-12 h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
-                <FaCalendarDay className="text-[#E05A10] text-xl" />
+            <div className="bg-white p-4 md:p-6 rounded-2xl border border-[#D4AF37]/40 shadow-[0_4px_20px_rgba(224,90,16,0.05)] flex items-start gap-3 md:gap-4 transition-transform hover:-translate-y-1 overflow-hidden">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#FCF5EB] flex items-center justify-center shrink-0">
+                <FaCalendarDay className="text-[#E05A10] text-lg md:text-xl" />
               </div>
-              <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">दिवस (Day)</p>
-                <p className="font-bold text-[#3D2B20] text-sm md:text-base">{liveSettings?.eventDay || 'प्रथम दिवस'}</p>
-                <p className="text-xs text-[#8B5A2B] mt-0.5">Katha Journey</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] md:text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 break-words">दिवस (Day)</p>
+                <p className="font-bold text-[#3D2B20] text-sm md:text-base break-words">{liveSettings?.eventDay || 'प्रथम दिवस'}</p>
+                <p className="text-[10px] md:text-xs text-[#8B5A2B] mt-0.5 break-words">Katha Journey</p>
               </div>
             </div>
 

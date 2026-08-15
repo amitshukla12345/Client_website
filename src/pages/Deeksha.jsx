@@ -7,12 +7,13 @@ import { AppContext } from '../context/AppContext'
 import logoImg from '../assets/images/logo.jpeg'
 import guruHeroImg from '../assets/images/guru_hero_image.png'
 import deekshaImg from '../assets/images/deeksha.png'
+import ResponsiveHeroBanner from '../components/ResponsiveHeroBanner'
 
 export default function Deeksha() {
   const { contacts } = useContext(AppContext)
   const navigate = useNavigate()
   const [activeFaq, setActiveFaq] = useState(null)
-  
+
   const [formData, setFormData] = useState({
     name: '',
     mobile: '',
@@ -79,20 +80,18 @@ export default function Deeksha() {
   }
 
   return (
-    <div className="pt-[60px] lg:pt-[64px] pb-20 bg-[#FFFDF7] min-h-screen font-sans text-dark overflow-hidden">
+    <div className="pt-[0px] lg:pt-[0px] pb-20 bg-[#FFFDF7] min-h-screen font-sans text-dark overflow-hidden">
       {/* Hero Section */}
-      <section className="relative w-full flex justify-center border-b border-gold/20">
-        <img src={guruHeroImg} alt="Guru Deeksha Hero Banner" className="w-full max-w-[1920px] h-auto block shadow-sm" />
-      </section>
+      <ResponsiveHeroBanner pageName="Deeksha" fallbackImage={guruHeroImg} />
 
       {/* About Section */}
       <section className="py-24 bg-[#FCF9F2] relative overflow-hidden">
         {/* Background Decorative Patterns */}
         <div className="absolute top-0 left-0 w-64 h-64 bg-[url('https://www.transparenttextures.com/patterns/mandala-pattern.png')] opacity-5 pointer-events-none"></div>
         <div className="absolute top-0 right-0 w-64 h-64 bg-[url('https://www.transparenttextures.com/patterns/mandala-pattern.png')] opacity-5 pointer-events-none rotate-90"></div>
-        
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          
+
           {/* Ornate Title Area */}
           <div className="text-center mb-16 relative">
             <div className="flex justify-center items-center gap-2 mb-3">
@@ -100,23 +99,23 @@ export default function Deeksha() {
               <span className="text-saffron uppercase font-bold tracking-[0.25em] text-[10px] lg:text-xs">Spiritual Initiation</span>
               <span className="text-saffron text-[10px]">✧</span>
             </div>
-            
+
             <div className="flex justify-center items-center gap-4 mb-4">
               <div className="w-12 h-[2px] bg-gold/60 hidden sm:block"></div>
               <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-bold text-[#b45b23]">गुरु दीक्षा क्या है?</h2>
               <div className="w-12 h-[2px] bg-gold/60 hidden sm:block"></div>
             </div>
-            
+
             <div className="flex justify-center items-center gap-3">
               <GiLotus className="text-gold text-lg" />
               <p className="text-dark-light font-bold text-sm lg:text-base tracking-wide">आध्यात्मिक जीवन की प्रथम सीढ़ी</p>
               <GiLotus className="text-gold text-lg" />
             </div>
           </div>
-          
+
           <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
             {/* Left Image (Circular with Ornate Border) */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -127,22 +126,22 @@ export default function Deeksha() {
                 <div className="absolute inset-0 rounded-full border-[1px] border-gold/40 border-dashed animate-[spin_60s_linear_infinite]"></div>
                 <div className="absolute inset-2 rounded-full border-[1.5px] border-gold/30"></div>
                 <div className="absolute inset-4 rounded-full border-[2px] border-gold/50 border-dotted animate-[spin_40s_linear_infinite_reverse]"></div>
-                
+
                 {/* Glowing effect */}
                 <div className="absolute inset-0 bg-gold/10 rounded-full blur-2xl"></div>
-                
+
                 {/* Main Circular Image */}
                 <div className="w-[82%] h-[82%] rounded-full overflow-hidden border-[6px] border-white shadow-2xl relative z-10">
                   <img src={deekshaImg} alt="Deeksha Ceremony" className="w-full h-full object-cover" />
                 </div>
-                
+
                 {/* Bottom Lotus Ornament */}
                 <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 z-20 text-gold bg-[#FCF9F2] px-4 rounded-full border-t border-gold/20 shadow-sm">
                   <GiLotus className="text-4xl sm:text-5xl drop-shadow-md" />
                 </div>
               </div>
             </motion.div>
-            
+
             {/* Right Content (Stacked Cards) */}
             <div className="w-full lg:w-3/5 space-y-4">
               {[
@@ -151,7 +150,7 @@ export default function Deeksha() {
                 { title: 'नियमित पालन', text: 'दीक्षा के बाद, शिष्य को प्रतिदिन गुरु मंत्र का जाप और बताए गए नियमों का नियमित रूप से पालन करना होता है।', icon: FaPrayingHands },
                 { title: 'आध्यात्मिक शांति', text: 'पूर्ण श्रद्धा और समर्पण के साथ गुरु की शरण में आने से ही दीक्षा फलित होती है और जीवन में आध्यात्मिक शांति आती है।', icon: GiLotus }
               ].map((item, idx) => (
-                <motion.div 
+                <motion.div
                   key={idx}
                   initial={{ opacity: 0, x: 20 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -161,18 +160,18 @@ export default function Deeksha() {
                 >
                   {/* Left Orange Border Accent */}
                   <div className="absolute left-0 top-0 bottom-0 w-1.5 bg-saffron rounded-l-lg"></div>
-                  
+
                   {/* Icon */}
                   <div className="w-12 h-12 lg:w-14 lg:h-14 bg-saffron/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <item.icon className="text-2xl lg:text-3xl text-saffron" />
                   </div>
-                  
+
                   {/* Text */}
                   <div className="flex-grow">
                     <h4 className="font-serif font-bold text-[#6a3b20] text-base lg:text-lg mb-0.5">{item.title}</h4>
                     <p className="text-dark-light text-[11px] lg:text-xs leading-relaxed font-medium pr-4">{item.text}</p>
                   </div>
-                  
+
                   {/* Checkmark */}
                   <div className="flex-shrink-0 self-center">
                     <FaCheckCircle className="text-green-500 text-lg lg:text-xl" />
@@ -190,7 +189,7 @@ export default function Deeksha() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
           <FaQuoteLeft className="text-4xl lg:text-5xl text-[#D4AF37]/40 mx-auto mb-6" />
           <h2 className="font-serif text-2xl lg:text-3xl font-bold text-[#b45b23] mb-8">गुरु दीक्षा पर दिव्य विचार</h2>
-          
+
           <div className="space-y-8">
             <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-[#EAD8C8] relative overflow-hidden group hover:shadow-md transition-shadow">
               <div className="absolute top-0 left-0 w-1.5 h-full bg-saffron rounded-l-2xl"></div>
@@ -198,7 +197,7 @@ export default function Deeksha() {
                 "दीक्षा केवल एक रीत या नियम नहीं, बल्कि आत्मा का दूसरा जन्म है। जब गुरु शिष्य को दीक्षा देते हैं, तो वह केवल मन्त्र नहीं सौंपते, बल्कि अपने तपोबल और प्रकाश का अंश शिष्य के जीवन में स्थापित कर देते हैं।"
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white/60 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-[#EAD8C8] text-left hover:-translate-y-1 transition-transform duration-300">
                 <h3 className="font-serif font-bold text-[#b45b23] text-lg lg:text-xl mb-3 flex items-center gap-2">
@@ -225,14 +224,14 @@ export default function Deeksha() {
       <section className="py-20 bg-[#FDFBF4]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-16">
-            
+
             {/* Left: Benefits */}
             <div className="w-full lg:w-1/2">
               <div className="text-center mb-10">
                 <h2 className="font-serif text-2xl lg:text-3xl font-bold text-dark">गुरु दीक्षा के लाभ</h2>
                 <div className="w-12 h-[2px] bg-gold mx-auto mt-3"></div>
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {benefits.map((benefit, idx) => (
                   <motion.div
@@ -245,7 +244,7 @@ export default function Deeksha() {
                   >
                     {/* Hover Gradient Background */}
                     <div className="absolute inset-0 bg-gradient-to-br from-gold/5 via-transparent to-saffron/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    
+
                     {/* Top Decorative Line */}
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0 h-1.5 bg-gradient-to-r from-saffron to-gold group-hover:w-full transition-all duration-500 rounded-b-full"></div>
 
@@ -269,20 +268,20 @@ export default function Deeksha() {
                 ))}
               </div>
             </div>
-            
+
             {/* Right: Process */}
             <div className="w-full lg:w-1/2 flex flex-col">
               <div className="text-center mb-8">
                 <h2 className="font-serif text-2xl lg:text-3xl font-bold text-dark">दीक्षा लेने की प्रक्रिया</h2>
                 <div className="w-12 h-[2px] bg-gold mx-auto mt-3"></div>
               </div>
-              
+
               {/* Horizontal Timeline (Scrollable on small screens) */}
               <div className="relative w-full flex-grow flex flex-col justify-center mb-3 overflow-x-auto pt-4 pb-2 custom-scrollbar">
                 <div className="flex items-start justify-between min-w-[500px] w-full max-w-[560px] mx-auto relative px-4">
                   {/* Connecting Line */}
                   <div className="absolute top-5 left-[72px] right-[72px] h-[2px] bg-gold/30 z-0"></div>
-                  
+
                   {processSteps.map((step, idx) => (
                     <div key={idx} className="relative z-10 flex flex-col items-center w-28 text-center group">
                       <div className="relative mb-3 group-hover:scale-110 transition-transform">
@@ -300,10 +299,10 @@ export default function Deeksha() {
                   ))}
                 </div>
               </div>
-              
+
               {/* Apply Button */}
               <div className="flex justify-center mb-6">
-                <button 
+                <button
                   onClick={() => document.getElementById('inquiry-form').scrollIntoView({ behavior: 'smooth' })}
                   className="group relative overflow-hidden rounded-full font-poppins font-bold text-white shadow-saffron-glow transition-all hover:shadow-premium-hover hover:scale-[1.02] bg-gradient-to-r from-[#F6B73C] to-[#FF8C00] px-8 py-2.5"
                 >
@@ -315,7 +314,7 @@ export default function Deeksha() {
               </div>
 
               {/* Important Notice */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -354,7 +353,7 @@ export default function Deeksha() {
                 </div>
               </motion.div>
             </div>
-            
+
           </div>
         </div>
       </section>
@@ -363,14 +362,14 @@ export default function Deeksha() {
       <section className="py-20 bg-white border-t border-gold/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-16">
-            
+
             {/* Left: Video */}
             <div className="w-full lg:w-1/2">
               <div className="text-center mb-10">
                 <h2 className="font-serif text-2xl lg:text-3xl font-bold text-dark">गुरु दीक्षा का महत्व</h2>
                 <div className="w-12 h-[2px] bg-gold mx-auto mt-3"></div>
               </div>
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -398,7 +397,7 @@ export default function Deeksha() {
                 <h2 className="font-serif text-2xl lg:text-3xl font-bold text-dark">अक्सर पूछे जाने वाले प्रश्न</h2>
                 <div className="w-12 h-[2px] bg-gold mx-auto mt-3"></div>
               </div>
-              
+
               <div className="space-y-5">
                 {faqs.map((faq, idx) => (
                   <div key={idx} className="bg-[#FDFBF4] border border-gold/20 rounded-2xl overflow-hidden">
@@ -437,7 +436,7 @@ export default function Deeksha() {
         {/* Background Decor */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(212,175,55,0.05)_0%,transparent_100%)]"></div>
         <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/mandala-pattern.png')] opacity-5 pointer-events-none"></div>
-        
+
         {/* Floating Particles */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {[...Array(6)].map((_, i) => (
@@ -464,9 +463,9 @@ export default function Deeksha() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
-            
+
             {/* Col 1: Contact Information */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -478,7 +477,7 @@ export default function Deeksha() {
                 <p className="font-hindi text-lg text-dark-light/80 leading-relaxed">हम आपके आध्यात्मिक मार्गदर्शन एवं कथा आयोजन हेतु सदैव उपलब्ध हैं।</p>
                 <div className="w-16 h-[2px] bg-gold mt-4"></div>
               </div>
-              
+
               <a href={`https://wa.me/${contacts?.whatsapp?.replace(/[^\d]/g, '') || '918960292928'}?text=प्रणाम`} target="_blank" rel="noopener noreferrer" className="w-full group flex items-center gap-5 bg-white/60 backdrop-blur-sm p-5 rounded-[20px] border border-gold/10 shadow-sm hover:shadow-premium hover:border-green-400/50 transition-all duration-300">
                 <div className="w-14 h-14 bg-green-50 group-hover:bg-green-100 rounded-full flex items-center justify-center text-green-500 text-2xl flex-shrink-0 transition-colors shadow-[0_0_15px_rgba(34,197,94,0.15)] group-hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]">
                   <FaWhatsapp />
@@ -489,7 +488,7 @@ export default function Deeksha() {
                   <p className="text-xs text-green-600 mt-1">Response within 10 Minutes</p>
                 </div>
               </a>
-              
+
               <a href={`tel:${contacts?.phone?.replace(/[^\d+]/g, '') || '+918960292928'}`} className="w-full group flex items-center gap-5 bg-white/60 backdrop-blur-sm p-5 rounded-[20px] border border-gold/10 shadow-sm hover:shadow-premium hover:border-saffron/40 transition-all duration-300">
                 <div className="w-14 h-14 bg-orange-50 group-hover:bg-orange-100 rounded-full flex items-center justify-center text-saffron text-2xl flex-shrink-0 transition-colors shadow-[0_0_15px_rgba(255,153,51,0.15)] group-hover:shadow-[0_0_20px_rgba(255,153,51,0.3)]">
                   <FaPhoneAlt />
@@ -500,7 +499,7 @@ export default function Deeksha() {
                   <p className="text-xs text-saffron mt-1">Office Hours (9 AM – 8 PM)</p>
                 </div>
               </a>
-              
+
               <a href={`mailto:${contacts?.email || 'amitshukla22509@gmail.com'}`} className="w-full group flex items-center gap-5 bg-white/60 backdrop-blur-sm p-5 rounded-[20px] border border-gold/10 shadow-sm hover:shadow-premium hover:border-gold/40 transition-all duration-300">
                 <div className="w-14 h-14 bg-yellow-50 group-hover:bg-yellow-100 rounded-full flex items-center justify-center text-gold text-2xl flex-shrink-0 transition-colors shadow-[0_0_15px_rgba(212,175,55,0.15)] group-hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]">
                   <FaEnvelope />
@@ -527,9 +526,9 @@ export default function Deeksha() {
                 </a>
               </div>
             </motion.div>
-            
+
             {/* Col 2: Inquiry Form */}
-            <motion.div 
+            <motion.div
               id="inquiry-form"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -538,14 +537,14 @@ export default function Deeksha() {
               className="lg:col-span-6 bg-white/80 backdrop-blur-xl rounded-[24px] border border-gold/20 shadow-premium p-6 lg:p-8 relative scroll-mt-24"
             >
               <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-saffron to-gold rounded-t-[24px]"></div>
-              
+
               <div className="text-center mb-8">
                 <h2 className="font-playfair text-2xl font-bold text-dark flex items-center justify-center gap-2">
                   दीक्षा हेतु आवेदन <span className="font-poppins text-lg font-normal opacity-50 mx-2">|</span> Inquiry Form
                 </h2>
                 <div className="w-16 h-[2px] bg-gold mx-auto mt-4 rounded-full"></div>
               </div>
-              
+
               <form onSubmit={handleFormSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="relative">
@@ -563,7 +562,7 @@ export default function Deeksha() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="relative">
                     <label className="block font-poppins text-xs font-semibold text-dark-light mb-1.5 ml-1">ईमेल / Email</label>
@@ -576,34 +575,34 @@ export default function Deeksha() {
                     <label className="block font-poppins text-xs font-semibold text-dark-light mb-1.5 ml-1">राज्य / State</label>
                     <div className="relative">
                       <FaMapMarkerAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-gold/60" />
-                      <input 
-                        type="text" 
-                        name="state" 
-                        value={formData.state} 
+                      <input
+                        type="text"
+                        name="state"
+                        value={formData.state}
                         onChange={(e) => {
                           handleInputChange(e);
                           setShowStateDropdown(true);
-                        }} 
+                        }}
                         onFocus={() => setShowStateDropdown(true)}
-                        placeholder="राज्य चुनें या टाइप करें..." 
-                        className="w-full bg-[#FFFDF7] border border-gold/20 rounded-2xl pl-11 pr-4 py-3.5 text-sm font-poppins focus:outline-none focus:border-saffron focus:ring-1 focus:ring-saffron/20 transition-all shadow-sm" 
-                        required 
+                        placeholder="राज्य चुनें या टाइप करें..."
+                        className="w-full bg-[#FFFDF7] border border-gold/20 rounded-2xl pl-11 pr-4 py-3.5 text-sm font-poppins focus:outline-none focus:border-saffron focus:ring-1 focus:ring-saffron/20 transition-all shadow-sm"
+                        required
                         autoComplete="off"
                       />
                     </div>
                     <AnimatePresence>
                       {showStateDropdown && (
-                        <motion.div 
+                        <motion.div
                           initial={{ opacity: 0, y: -5 }}
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -5 }}
                           className="absolute z-50 top-full left-0 right-0 mt-2 max-h-48 overflow-y-auto bg-white border border-gold/20 rounded-xl shadow-xl custom-scrollbar"
                         >
                           {indianStates.filter(s => s.toLowerCase().includes(formData.state.toLowerCase())).map((state, idx) => (
-                            <div 
+                            <div
                               key={idx}
                               onClick={() => {
-                                setFormData(prev => ({...prev, state: state}));
+                                setFormData(prev => ({ ...prev, state: state }));
                                 setShowStateDropdown(false);
                               }}
                               className="px-4 py-3 text-sm font-poppins text-dark-light hover:bg-saffron/10 hover:text-saffron cursor-pointer transition-colors border-b border-gray-50 last:border-0"
@@ -619,7 +618,7 @@ export default function Deeksha() {
                     </AnimatePresence>
                   </div>
                 </div>
-                
+
                 <div className="relative">
                   <label className="block font-poppins text-xs font-semibold text-dark-light mb-1.5 ml-1">विषय / Subject</label>
                   <div className="relative">
@@ -632,7 +631,7 @@ export default function Deeksha() {
                     <FaChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-gold/60 pointer-events-none" />
                   </div>
                 </div>
-                
+
                 <div className="relative">
                   <label className="block font-poppins text-xs font-semibold text-dark-light mb-1.5 ml-1">संदेश / Message</label>
                   <div className="relative">
@@ -640,7 +639,7 @@ export default function Deeksha() {
                     <textarea name="message" value={formData.message} onChange={handleInputChange} rows="3" placeholder="अपना संदेश लिखें..." className="w-full bg-[#FFFDF7] border border-gold/20 rounded-2xl pl-11 pr-4 py-3.5 text-sm font-poppins focus:outline-none focus:border-saffron focus:ring-1 focus:ring-saffron/20 transition-all shadow-sm resize-none"></textarea>
                   </div>
                 </div>
-                
+
                 <div className="pt-2">
                   <button type="submit" className="group relative w-full overflow-hidden rounded-full font-poppins font-bold text-white shadow-saffron-glow transition-all hover:shadow-premium-hover">
                     <div className="absolute inset-0 bg-gradient-to-r from-[#F6B73C] to-[#FF8C00] transition-transform duration-300 group-hover:scale-[1.02]"></div>
@@ -649,7 +648,7 @@ export default function Deeksha() {
                       <span className="tracking-wide">Submit Inquiry</span>
                     </div>
                   </button>
-                  
+
                   <div className="mt-5 space-y-2 text-center">
                     <p className="text-xs text-dark-light/70 font-poppins flex items-center justify-center gap-1.5">
                       <span className="text-gold">🔒</span> Your information remains completely confidential.
@@ -661,7 +660,7 @@ export default function Deeksha() {
                 </div>
               </form>
             </motion.div>
-            
+
 
           </div>
         </div>

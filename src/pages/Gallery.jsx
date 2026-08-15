@@ -5,6 +5,7 @@ import { FaImage, FaVideo, FaSearchPlus, FaPlayCircle, FaTimes, FaImages, FaOm, 
 import { GiLotus } from 'react-icons/gi'
 import { AppContext } from '../context/AppContext'
 import galleryHeroImg from '../assets/images/gallary_.png'
+import ResponsiveHeroBanner from '../components/ResponsiveHeroBanner'
 
 export default function Gallery() {
   const { galleryPhotos, galleryVideos, contacts } = useContext(AppContext)
@@ -30,19 +31,17 @@ export default function Gallery() {
   const currentItems = activeTab === 'Photos' ? photos : videos
 
   return (
-    <div className="pt-[50px] lg:pt-[60px] pb-20 bg-[#FFFDF7]">
+    <div className="pt-[0px] lg:pt-[0px] pb-20 bg-[#FFFDF7]">
       {/* Hero Section */}
-      <section className="relative w-full flex justify-center border-b border-gold/20 -mt-12 lg:-mt-16">
-        <img src={galleryHeroImg} alt="Gallery Hero Banner" className="w-full max-w-[1920px] h-auto block shadow-sm" />
-      </section>
+      <ResponsiveHeroBanner pageName="Gallery" fallbackImage={galleryHeroImg} />
 
       {/* Detailed Gallery Section with Website Theme Colors */}
       <section className="py-16 bg-[#FFF9F0] relative overflow-hidden min-h-screen">
-        
+
         {/* Rich Background Decorative Elements */}
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-[0.08] pointer-events-none"></div>
         <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-[#FFF9F0] via-transparent to-[#FFF9F0] pointer-events-none"></div>
-        
+
         <div className="absolute top-8 left-8 text-[#D4AF37]/50 text-7xl font-serif animate-pulse pointer-events-none">✧</div>
         <div className="absolute top-8 right-8 text-[#D4AF37]/50 text-7xl font-serif animate-pulse pointer-events-none">✧</div>
         <div className="absolute bottom-1/4 left-4 text-[#E05A10]/10 text-9xl font-serif pointer-events-none">ॐ</div>
@@ -86,7 +85,7 @@ export default function Gallery() {
                 <div className="relative h-48 overflow-hidden">
                   <img src={item.url} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-95 group-hover:opacity-100" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                  
+
                   {/* Icon on Hover */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 backdrop-blur-sm">
                     <div className="w-12 h-12 rounded-full bg-[#E05A10] flex items-center justify-center text-white text-xl shadow-lg transform scale-0 group-hover:scale-100 transition-transform duration-500 delay-100">
@@ -107,27 +106,27 @@ export default function Gallery() {
           {/* Stats Counter Bar */}
           <div className="mt-16 max-w-5xl mx-auto bg-white border border-[#EAD8C8] rounded-2xl p-6 sm:p-8 shadow-sm">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 divide-x divide-[#EAD8C8]">
-              <a 
-                href="https://www.instagram.com/" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://www.instagram.com/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex flex-col items-center justify-center space-y-2 px-2 group cursor-pointer hover:bg-orange-50/50 rounded-xl py-3 transition-all duration-300"
               >
                 <FaImages className="text-2xl text-[#E05A10] mb-1 group-hover:scale-125 transition-transform duration-300" />
                 <div className="text-2xl sm:text-3xl font-black text-[#3D2B20] group-hover:text-[#E05A10] transition-colors">500+</div>
                 <div className="text-[10px] sm:text-xs font-bold text-[#E05A10] uppercase tracking-wider">फोटो</div>
               </a>
-              <a 
-                href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8" 
-                target="_blank" 
-                rel="noopener noreferrer" 
+              <a
+                href="https://youtube.com/@jagadguruhariprapannaacharyaji?si=yadkCLNnQMTk2qK8"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="flex flex-col items-center justify-center space-y-2 px-2 group cursor-pointer hover:bg-orange-50/50 rounded-xl py-3 transition-all duration-300"
               >
                 <FaVideo className="text-2xl text-[#E05A10] mb-1 group-hover:scale-125 transition-transform duration-300" />
                 <div className="text-2xl sm:text-3xl font-black text-[#3D2B20] group-hover:text-[#E05A10] transition-colors">120+</div>
                 <div className="text-[10px] sm:text-xs font-bold text-[#E05A10] uppercase tracking-wider">वीडियो</div>
               </a>
-              <div 
+              <div
                 onClick={() => navigate('/events')}
                 className="flex flex-col items-center justify-center space-y-2 px-2 group cursor-pointer hover:bg-orange-50/50 rounded-xl py-3 transition-all duration-300"
               >
@@ -178,9 +177,9 @@ export default function Gallery() {
               {currentItems[lightboxIndex].type === 'Photo' ? (
                 /* High-Res Photo view */
                 <div className="bg-cream-dark p-2 rounded-2xl border border-gold/30 overflow-hidden shadow-2xl">
-                  <img 
-                    src={currentItems[lightboxIndex].url} 
-                    alt={currentItems[lightboxIndex].title} 
+                  <img
+                    src={currentItems[lightboxIndex].url}
+                    alt={currentItems[lightboxIndex].title}
                     className="max-h-[75vh] w-auto max-w-full object-contain rounded-xl"
                   />
                   <div className="p-4 text-center">

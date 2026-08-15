@@ -740,17 +740,17 @@ export default function BookingsManager({
       <AnimatePresence>
         {selectedBookings.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }}
-            className="md:hidden fixed bottom-16 sm:bottom-0 left-0 right-0 z-[45] bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.05)] p-4 border-t border-[#EAD8C8] flex flex-col gap-3"
+            initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }}
+            className="md:hidden fixed top-0 left-0 right-0 z-[60] bg-white shadow-[0_10px_30px_rgba(0,0,0,0.15)] p-4 pt-6 sm:p-6 border-b border-[#EAD8C8] flex flex-col gap-3"
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between px-2">
               <span className="text-xs font-bold text-[#E05A10]">SELECTED: {selectedBookings.length}</span>
-              <button onClick={() => setSelectedBookings([])} className="text-[10px] font-bold text-[#3D2B20]/60 underline">CLEAR ALL</button>
+              <button onClick={() => setSelectedBookings([])} className="text-[10px] font-bold text-[#3D2B20]/60 underline tracking-wide">CLEAR ALL</button>
             </div>
-            <div className="flex items-center gap-2">
-              <button onClick={() => handleBulkAction('Confirm')} className="flex-1 py-2 bg-green-500 text-white text-[11px] font-bold rounded-lg shadow-sm hover:bg-green-600 transition-colors">CONFIRM</button>
-              <button onClick={() => handleBulkAction('Cancel')} className="flex-1 py-2 bg-red-500 text-white text-[11px] font-bold rounded-lg shadow-sm hover:bg-red-600 transition-colors">CANCEL</button>
-              <button onClick={() => handleBulkAction('Delete')} className="flex-1 py-2 bg-gray-600 text-white text-[11px] font-bold rounded-lg shadow-sm hover:bg-gray-700 transition-colors">DELETE</button>
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+              <button onClick={() => handleBulkAction('Confirm')} className="px-4 py-2.5 bg-green-500 text-white text-[11px] font-bold rounded-xl shadow hover:bg-green-600 transition-colors tracking-wide">CONFIRM</button>
+              <button onClick={() => handleBulkAction('Cancel')} className="px-4 py-2.5 bg-red-500 text-white text-[11px] font-bold rounded-xl shadow hover:bg-red-600 transition-colors tracking-wide">CANCEL</button>
+              <button onClick={() => handleBulkAction('Delete')} className="px-4 py-2.5 bg-gray-600 text-white text-[11px] font-bold rounded-xl shadow hover:bg-gray-700 transition-colors tracking-wide">DELETE</button>
             </div>
           </motion.div>
         )}

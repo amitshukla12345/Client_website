@@ -61,7 +61,7 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 w-full z-[80] transition-all duration-300">
+      <header className="sticky top-0 left-0 w-full z-[80] transition-all duration-300">
         {/* 0. CONTACT BAR (phone, email & social links) — TOP */}
         <div className="bg-[#FAF0E6] text-[#3D2B20] text-[10px] xs:text-xs py-1.5 sm:py-2 px-2 sm:px-6 lg:px-8 border-b border-[#EAD8C8] flex flex-col sm:flex-row items-center justify-between gap-1 xs:gap-2 z-50">
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-medium">

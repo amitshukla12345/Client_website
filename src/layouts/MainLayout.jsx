@@ -84,24 +84,7 @@ export default function MainLayout({ children }) {
         )}
       </AnimatePresence>
 
-      {/* Global Announcement Banner */}
-      <AnimatePresence>
-        {!isAdminPage && contacts?.isAnnouncementActive && contacts?.announcement && (
-          <motion.div 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="bg-gradient-to-r from-saffron to-[#c94d0d] text-white w-full z-50 relative shadow-sm"
-          >
-            <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 flex items-center justify-center space-x-3 overflow-hidden">
-              <FaBullhorn className="text-white/80 flex-shrink-0 animate-pulse" />
-              <div className="text-xs sm:text-sm font-medium tracking-wide whitespace-nowrap overflow-hidden relative w-full flex items-center justify-center">
-                <span className="marquee-text-centered text-center w-full px-4">{contacts.announcement}</span>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Global Announcement Banner Removed */}
 
       {/* Main Navigation */}
       <Navbar />

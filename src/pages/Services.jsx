@@ -9,6 +9,7 @@ import shivkathaBanner from '../assets/images/shivekatha.png'
 import deviBhagwatBanner from '../assets/images/devi_bhagwat.png'
 import sunderkandBanner from '../assets/images/sunderkand.png'
 import serviceHeroImg from '../assets/images/service_hero_banner.png'
+import ResponsiveHeroBanner from '../components/ResponsiveHeroBanner'
 
 export default function Services() {
   const serviceDetails = [
@@ -82,39 +83,29 @@ export default function Services() {
   ]
 
   return (
-    <div className="pt-[100px] sm:pt-[105px] lg:pt-[105px] bg-[#FFFDF7] relative overflow-hidden font-sans">
-      
+    <div className="pt-[0px] lg:pt-[0] bg-[#FFFDF7] relative overflow-hidden font-sans">
+
       {/* Background Decor Layer */}
       <div className="absolute inset-0 pointer-events-none z-0">
         {/* Mandala Watermark (CSS based) */}
         <div className="absolute top-40 left-1/2 -translate-x-1/2 w-[800px] h-[800px] opacity-[0.03] bg-[radial-gradient(circle,transparent_20%,#D4AF37_20%,#D4AF37_80%,transparent_80%,transparent)] rounded-full [background-size:20px_20px]"></div>
         <div className="absolute top-[800px] -left-[200px] w-[600px] h-[600px] opacity-[0.02] bg-[radial-gradient(circle,transparent_20%,#D4AF37_20%,#D4AF37_80%,transparent_80%,transparent)] rounded-full [background-size:20px_20px]"></div>
         <div className="absolute top-[1600px] -right-[200px] w-[600px] h-[600px] opacity-[0.02] bg-[radial-gradient(circle,transparent_20%,#D4AF37_20%,#D4AF37_80%,transparent_80%,transparent)] rounded-full [background-size:20px_20px]"></div>
-        
+
         {/* Soft Golden Gradients for cinematic lighting */}
         <div className="absolute top-[20%] left-0 w-full h-[500px] bg-gradient-to-b from-[#F6B73C]/[0.03] to-transparent"></div>
         <div className="absolute top-[50%] left-0 w-full h-[500px] bg-gradient-to-t from-[#F6B73C]/[0.03] to-transparent"></div>
       </div>
 
       {/* Page Header (Hero Banner) */}
-      <section className="relative w-full flex justify-center border-b-2 border-[#D4AF37]/20 z-10">
-        <img src={serviceHeroImg} alt="Our Services Banner" className="w-full max-w-[1920px] h-auto block shadow-md" />
-        
-        {/* Decorative Hanging Bells */}
-        <div className="absolute top-0 left-[10%] w-px h-16 bg-gradient-to-b from-[#D4AF37] to-transparent hidden md:block">
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-gradient-to-b from-[#D4AF37] to-[#B38D22] shadow-lg flex items-end justify-center pb-1"><div className="w-1.5 h-1.5 bg-[#8A6715] rounded-full"></div></div>
-        </div>
-        <div className="absolute top-0 right-[10%] w-px h-24 bg-gradient-to-b from-[#D4AF37] to-transparent hidden md:block">
-          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-gradient-to-b from-[#D4AF37] to-[#B38D22] shadow-lg flex items-end justify-center pb-1"><div className="w-2 h-2 bg-[#8A6715] rounded-full"></div></div>
-        </div>
-      </section>
+      <ResponsiveHeroBanner pageName="Services" fallbackImage={serviceHeroImg} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        
+
         {/* Statistics Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-24">
           {stats.map((stat, idx) => (
-            <motion.div 
+            <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -125,8 +116,12 @@ export default function Services() {
               <div className="w-12 h-12 rounded-full bg-[#FFFDF7] border border-[#D4AF37]/30 flex items-center justify-center text-2xl text-[#D4AF37] mb-3 shadow-inner group-hover:scale-110 group-hover:text-[#E05A10] transition-all duration-300">
                 <stat.icon />
               </div>
-              <div className="font-serif text-3xl font-black text-[#3D2B20]">{stat.value}</div>
-              <div className="text-sm font-semibold text-[#5a4332] uppercase tracking-wider mt-1">{stat.label}</div>
+              <div className={`font-serif font-black text-[#3D2B20] break-words w-full ${stat.value.length > 6 ? 'text-xl sm:text-2xl md:text-xl lg:text-2xl xl:text-3xl' : 'text-3xl'}`}>
+                {stat.value}
+              </div>
+              <div className="text-xs sm:text-sm font-semibold text-[#5a4332] uppercase tracking-wider mt-1 w-full break-words">
+                {stat.label}
+              </div>
             </motion.div>
           ))}
         </div>
@@ -153,7 +148,7 @@ export default function Services() {
                   />
                   {/* Subtle inner shadow overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-80"></div>
-                  
+
                   {/* Duration Badge */}
                   <div className="absolute bottom-6 left-6 right-6 flex justify-between items-end">
                     <div className="inline-flex items-center space-x-2 bg-white/20 backdrop-blur-md border border-white/30 rounded-full px-4 py-1.5 text-white text-sm font-semibold shadow-lg">
@@ -162,7 +157,7 @@ export default function Services() {
                     </div>
                   </div>
                 </div>
-                
+
                 {/* Decorative floating dots behind image */}
                 <div className="absolute -top-6 -left-6 w-24 h-24 bg-[radial-gradient(circle,#D4AF37_2px,transparent_2px)] [background-size:12px_12px] opacity-30 z-0"></div>
                 <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-[radial-gradient(circle,#D4AF37_2px,transparent_2px)] [background-size:12px_12px] opacity-30 z-0"></div>
@@ -170,7 +165,7 @@ export default function Services() {
 
               {/* Right Side: Content (60%) */}
               <div className={`w-full lg:w-[55%] flex flex-col justify-center ${idx % 2 === 1 ? 'lg:order-1 lg:items-end lg:text-right' : 'lg:order-2 lg:items-start lg:text-left'}`}>
-                
+
                 {/* Top Heading */}
                 <div className={`flex items-center space-x-3 mb-4 ${idx % 2 === 1 ? 'flex-row-reverse space-x-reverse' : ''}`}>
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F6B73C] to-[#E05A10] flex items-center justify-center text-white text-xl shadow-[0_4px_15px_rgba(224,90,16,0.3)]">
@@ -180,7 +175,7 @@ export default function Services() {
                     {svc.titleHindi}
                   </h2>
                 </div>
-                
+
                 <h3 className="font-serif text-xl md:text-2xl font-bold text-[#3D2B20] mb-4">
                   {svc.title}
                 </h3>
@@ -219,14 +214,14 @@ export default function Services() {
                   >
                     {/* Button Shine Effect */}
                     <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent group-hover:animate-[shine_1.5s_ease-in-out_infinite]"></div>
-                    
+
                     <span className="relative z-10 flex items-center space-x-3">
                       <span>Request Booking</span>
                       <FaArrowRight className="group-hover:translate-x-1.5 transition-transform duration-300" />
                     </span>
                   </Link>
                 </div>
-                
+
               </div>
             </motion.div>
           ))}

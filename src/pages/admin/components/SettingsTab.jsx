@@ -11,7 +11,10 @@ const TABS = [
   { id: 'security', label: 'Security Settings', icon: <FaLock /> },
   { id: 'backup', label: 'Backup & Restore', icon: <FaDatabase /> },
   { id: 'notification', label: 'Notification Settings', icon: <FaBell /> },
+  { id: 'hero-banner', label: 'Hero Banner Settings', icon: <FaCamera /> },
 ]
+
+import HeroBannerManager from './HeroBannerManager'
 
 export default function SettingsTab({ adminProfile, updateAdminProfile, changeAdminPassword }) {
   const [activeTab, setActiveTab] = useState('general')
@@ -206,6 +209,8 @@ export default function SettingsTab({ adminProfile, updateAdminProfile, changeAd
             </div>
           </div>
         )
+      case 'hero-banner':
+        return <HeroBannerManager />
       default:
         return null
     }

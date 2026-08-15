@@ -444,95 +444,54 @@ export default function AdminYajmanManager() {
       />
       
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-[#EAD8C8] sticky top-4 z-40">
-        <div>
-          <h2 className="text-2xl font-black font-serif text-[#3D2B20] flex items-center gap-3">
-            Yajman Management 
-            <button 
-              type="button"
-              onClick={() => {
-                setYajmanData(prev => ({ ...prev, isPublished: !prev.isPublished }));
-                setHasUnsavedChanges(true);
-              }}
-              className="flex items-center cursor-pointer bg-gray-50 px-3 py-1 rounded-full border border-gray-200 shadow-sm ml-2 focus:outline-none focus:ring-2 focus:ring-[#E05A10]/20"
-            >
-              <div className="relative">
-                <div className={`block w-10 h-6 rounded-full transition-colors ${yajmanData.isPublished ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${yajmanData.isPublished ? 'transform translate-x-4' : ''}`}></div>
-              </div>
-              <div className={`ml-2 text-xs font-bold ${yajmanData.isPublished ? 'text-green-600' : 'text-gray-500'}`}>
-                {yajmanData.isPublished ? 'PUBLISHED' : 'HIDDEN'}
-              </div>
+      <div className="lg:sticky lg:top-0 lg:z-40 lg:bg-[#FFFDF7] lg:pb-4 lg:-mx-8 lg:px-8 lg:pt-8 lg:-mt-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-[#EAD8C8]">
+          <div className="w-full">
+            <h2 className="text-2xl font-black font-serif text-[#3D2B20] flex flex-wrap items-center gap-3">
+              <span>Yajman Management</span>
+              <button 
+                type="button"
+                onClick={() => {
+                  setYajmanData(prev => ({ ...prev, isPublished: !prev.isPublished }));
+                  setHasUnsavedChanges(true);
+                }}
+                className="flex items-center cursor-pointer bg-gray-50 px-3 py-1 rounded-full border border-gray-200 shadow-sm ml-2 focus:outline-none focus:ring-2 focus:ring-[#E05A10]/20"
+              >
+                <div className="relative">
+                  <div className={`block w-10 h-6 rounded-full transition-colors ${yajmanData.isPublished ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+                  <div className={`dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${yajmanData.isPublished ? 'transform translate-x-4' : ''}`}></div>
+                </div>
+                <div className={`ml-2 text-xs font-bold ${yajmanData.isPublished ? 'text-green-600' : 'text-gray-500'}`}>
+                  {yajmanData.isPublished ? 'PUBLISHED' : 'HIDDEN'}
+                </div>
+              </button>
+            </h2>
+            <p className="text-[#3D2B20]/60 text-sm mt-1">Manage the details displayed in the "Yajman Introduction" section.</p>
+          </div>
+          <div className="flex flex-wrap gap-2 sm:gap-3 w-full md:w-auto">
+            {yajman && (
+               <button onClick={handleDelete} className="p-2.5 sm:px-4 sm:py-2.5 text-red-500 bg-white border border-red-200 rounded-xl hover:bg-red-50 transition-colors shadow-sm" title="Delete">
+                 <FaTrash />
+               </button>
+            )}
+            <button onClick={() => setIsPreviewOpen(true)} className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[#FFF9F0] text-[#8B5A2B] border border-[#EAD8C8] px-4 py-2.5 rounded-xl font-bold hover:bg-[#F5E6D3] transition-colors shadow-sm">
+              <FaEye /> Preview
             </button>
-          </h2>
-          <p className="text-[#3D2B20]/60 text-sm mt-1">Manage the details displayed in the "Yajman Introduction" section.</p>
-        </div>
-        <div className="flex flex-wrap gap-2 sm:gap-3 w-full md:w-auto">
-          {yajman && (
-             <button onClick={handleDelete} className="p-2.5 sm:px-4 sm:py-2.5 text-red-500 bg-white border border-red-200 rounded-xl hover:bg-red-50 transition-colors shadow-sm" title="Delete">
-               <FaTrash />
-             </button>
-          )}
-          <button onClick={() => setIsPreviewOpen(true)} className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-[#FFF9F0] text-[#8B5A2B] border border-[#EAD8C8] px-4 py-2.5 rounded-xl font-bold hover:bg-[#F5E6D3] transition-colors shadow-sm">
-            <FaEye /> Preview
-          </button>
-          <button onClick={handleResetForm} disabled={!hasUnsavedChanges} className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-gray-500 border border-gray-200 px-4 py-2.5 rounded-xl font-bold hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50">
-            <FaUndo /> Reset
-          </button>
-          <button onClick={handleSave} disabled={isSaving || !hasUnsavedChanges} className={`flex-[2] md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all shadow-md ${hasUnsavedChanges ? 'bg-[#E05A10] text-white hover:bg-[#C04000]' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}>
-            <FaSave /> {isSaving ? 'Saving...' : 'Save Changes'}
-          </button>
+            <button onClick={handleResetForm} disabled={!hasUnsavedChanges} className="flex-1 md:flex-none flex items-center justify-center gap-2 bg-white text-gray-500 border border-gray-200 px-4 py-2.5 rounded-xl font-bold hover:bg-gray-50 transition-colors shadow-sm disabled:opacity-50">
+              <FaUndo /> Reset
+            </button>
+            <button onClick={handleSave} disabled={isSaving || !hasUnsavedChanges} className={`flex-[2] md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl font-bold transition-all shadow-md ${hasUnsavedChanges ? 'bg-[#E05A10] text-white hover:bg-[#C04000]' : 'bg-gray-100 text-gray-400 border border-gray-200'}`}>
+              <FaSave /> {isSaving ? 'Saving...' : 'Save Changes'}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Main Form */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Left Column: Image Upload */}
-        <div className="lg:col-span-1 space-y-6">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#EAD8C8] flex flex-col items-center">
-            <div className="w-full flex items-center justify-between mb-4 border-b border-[#EAD8C8] pb-2">
-              <h3 className="font-bold text-[#3D2B20] flex items-center gap-2"><FaImage className="text-[#E05A10]" /> Profile Image</h3>
-              {(yajmanData.originalImageUrl || yajmanData.profileImageUrl) && (
-                 <button onClick={() => openCropper('main')} className="text-xs font-bold text-[#E05A10] flex items-center gap-1 hover:underline"><FaCrop/> Adjust Crop</button>
-              )}
-            </div>
-            
-            <div className="w-full aspect-[4/5] bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center relative overflow-hidden group transition-all hover:border-[#E05A10]">
-              {(yajmanData.originalImageUrl || yajmanData.profileImageUrl) ? (
-                <>
-                  <div className="w-full h-full overflow-hidden flex items-center justify-center bg-[#FAF6F0]">
-                     <img src={yajmanData.originalImageUrl || yajmanData.profileImageUrl} alt="Yajman" className="w-full h-full object-cover" style={renderCropStyle(yajmanData.cropData)} />
-                  </div>
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity gap-4">
-                    <button onClick={() => document.getElementById('yajmanImageInput').click()} className="bg-white text-[#3D2B20] p-3 rounded-full hover:bg-gray-100 transition-colors shadow-lg" title="Replace">
-                      <FaImage />
-                    </button>
-                    <button onClick={() => handleRemoveImage('main')} className="bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-colors shadow-lg" title="Remove">
-                      <FaTrash />
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <div className="text-center p-6 cursor-pointer" onClick={() => document.getElementById('yajmanImageInput').click()}>
-                  <FaImage className="text-4xl text-gray-400 mx-auto mb-3 group-hover:text-[#E05A10] transition-colors" />
-                  <p className="text-sm font-semibold text-gray-600">Click to upload image</p>
-                  <p className="text-xs text-gray-400 mt-1">Recommended: 800x1000px</p>
-                </div>
-              )}
-              <input 
-                type="file" 
-                id="yajmanImageInput" 
-                accept="image/*" 
-                className="hidden" 
-                onChange={(e) => handleImageUpload(e, 'main')}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Right Column: Text Details */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Right Column: Text Details (Renders first on mobile) */}
+        <div className="lg:col-span-2 space-y-6 lg:order-2">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#EAD8C8]">
             <h3 className="font-bold text-[#3D2B20] w-full mb-6 border-b border-[#EAD8C8] pb-2 text-lg flex items-center gap-2"><FaUser className="text-[#E05A10]" /> Primary Information</h3>
             
@@ -659,6 +618,49 @@ export default function AdminYajmanManager() {
               </div>
             </div>
 
+          </div>
+        </div>
+
+        {/* Left Column: Image Upload (Renders second on mobile) */}
+        <div className="lg:col-span-1 space-y-6 lg:order-1">
+          <div className="bg-white p-6 rounded-2xl shadow-sm border border-[#EAD8C8] flex flex-col items-center">
+            <div className="w-full flex items-center justify-between mb-4 border-b border-[#EAD8C8] pb-2">
+              <h3 className="font-bold text-[#3D2B20] flex items-center gap-2"><FaImage className="text-[#E05A10]" /> Profile Image</h3>
+              {(yajmanData.originalImageUrl || yajmanData.profileImageUrl) && (
+                 <button onClick={() => openCropper('main')} className="text-xs font-bold text-[#E05A10] flex items-center gap-1 hover:underline"><FaCrop/> Adjust Crop</button>
+              )}
+            </div>
+            
+            <div className="w-full max-w-sm lg:max-w-none aspect-[4/5] bg-gray-50 rounded-2xl border-2 border-dashed border-gray-300 flex flex-col items-center justify-center relative overflow-hidden group transition-all hover:border-[#E05A10]">
+              {(yajmanData.originalImageUrl || yajmanData.profileImageUrl) ? (
+                <>
+                  <div className="w-full h-full overflow-hidden flex items-center justify-center bg-[#FAF6F0]">
+                     <img src={yajmanData.originalImageUrl || yajmanData.profileImageUrl} alt="Yajman" className="w-full h-full object-cover" style={renderCropStyle(yajmanData.cropData)} />
+                  </div>
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity gap-4">
+                    <button onClick={() => document.getElementById('yajmanImageInput').click()} className="bg-white text-[#3D2B20] p-3 rounded-full hover:bg-gray-100 transition-colors shadow-lg" title="Replace">
+                      <FaImage />
+                    </button>
+                    <button onClick={() => handleRemoveImage('main')} className="bg-red-500 text-white p-3 rounded-full hover:bg-red-600 transition-colors shadow-lg" title="Remove">
+                      <FaTrash />
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center p-6 cursor-pointer" onClick={() => document.getElementById('yajmanImageInput').click()}>
+                  <FaImage className="text-4xl text-gray-400 mx-auto mb-3 group-hover:text-[#E05A10] transition-colors" />
+                  <p className="text-sm font-semibold text-gray-600">Click to upload image</p>
+                  <p className="text-xs text-gray-400 mt-1">Recommended: 800x1000px</p>
+                </div>
+              )}
+              <input 
+                type="file" 
+                id="yajmanImageInput" 
+                accept="image/*" 
+                className="hidden" 
+                onChange={(e) => handleImageUpload(e, 'main')}
+              />
+            </div>
           </div>
         </div>
       </div>

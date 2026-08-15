@@ -256,8 +256,8 @@ export default function OverviewTab({ bookings, events, galleryPhotos, galleryVi
         {/* Pie Chart */}
         <motion.div variants={itemVariants} className="lg:col-span-5 bg-white p-6 rounded-2xl border border-[#EAD8C8] shadow-sm flex flex-col justify-between">
           <h3 className="font-serif text-lg font-bold text-[#3D2B20] mb-2">Katha Category Breakdown</h3>
-          <div className="flex-grow flex items-center">
-            <div className="h-[200px] w-[50%]">
+          <div className="flex-grow flex flex-col md:flex-row items-center">
+            <div className="h-[200px] w-full md:w-[50%] mb-4 md:mb-0">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -278,14 +278,14 @@ export default function OverviewTab({ bookings, events, galleryPhotos, galleryVi
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="w-[50%] pl-4 space-y-3">
+            <div className="w-full md:w-[50%] md:pl-4 space-y-3">
               {kathaCategoryData.map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between text-xs">
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 min-w-0 mr-2">
                     <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }}></span>
                     <span className="text-gray-600 font-medium truncate" title={item.name}>{item.name}</span>
                   </div>
-                  <span className="font-bold text-[#3D2B20]">{item.value} <span className="text-gray-400 font-normal ml-1">({totalBookings > 0 ? Math.round((item.value / totalBookings) * 100) : 0}%)</span></span>
+                  <span className="font-bold text-[#3D2B20] whitespace-nowrap flex-shrink-0">{item.value} <span className="text-gray-400 font-normal ml-1">({totalBookings > 0 ? Math.round((item.value / totalBookings) * 100) : 0}%)</span></span>
                 </div>
               ))}
             </div>

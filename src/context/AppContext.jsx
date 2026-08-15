@@ -85,7 +85,11 @@ export const AppProvider = ({ children }) => {
   const [calendarDates, setCalendarDates] = useState([])
   const [organizers, setOrganizers] = useState([])
   const [yajman, setYajman] = useState(null)
+  const [successor, setSuccessor] = useState(null)
   
+  // Hero Banners State
+  const [pageHeroBanners, setPageHeroBanners] = useState([])
+
   const [liveSettings, setLiveSettings] = useState(() => {
     const saved = localStorage.getItem('katha_live_settings')
     return saved ? JSON.parse(saved) : DEFAULT_LIVE_SETTINGS
@@ -174,6 +178,12 @@ export const AppProvider = ({ children }) => {
             setLiveSettings(data.liveSettings[data.liveSettings.length - 1]);
             localStorage.setItem('katha_live_settings', JSON.stringify(data.liveSettings[data.liveSettings.length - 1]));
           }
+          if (data.successor && data.successor.length > 0) {
+            setSuccessor(data.successor[data.successor.length - 1]);
+          }
+          if (data.pageHeroBanners && data.pageHeroBanners.length > 0) {
+            setPageHeroBanners(data.pageHeroBanners);
+          }
         }
       } catch (error) {
         console.warn('Backend not reachable, falling back to local storage defaults.');
@@ -208,6 +218,35 @@ export const AppProvider = ({ children }) => {
     if (res.ok) await fetchAdminProfile();
     return res;
   };
+
+  // Update Page Hero Banner API
+  const updatePageHeroBanner = async (bannerData) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/hero-banners`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(bannerData)
+      });
+      await handleResponse(res);
+      if (res.ok) {
+        const savedBanner = await res.json();
+        setPageHeroBanners(prev => {
+          const index = prev.findIndex(b => b.pageName === savedBanner.pageName);
+          if (index >= 0) {
+            const newArray = [...prev];
+            newArray[index] = savedBanner;
+            return newArray;
+          }
+          return [...prev, savedBanner];
+        });
+        return { success: true, data: savedBanner };
+      }
+      return { success: false, error: 'Save failed' };
+    } catch (e) {
+      console.error('updatePageHeroBanner error', e);
+      return { success: false, error: e.message };
+    }
+  }
 
   const changeAdminPassword = async (oldPassword, newPassword) => {
     const res = await fetch(`${API_BASE_URL}/admin/change-password`, {
@@ -307,6 +346,31 @@ export const AppProvider = ({ children }) => {
       await handleResponse(res)
       if (res.ok) setAbout(await res.json())
     } catch(e) { console.error(e) }
+  }
+
+  const updateSuccessor = async (newSuccessor) => {
+    try {
+      const payload = { ...successor, ...newSuccessor }
+      delete payload.id
+
+      const res = await fetch(`${API_BASE_URL}/admin/successor`, {
+        method: 'POST',
+        headers: getAuthHeaders(),
+        body: JSON.stringify(payload)
+      })
+      await handleResponse(res)
+      if (res.ok) {
+        const saved = await res.json();
+        setSuccessor(saved);
+        return { success: true };
+      } else {
+        const errorText = await res.text();
+        return { success: false, error: `HTTP ${res.status}: ${errorText}` };
+      }
+    } catch(e) { 
+      console.error(e);
+      return { success: false, error: e.toString() };
+    }
   }
 
   const addEvent = async (event) => {
@@ -599,9 +663,12 @@ export const AppProvider = ({ children }) => {
         getAuthHeaders,
         handleResponse,
         yajman, setYajman,
+        successor, updateSuccessor,
         liveSettings,
         updateLiveSettings,
-        deleteLiveSettings
+        deleteLiveSettings,
+        pageHeroBanners,
+        updatePageHeroBanner
       }}
     >
       {children}

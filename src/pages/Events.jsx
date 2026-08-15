@@ -8,6 +8,7 @@ import EventCard from '../components/EventCard'
 import CustomCalendar from '../components/CustomCalendar'
 import { AppContext } from '../context/AppContext'
 import eventHeroBanner from '../assets/images/event_hero_banner.png'
+import ResponsiveHeroBanner from '../components/ResponsiveHeroBanner'
 
 export default function Events() {
   const { events, calendarDates, contacts } = useContext(AppContext)
@@ -98,11 +99,9 @@ export default function Events() {
   }, [searchQuery]);
 
   return (
-    <div className="pt-[90px] lg:pt-[104px] pb-20 bg-[#FFFDF7]">
+    <div className="pt-[95px] lg:pt-[95px] pb-20 bg-[#FFFDF7]">
       {/* Hero Section */}
-      <section className="relative w-full flex justify-center border-b border-gold/20">
-        <img src={eventHeroBanner} alt="Events Hero Banner" className="w-full max-w-[1920px] h-auto block shadow-sm" />
-      </section>
+      <ResponsiveHeroBanner pageName="Events" fallbackImage={eventHeroBanner} />
 
       {/* Main Content & Filter Section */}
       <section className="py-24 bg-cream-light">
