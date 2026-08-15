@@ -65,9 +65,9 @@ export default function Navbar() {
         {/* 0. CONTACT BAR (phone, email & social links) — TOP */}
         <div className="bg-[#FAF0E6] text-[#3D2B20] text-[10px] xs:text-xs py-1.5 sm:py-2 px-2 sm:px-6 lg:px-8 border-b border-[#EAD8C8] flex flex-col sm:flex-row items-center justify-between gap-1 xs:gap-2 z-50">
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 font-medium">
-            <a href="tel:+918960229228" className="flex items-center space-x-1.5 hover:text-[#E05A10] transition-colors">
+            <a href="tel:+917738169410" className="flex items-center space-x-1.5 hover:text-[#E05A10] transition-colors">
               <FaPhoneAlt className="text-[10px] text-[#E05A10]" />
-              <span>+91 89602 29228</span>
+              <span>+91 77381 69410</span>
             </a>
             <a href={`mailto:${contacts?.email || ''}`} className="flex items-center space-x-1.5 hover:text-[#E05A10] transition-colors">
               <FaEnvelope className="text-[10px] text-[#E05A10]" />

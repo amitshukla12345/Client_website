@@ -20,6 +20,7 @@ import SettingsTab from './components/SettingsTab'
 import LiveTab from './components/LiveTab'
 import BookingsManager from './components/BookingsManager'
 import SmartImageCropper from './components/SmartImageCropper'
+import { saveSessionSubmission } from '../../utils/sessionSubmissions'
 
 export default function Dashboard() {
   const {
@@ -45,6 +46,27 @@ export default function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [selectedBookings, setSelectedBookings] = useState([])
+
+  // Keep a demo-only record of every dashboard form submission for this browser session.
+  // Sensitive credentials are never included in the stored data.
+  useEffect(() => {
+    const saveDashboardForm = (event) => {
+      const form = event.target
+      if (!(form instanceof HTMLFormElement)) return
+
+      const fields = {}
+      new FormData(form).forEach((value, key) => {
+        const input = form.elements.namedItem(key)
+        if (input?.type === 'password') return
+        fields[key] = value instanceof File ? value.name : value
+      })
+
+      saveSessionSubmission(`Admin Dashboard: ${activeTab}`, fields)
+    }
+
+    document.addEventListener('submit', saveDashboardForm, true)
+    return () => document.removeEventListener('submit', saveDashboardForm, true)
+  }, [activeTab])
   const [isProfileOpen, setIsProfileOpen] = useState(false)
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false)
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false)

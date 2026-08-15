@@ -21,11 +21,11 @@ export default function Login() {
     }
   }, [isAdminLoggedIn, navigate])
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
     
-    const success = loginAdmin(username, password)
+    const success = await loginAdmin(username, password)
     if (success) {
       navigate('/admin/dashboard')
     } else {
@@ -159,7 +159,7 @@ export default function Login() {
               Authorized admin access only. All activities are monitored.
             </p>
             <p className="text-[10px] text-[#E05A10] font-semibold mt-1">
-              Default Credentials: admin / admin123
+              Demo Credentials: admin / admin
             </p>
           </div>
         </div>

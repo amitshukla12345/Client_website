@@ -8,6 +8,7 @@ import logoImg from '../assets/images/logo.jpeg'
 import guruHeroImg from '../assets/images/guru_hero_image.png'
 import deekshaImg from '../assets/images/deeksha.png'
 import ResponsiveHeroBanner from '../components/ResponsiveHeroBanner'
+import { saveSessionSubmission } from '../utils/sessionSubmissions'
 
 export default function Deeksha() {
   const { contacts } = useContext(AppContext)
@@ -73,8 +74,9 @@ export default function Deeksha() {
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    saveSessionSubmission('Deeksha Application', formData)
     const whatsappMessage = `*दीक्षा हेतु आवेदन / Inquiry*\n\n*नाम:* ${formData.name}\n*मोबाइल:* ${formData.mobile}\n*ईमेल:* ${formData.email || 'N/A'}\n*शहर / राज्य:* ${formData.state || 'N/A'}\n*विषय:* ${formData.subject}\n*संदेश:* ${formData.message}`
-    const phone = contacts?.whatsapp?.replace(/[^\d]/g, '') || '918960292928'
+    const phone = contacts?.whatsapp?.replace(/[^\d]/g, '') || '917738169410'
     const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(whatsappMessage)}`
     window.open(whatsappUrl, '_blank')
   }
@@ -478,24 +480,24 @@ export default function Deeksha() {
                 <div className="w-16 h-[2px] bg-gold mt-4"></div>
               </div>
 
-              <a href={`https://wa.me/${contacts?.whatsapp?.replace(/[^\d]/g, '') || '918960292928'}?text=प्रणाम`} target="_blank" rel="noopener noreferrer" className="w-full group flex items-center gap-5 bg-white/60 backdrop-blur-sm p-5 rounded-[20px] border border-gold/10 shadow-sm hover:shadow-premium hover:border-green-400/50 transition-all duration-300">
+              <a href={`https://wa.me/${contacts?.whatsapp?.replace(/[^\d]/g, '') || '917738169410'}?text=प्रणाम`} target="_blank" rel="noopener noreferrer" className="w-full group flex items-center gap-5 bg-white/60 backdrop-blur-sm p-5 rounded-[20px] border border-gold/10 shadow-sm hover:shadow-premium hover:border-green-400/50 transition-all duration-300">
                 <div className="w-14 h-14 bg-green-50 group-hover:bg-green-100 rounded-full flex items-center justify-center text-green-500 text-2xl flex-shrink-0 transition-colors shadow-[0_0_15px_rgba(34,197,94,0.15)] group-hover:shadow-[0_0_20px_rgba(34,197,94,0.3)]">
                   <FaWhatsapp />
                 </div>
                 <div>
                   <h4 className="font-poppins font-semibold text-dark text-lg mb-0.5">WhatsApp</h4>
-                  <p className="text-sm font-medium text-dark-light">{contacts?.whatsapp || '+91 8960292928'}</p>
+                  <p className="text-sm font-medium text-dark-light">{contacts?.whatsapp || '+91 77381 69410'}</p>
                   <p className="text-xs text-green-600 mt-1">Response within 10 Minutes</p>
                 </div>
               </a>
 
-              <a href={`tel:${contacts?.phone?.replace(/[^\d+]/g, '') || '+918960292928'}`} className="w-full group flex items-center gap-5 bg-white/60 backdrop-blur-sm p-5 rounded-[20px] border border-gold/10 shadow-sm hover:shadow-premium hover:border-saffron/40 transition-all duration-300">
+              <a href={`tel:${contacts?.phone?.replace(/[^\d+]/g, '') || '+917738169410'}`} className="w-full group flex items-center gap-5 bg-white/60 backdrop-blur-sm p-5 rounded-[20px] border border-gold/10 shadow-sm hover:shadow-premium hover:border-saffron/40 transition-all duration-300">
                 <div className="w-14 h-14 bg-orange-50 group-hover:bg-orange-100 rounded-full flex items-center justify-center text-saffron text-2xl flex-shrink-0 transition-colors shadow-[0_0_15px_rgba(255,153,51,0.15)] group-hover:shadow-[0_0_20px_rgba(255,153,51,0.3)]">
                   <FaPhoneAlt />
                 </div>
                 <div>
                   <h4 className="font-poppins font-semibold text-dark text-lg mb-0.5">Call Us</h4>
-                  <p className="text-sm font-medium text-dark-light">{contacts?.phone || '+91 8960292928'}</p>
+                  <p className="text-sm font-medium text-dark-light">{contacts?.phone || '+91 77381 69410'}</p>
                   <p className="text-xs text-saffron mt-1">Office Hours (9 AM – 8 PM)</p>
                 </div>
               </a>
@@ -521,7 +523,7 @@ export default function Deeksha() {
                 <a href={contacts?.facebook || '#'} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white border border-gold/20 flex items-center justify-center text-gold hover:bg-gold hover:text-white transition-all shadow-sm hover:shadow-gold-glow">
                   <FaFacebook size={20} />
                 </a>
-                <a href={`https://wa.me/${contacts?.whatsapp?.replace(/[^\d]/g, '') || '918960292928'}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white border border-gold/20 flex items-center justify-center text-gold hover:bg-gold hover:text-white transition-all shadow-sm hover:shadow-gold-glow">
+              <a href={`https://wa.me/${contacts?.whatsapp?.replace(/[^\d]/g, '') || '917738169410'}`} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full bg-white border border-gold/20 flex items-center justify-center text-gold hover:bg-gold hover:text-white transition-all shadow-sm hover:shadow-gold-glow">
                   <FaWhatsapp size={20} />
                 </a>
               </div>

@@ -130,7 +130,7 @@ export default function MainLayout({ children }) {
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          href={contacts?.whatsapp ? `https://wa.me/${contacts.whatsapp.replace(/[^\d]/g, '')}?text=Radhe%20Radhe!%20I%20want%20to%20inquire%20about%20booking%20a%20Katha.` : "https://wa.me/918960292928?text=Radhe%20Radhe!"}
+          href={contacts?.whatsapp ? `https://wa.me/${contacts.whatsapp.replace(/[^\d]/g, '')}?text=Radhe%20Radhe!%20I%20want%20to%20inquire%20about%20booking%20a%20Katha.` : "https://wa.me/917738169410?text=Radhe%20Radhe!"}
           target="_blank"
           rel="noopener noreferrer"
           className="w-[44px] h-[44px] sm:w-[50px] sm:h-[50px] rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-md hover:bg-[#128C7E] hover:-translate-y-1 transition-all duration-200"

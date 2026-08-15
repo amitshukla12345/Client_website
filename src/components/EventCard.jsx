@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaExternalLinkAlt, FaCheckCircle, FaTicketAlt } from 'react-icons/fa'
+import { saveSessionSubmission } from '../utils/sessionSubmissions'
 
 export default function EventCard({ event }) {
   const [showModal, setShowModal] = useState(false)
@@ -9,6 +10,12 @@ export default function EventCard({ event }) {
 
   const handleRegister = (e) => {
     e.preventDefault()
+    saveSessionSubmission('Event Registration', {
+      ...regForm,
+      eventId: event.id,
+      eventTitle: event.title,
+      eventDate: event.date
+    })
     setRegistered(true)
     setTimeout(() => {
       setShowModal(false)

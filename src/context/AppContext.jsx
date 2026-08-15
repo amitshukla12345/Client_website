@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
+import { getSessionSubmissions, removeSessionSubmission, saveSessionSubmission, updateSessionSubmission } from '../utils/sessionSubmissions'
 
 export const AppContext = createContext()
 
@@ -44,21 +45,69 @@ const DEFAULT_LIVE_SETTINGS = {
   marqueeEnabled: true
 }
 
+const DEMO_CONTENT_KEY = 'katha_demo_content'
+const DEFAULT_DEMO_CONTENT = {
+  contacts: { phone: '+91 77381 69410', whatsapp: '+91 77381 69410', email: 'amitshukla22509@gmail.com', announcement: 'Demo: bookings and enquiries are stored for this browser session.', isAnnouncementActive: true, youtube: 'https://youtube.com', facebook: 'https://facebook.com', instagram: 'https://instagram.com' },
+  about: { name: 'Pujya Swami Hariprapannacharya Ji Maharaj', bio: 'A humble servant of Sanatan Dharma, sharing the teachings of Shrimad Bhagvat with devotees across India.', image: '/images/spiritual_bg.png', fatherName: 'Shri Ramcharan Das Ji', guruDiksha: 'Vrindavan Dham', firstKatha: '2012', kathaYatra: '500+ spiritual programmes', stats: [{ label: 'Years of Service', value: '18+' }, { label: 'Katha Programmes', value: '500+' }, { label: 'Devotees', value: '1 Lakh+' }] },
+  banners: [
+    { id: 'demo-banner-1', status: 'Published', title: 'Shrimad Bhagvat Katha', subtitle: 'Seven days of divine wisdom, bhajan and satsang', date: '15–21 September 2026', time: '4:00 PM onwards', venue: 'Prayagraj, Uttar Pradesh', image: '/images/spiritual_bg.png', btn1Text: 'Book Katha', btn1Url: '/contact', btn2Text: 'Watch Live', btn2Url: '/live', theme: 'WARM GOLD' },
+    { id: 'demo-banner-2', status: 'Published', title: 'Divine Satsang', subtitle: 'Join the weekly spiritual discourse', date: 'Every Sunday', time: '10:00 AM', venue: 'Ashram Hall', image: '/images/services-bg.png', btn1Text: 'Contact Us', btn1Url: '/contact', btn2Text: 'Live Darshan', btn2Url: '/live', theme: 'SAFFRON' }
+  ],
+  events: [
+    { id: 'demo-event-1', title: 'Shrimad Bhagvat Katha Mahotsav', date: '15', month: 'September 2026', time: '04:00 PM – 07:00 PM', location: 'Prayagraj, Uttar Pradesh', image: '/images/spiritual_bg.png', description: 'A seven-day celebration of devotion, wisdom and bhajans.' },
+    { id: 'demo-event-2', title: 'Sundarkand Path', date: '28', month: 'September 2026', time: '06:00 PM – 08:00 PM', location: 'Ashram Satsang Hall', image: '/images/services-bg.png', description: 'Collective recitation and divine satsang.' }
+  ],
+  galleryPhotos: [
+    { id: 'demo-photo-1', url: '/images/spiritual_bg.png' }, { id: 'demo-photo-2', url: '/images/services-bg.png' }, { id: 'demo-photo-3', url: '/images/katha_map_infographic.jpg' }
+  ],
+  galleryVideos: [
+    { id: 'demo-video-1', title: 'Bhagvat Katha – Day 1', videoId: 'dQw4w9WgXcQ', image: '/images/spiritual_bg.png' }, { id: 'demo-video-2', title: 'Morning Satsang', videoId: 'dQw4w9WgXcQ', image: '/images/services-bg.png' }
+  ],
+  calendarDates: [
+    { id: 'demo-date-1', date: '2026-09-15', status: 'Available' }, { id: 'demo-date-2', date: '2026-09-21', status: 'Booked' }, { id: 'demo-date-3', date: '2026-10-05', status: 'Available' }
+  ],
+  organizers: [
+    { id: 'demo-org-1', name: 'Ramesh Sharma', phone: '9876543210', email: 'ramesh@example.com', city: 'Prayagraj', role: 'Event Coordinator' }, { id: 'demo-org-2', name: 'Sita Devi', phone: '9123456780', email: 'sita@example.com', city: 'Varanasi', role: 'Volunteer Lead' }
+  ]
+}
+
+const getDemoContent = () => {
+  try {
+    const saved = sessionStorage.getItem(DEMO_CONTENT_KEY)
+    if (!saved) return DEFAULT_DEMO_CONTENT
+
+    const savedContent = JSON.parse(saved)
+    const oldContactValues = ['+91 89602 92928', '+91 8960292928', 'demo@shrimadkatha.in', 'shrimadbhagwatkatha@gmail.com', 'contact@shrimadkatha.com']
+    const hasOldContact = oldContactValues.includes(savedContent.contacts?.phone)
+      || oldContactValues.includes(savedContent.contacts?.whatsapp)
+      || oldContactValues.includes(savedContent.contacts?.email)
+
+    return {
+      ...DEFAULT_DEMO_CONTENT,
+      ...savedContent,
+      contacts: hasOldContact ? DEFAULT_DEMO_CONTENT.contacts : { ...DEFAULT_DEMO_CONTENT.contacts, ...savedContent.contacts }
+    }
+  } catch {
+    return DEFAULT_DEMO_CONTENT
+  }
+}
+
 export const AppProvider = ({ children }) => {
+  const [demoContent] = useState(getDemoContent)
   // Authentication State
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(() => {
-    return localStorage.getItem('katha_admin_logged_in') === 'true'
+    return sessionStorage.getItem('katha_admin_logged_in') === 'true'
   })
 
   const logoutAdmin = () => {
     setIsAdminLoggedIn(false)
-    localStorage.removeItem('katha_admin_logged_in')
-    localStorage.removeItem('katha_admin_token')
+    sessionStorage.removeItem('katha_admin_logged_in')
+    sessionStorage.removeItem('katha_admin_token')
   }
 
   const getAuthHeaders = () => ({
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('katha_admin_token')}`
+    'Authorization': `Bearer ${sessionStorage.getItem('katha_admin_token')}`
   })
 
   const handleResponse = async (res) => {
@@ -70,20 +119,22 @@ export const AppProvider = ({ children }) => {
   }
 
   // Data States
-  const [contacts, setContacts] = useState({})
-  const [about, setAbout] = useState({})
+  const [contacts, setContacts] = useState(demoContent.contacts)
+  const [about, setAbout] = useState(demoContent.about)
   
   // Static content that doesn't have a backend table yet
   const [timeline, setTimeline] = useState(DEFAULT_TIMELINE)
   const [achievements, setAchievements] = useState(DEFAULT_ACHIEVEMENTS)
 
-  const [banners, setBanners] = useState([])
-  const [events, setEvents] = useState([])
-  const [galleryPhotos, setGalleryPhotos] = useState([])
-  const [galleryVideos, setGalleryVideos] = useState([])
-  const [bookings, setBookings] = useState([])
-  const [calendarDates, setCalendarDates] = useState([])
-  const [organizers, setOrganizers] = useState([])
+  const [banners, setBanners] = useState(demoContent.banners)
+  const [events, setEvents] = useState(demoContent.events)
+  const [galleryPhotos, setGalleryPhotos] = useState(demoContent.galleryPhotos)
+  const [galleryVideos, setGalleryVideos] = useState(demoContent.galleryVideos)
+  const [bookings, setBookings] = useState(() =>
+    getSessionSubmissions().filter(submission => submission.formType === 'Katha Booking')
+  )
+  const [calendarDates, setCalendarDates] = useState(demoContent.calendarDates)
+  const [organizers, setOrganizers] = useState(demoContent.organizers)
   const [yajman, setYajman] = useState(null)
   const [successor, setSuccessor] = useState(null)
   
@@ -142,6 +193,10 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('katha_contacts', JSON.stringify(contacts))
   }, [contacts])
+
+  useEffect(() => {
+    sessionStorage.setItem(DEMO_CONTENT_KEY, JSON.stringify({ contacts, about, banners, events, galleryPhotos, galleryVideos, calendarDates, organizers }))
+  }, [contacts, about, banners, events, galleryPhotos, galleryVideos, calendarDates, organizers])
 
   // Fetch Data from Spring Boot Backend
   useEffect(() => {
@@ -283,13 +338,20 @@ export const AppProvider = ({ children }) => {
       });
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem('katha_admin_token', data.token);
+        sessionStorage.setItem('katha_admin_token', data.token);
         setIsAdminLoggedIn(true);
-        localStorage.setItem('katha_admin_logged_in', 'true');
+        sessionStorage.setItem('katha_admin_logged_in', 'true');
         return true;
       }
     } catch (error) {
       console.error('Login API failed:', error);
+    }
+
+    // Lets the existing displayed demo credentials open the dashboard when the API is not running.
+    if (username === 'admin' && password === 'admin') {
+      setIsAdminLoggedIn(true)
+      sessionStorage.setItem('katha_admin_logged_in', 'true')
+      return true
     }
     return false;
   }
@@ -445,6 +507,9 @@ export const AppProvider = ({ children }) => {
   }
 
   const addBooking = async (booking) => {
+    const demoBooking = saveSessionSubmission('Katha Booking', booking)
+    setBookings(prev => [demoBooking, ...prev.filter(item => item.id !== demoBooking.id)])
+
     try {
       const response = await fetch(`${API_BASE_URL}/public/bookings`, {
         method: 'POST',
@@ -453,7 +518,7 @@ export const AppProvider = ({ children }) => {
       });
       if (response.ok) {
         const savedBooking = await response.json();
-        setBookings(prev => [savedBooking, ...prev]);
+        setBookings(prev => [savedBooking, ...prev.filter(item => item.id !== demoBooking.id)]);
       }
     } catch (e) {
       console.warn("Failed to save booking to backend");
@@ -461,8 +526,13 @@ export const AppProvider = ({ children }) => {
   }
 
   const updateBookingStatus = async (id, status) => {
+    if (String(id).startsWith('demo-')) {
+      updateSessionSubmission(id, { status })
+      setBookings(prev => prev.map(booking => booking.id === id ? { ...booking, status } : booking))
+      return
+    }
     try {
-      const token = localStorage.getItem('katha_admin_token');
+      const token = sessionStorage.getItem('katha_admin_token');
       const res = await fetch(`${API_BASE_URL}/admin/bookings/${id}/status`, {
         method: 'PUT',
         headers: { 
@@ -517,8 +587,13 @@ export const AppProvider = ({ children }) => {
   }
 
   const deleteBooking = async (id) => {
+    if (String(id).startsWith('demo-')) {
+      removeSessionSubmission(id)
+      setBookings(prev => prev.filter(booking => booking.id !== id))
+      return
+    }
     try {
-      const token = localStorage.getItem('katha_admin_token');
+      const token = sessionStorage.getItem('katha_admin_token');
       const res = await fetch(`${API_BASE_URL}/admin/bookings/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }

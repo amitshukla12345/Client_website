@@ -9,6 +9,7 @@ import BookingForm from '../components/BookingForm'
 import contactHeroImg from '../assets/images/contact_hero_image.png'
 import mapPhoneIcon from '../assets/images/map_phone_icon.png'
 import ResponsiveHeroBanner from '../components/ResponsiveHeroBanner'
+import { saveSessionSubmission } from '../utils/sessionSubmissions'
 
 const emojis = {
   diya: "🪔",
@@ -86,8 +87,9 @@ export default function Contact() {
 
   const handleMeetFormSubmit = (e) => {
     e.preventDefault()
+    saveSessionSubmission('Meeting Request', meetFormData)
     const stateName = meetFormData.state
-    const whatsappNumber = contacts?.whatsapp?.replace(/[^\d]/g, '') || '918960292928'
+    const whatsappNumber = contacts?.whatsapp?.replace(/[^\d]/g, '') || '917738169410'
     const text = `${emojis.diya} *गुरुजी से भेंट के लिए अनुरोध | Request for meeting with Guruji* ${emojis.diya}\n${emojis.pray} *जय सियाराम | राधे राधे (Jai Siyaram | Radhe Radhe)* ${emojis.pray}\n\nमैं गुरुजी से भेंट करना चाहता/चाहती हूँ। मेरा विवरण इस प्रकार है:\nI would like to request a meeting with Guruji. My details are as follows:\n\n${emojis.user} नाम (Name) : ${meetFormData.firstName} ${meetFormData.lastName}\n${emojis.mobile} मोबाइल (Mobile) : ${meetFormData.mobile}\n${emojis.email} ईमेल (Email) : ${meetFormData.email}\n\n${emojis.pin} राज्य (State) : ${stateName}\n${emojis.city} ज़िला (District) : ${meetFormData.district}\n${emojis.house} शहर / गाँव (City/Village) : ${meetFormData.village}\n${emojis.postbox} पिनकोड (Pincode) : ${meetFormData.pincode}\n\n${emojis.calendar} दिन (Day) : ${meetFormData.day}\n${emojis.clockNine} समय (Time) : ${meetFormData.timeSlot}\n\n━━━━━━━━━━━━━━━━━━\n\n${emojis.phone} *कृपया भेंट के लिए समय की पुष्टि करें।* \n(Please confirm the meeting time.)\n\n${emojis.cherryBlossom} *धन्यवाद (Thank You)* ${emojis.pray}`
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`
@@ -109,8 +111,9 @@ export default function Contact() {
 
   const handleSevaFormSubmit = (e) => {
     e.preventDefault()
+    saveSessionSubmission('Seva Request', sevaFormData)
     const stateName = sevaFormData.state
-    const whatsappNumber = contacts?.whatsapp?.replace(/[^\d]/g, '') || '918960292928'
+    const whatsappNumber = contacts?.whatsapp?.replace(/[^\d]/g, '') || '917738169410'
     const text = `${emojis.temple} *सेवा के लिए अनुरोध | Request for Seva* ${emojis.temple}\n${emojis.pray} *जय सियाराम | राधे राधे (Jai Siyaram | Radhe Radhe)* ${emojis.pray}\n\nमैं आश्रम में सेवा कार्य के लिए अपना योगदान देना चाहता/चाहती हूँ। मेरा विवरण इस प्रकार है:\nI wish to contribute to the Seva work at the Ashram. My details are as follows:\n\n${sevaFormData.sevaType === 'गौ सेवा' ? emojis.cow : emojis.sparkle} सेवा (Seva Type) : ${sevaFormData.sevaType}\n\n${emojis.user} नाम (Name) : ${sevaFormData.firstName} ${sevaFormData.lastName}\n${emojis.mobile} मोबाइल (Mobile) : ${sevaFormData.mobile}\n${emojis.email} ईमेल (Email) : ${sevaFormData.email}\n\n${emojis.pin} राज्य (State) : ${stateName}\n${emojis.city} ज़िला (District) : ${sevaFormData.district}\n${emojis.house} शहर / गाँव (City/Village) : ${sevaFormData.village}\n${emojis.postbox} पिनकोड (Pincode) : ${sevaFormData.pincode}\n\n━━━━━━━━━━━━━━━━━━\n\n${emojis.phone} *कृपया सेवार्थी से संपर्क कर सेवा हेतु मार्गदर्शन प्रदान करें।* \n(Please contact the devotee to guide them for the Seva.)\n\n${emojis.cherryBlossom} *धन्यवाद (Thank You)* ${emojis.pray}`
 
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`
@@ -193,9 +196,10 @@ export default function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault()
     setLoading(true)
+    saveSessionSubmission('General Inquiry', formData)
 
     // Construct WhatsApp message
-    const whatsappNumber = contacts?.whatsapp?.replace(/[^\d]/g, '') || '918960292928'
+    const whatsappNumber = contacts?.whatsapp?.replace(/[^\d]/g, '') || '917738169410'
     const text = `🪷 *स्वामी हरिप्रपन्नाचार्य जी* 🪷\n🙏 *जय सियाराम | राधे राधे* 🙏\n✨ _सत्यम परं धीमहि_ ✨\n\nसादर प्रणाम,\nमुझे एक सामान्य जानकारी (General Inquiry) के लिए संपर्क करना है। मेरा विवरण इस प्रकार है:\n\n*👤 नाम (Name):* ${formData.name}\n*📞 फोन (Phone):* ${formData.phone}\n*✉️ ईमेल (Email):* ${formData.email}\n*📋 विषय (Subject):* ${formData.subject}\n\n*📝 संदेश (Message):*\n${formData.message}\n\n🌐 _(वेबसाइट के माध्यम से भेजा गया संदेश)_`
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`
 
@@ -210,24 +214,24 @@ export default function Contact() {
   const contactInfo = [
     {
       title: 'Phone Enquiries',
-      value: '+91 89602 92928',
+      value: '+91 77381 69410',
       subtext: 'Mon to Sat (09:00 AM to 06:00 PM)',
       icon: FaPhoneAlt,
-      link: 'tel:+918960292928'
+      link: 'tel:+917738169410'
     },
     {
       title: 'WhatsApp Message',
-      value: contacts?.whatsapp || '+91 89602 92928',
+      value: contacts?.whatsapp || '+91 77381 69410',
       subtext: 'For instant scriptural booking chats',
       icon: FaWhatsapp,
-      link: contacts?.whatsapp?.startsWith('http') ? contacts.whatsapp : `https://wa.me/${(contacts?.whatsapp || '918960292928').replace(/[^\d]/g, '')}`
+      link: contacts?.whatsapp?.startsWith('http') ? contacts.whatsapp : `https://wa.me/${(contacts?.whatsapp || '917738169410').replace(/[^\d]/g, '')}`
     },
     {
       title: 'Official Email',
-      value: contacts?.email || 'shrimadbhagwatkatha@gmail.com',
+      value: contacts?.email || 'amitshukla22509@gmail.com',
       subtext: 'Send official proposals & letters',
       icon: FaEnvelope,
-      link: `mailto:${contacts?.email || 'shrimadbhagwatkatha@gmail.com'}`
+      link: `mailto:${contacts?.email || 'amitshukla22509@gmail.com'}`
     },
     {
       title: 'Ashram Address',
@@ -270,7 +274,7 @@ export default function Contact() {
           />
           {/* WhatsApp */}
           <a
-            href={contacts?.whatsapp?.startsWith('http') ? contacts.whatsapp : `https://wa.me/${(contacts?.whatsapp || '918960292928').replace(/[^\d]/g, '')}`}
+            href={contacts?.whatsapp?.startsWith('http') ? contacts.whatsapp : `https://wa.me/${(contacts?.whatsapp || '917738169410').replace(/[^\d]/g, '')}`}
             target="_blank" rel="noopener noreferrer"
             className="absolute rounded-full hover:bg-white/30 transition-colors"
             style={{ top: '62%', right: '0.8%', width: '4%', height: '8%' }}

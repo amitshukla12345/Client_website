@@ -100,11 +100,11 @@ export default function Footer() {
               </li>
               <li className="flex items-center space-x-3.5 group">
                 <FaPhoneAlt className="text-[#D4AF37] text-[15px] flex-shrink-0 group-hover:text-[#E05A10] transition-colors" />
-                <span className="leading-relaxed tracking-wide">{contacts?.phone || '+91 89602 92928'}</span>
+                <span className="leading-relaxed tracking-wide">{contacts?.phone || '+91 77381 69410'}</span>
               </li>
               <li className="flex items-center space-x-3.5 group">
                 <FaEnvelope className="text-[#D4AF37] text-[15px] flex-shrink-0 group-hover:text-[#E05A10] transition-colors" />
-                <span className="leading-relaxed break-all">{contacts?.email || 'contact@shrimadkatha.com'}</span>
+                <span className="leading-relaxed break-all">{contacts?.email || 'amitshukla22509@gmail.com'}</span>
               </li>
             </ul>
           </div>
