@@ -46,6 +46,17 @@ const DEFAULT_LIVE_SETTINGS = {
 }
 
 const DEMO_CONTENT_KEY = 'katha_demo_content'
+const DEFAULT_DEMO_BOOKINGS = [
+  { id: 'demo-booking-1', name: 'Amit Sharma', phone: '+91 98765 43210', email: 'amit.sharma@gmail.com', city: 'Lucknow', state: 'Uttar Pradesh', kathaType: 'Shrimad Bhagwat Katha', preferredDate: '2026-09-15', status: 'Confirmed', createdAt: '2025-01-08T10:30:00.000Z', message: 'Please arrange a 7-day Bhagwat Katha in our local mandal.' },
+  { id: 'demo-booking-2', name: 'Neha Singh', phone: '+91 91234 56789', email: 'neha.singh@gmail.com', city: 'Varanasi', state: 'Uttar Pradesh', kathaType: 'Ram Katha', preferredDate: '2026-02-18', status: 'Pending', createdAt: '2025-02-12T09:15:00.000Z', message: 'We want a Ram Katha for the upcoming festival.' },
+  { id: 'demo-booking-3', name: 'Rakesh Verma', phone: '+91 99887 66554', email: 'rakesh.verma@yahoo.com', city: 'Indore', state: 'Madhya Pradesh', kathaType: 'Shiv Katha', preferredDate: '2026-03-04', status: 'Confirmed', createdAt: '2025-03-04T16:45:00.000Z', message: 'Need a Shiv Katha for our spiritual gathering.' },
+  { id: 'demo-booking-4', name: 'Pooja Gupta', phone: '+91 98111 22334', email: 'pooja.gupta@gmail.com', city: 'Jaipur', state: 'Rajasthan', kathaType: 'Bhajan Sandhya', preferredDate: '2026-04-11', status: 'Cancelled', createdAt: '2025-04-09T12:10:00.000Z', message: 'Looking for devotional bhajan program for housewarming.' },
+  { id: 'demo-booking-5', name: 'Sandeep Joshi', phone: '+91 97654 32109', email: 'sandeep.joshi@gmail.com', city: 'Nagpur', state: 'Maharashtra', kathaType: 'Shiv Katha', preferredDate: '2026-05-20', status: 'Confirmed', createdAt: '2025-05-15T14:00:00.000Z', message: 'Please confirm the date and venue availability.' },
+  { id: 'demo-booking-6', name: 'Meena Patel', phone: '+91 85432 19876', email: 'meena.patel@gmail.com', city: 'Ahmedabad', state: 'Gujarat', kathaType: 'Shrimad Bhagwat Katha', preferredDate: '2026-06-10', status: 'Pending', createdAt: '2025-06-03T18:20:00.000Z', message: 'We would like to host a divine katha for community.' },
+  { id: 'demo-booking-7', name: 'Vikas Mishra', phone: '+91 98770 88991', email: 'vikas.mishra@gmail.com', city: 'Patna', state: 'Bihar', kathaType: 'Ram Katha', preferredDate: '2026-07-21', status: 'Confirmed', createdAt: '2025-07-11T08:55:00.000Z', message: 'Request a weekend Ram Katha with bhajan evening.' },
+  { id: 'demo-booking-8', name: 'Anita Rai', phone: '+91 96543 77880', email: 'anita.rai@gmail.com', city: 'Delhi', state: 'Delhi', kathaType: 'Sundarkand Path', preferredDate: '2026-08-06', status: 'Pending', createdAt: '2025-08-05T20:15:00.000Z', message: 'Need a Sundarkand path for our family event.' }
+]
+
 const DEFAULT_DEMO_CONTENT = {
   contacts: { phone: '+91 77381 69410', whatsapp: '+91 77381 69410', email: 'amitshukla22509@gmail.com', announcement: 'Demo: bookings and enquiries are stored for this browser session.', isAnnouncementActive: true, youtube: 'https://youtube.com', facebook: 'https://facebook.com', instagram: 'https://instagram.com' },
   about: { name: 'Pujya Swami Hariprapannacharya Ji Maharaj', bio: 'A humble servant of Sanatan Dharma, sharing the teachings of Shrimad Bhagvat with devotees across India.', image: '/images/spiritual_bg.png', fatherName: 'Shri Ramcharan Das Ji', guruDiksha: 'Vrindavan Dham', firstKatha: '2012', kathaYatra: '500+ spiritual programmes', stats: [{ label: 'Years of Service', value: '18+' }, { label: 'Katha Programmes', value: '500+' }, { label: 'Devotees', value: '1 Lakh+' }] },
@@ -130,9 +141,10 @@ export const AppProvider = ({ children }) => {
   const [events, setEvents] = useState(demoContent.events)
   const [galleryPhotos, setGalleryPhotos] = useState(demoContent.galleryPhotos)
   const [galleryVideos, setGalleryVideos] = useState(demoContent.galleryVideos)
-  const [bookings, setBookings] = useState(() =>
-    getSessionSubmissions().filter(submission => submission.formType === 'Katha Booking')
-  )
+  const [bookings, setBookings] = useState(() => {
+    const sessionBookings = getSessionSubmissions().filter(submission => submission.formType === 'Katha Booking')
+    return sessionBookings.length > 0 ? sessionBookings : DEFAULT_DEMO_BOOKINGS
+  })
   const [calendarDates, setCalendarDates] = useState(demoContent.calendarDates)
   const [organizers, setOrganizers] = useState(demoContent.organizers)
   const [yajman, setYajman] = useState(null)
